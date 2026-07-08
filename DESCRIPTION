@@ -1,0 +1,18 @@
+Package: oneway
+Title: One-Way Statistical Analyses
+Version: 0.0.1
+Authors@R: 
+    person("Joon-Keat", "Lai", , "p10911004@gmail.com", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-9840-5836"))
+Description: An integrated toolkit for one-way statistical analyses. The package 
+             implements a collection of methods for one-way experimental designs, 
+             including tests of assumptions (normality and homoscedasticity), 
+             one-way analysis of variance, robust and nonparametric alternatives, 
+             multiple comparison procedures, effect size estimators, confidence 
+             intervals, and descriptive summaries. Functions are designed with a 
+             consistent interface to support reproducible and user-friendly 
+             statistical workflows.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0

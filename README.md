@@ -17,7 +17,7 @@ There are also other nice alternatives such as
 [`onewaytests`](https://cran.r-project.org/package=onewaytests),
 and other friends.
 
-# Installation
+<!-- # Installation
 
 You can install the package from [CRAN](https://cran.r-project.org/package=oneway) with:
 
@@ -35,4 +35,4 @@ devtools::install_github("P10911004-NPUST/oneway")
 # Quick start
 ```r
 pairwise_comparison(df0, val ~ grp)
-```
+``` -->

@@ -28,8 +28,8 @@ install.packages("oneway")
 or the development version from [GitHub](https://github.com/P10911004-NPUST/oneway) with:
 
 ``` r
-if (!require("devtools")) install.packages("devtools")
-devtools::install_github("P10911004-NPUST/oneway")
+if (!require("pak")) install.packages("pak")
+pak::pak("P10911004-NPUST/oneway")
 ```
 
 # Quick start

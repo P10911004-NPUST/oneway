@@ -1,104 +1,182 @@
 oneway_standard_output <- function(
-        method = "which priori + post-hoc tests ?",
-        pre_hoc = data.frame(),
-        post_hoc = data.frame(),
-        summary = data.frame(),
-        alpha = 0.05,
+        method          = "which priori + post-hoc tests ?",
+        pre_hoc         = data.frame(),
+        post_hoc        = data.frame(),
+        summary         = data.frame(),
+        alternative     = c("two.sided", "less", "greater"),
+        alpha           = 0.05,
         p_adjust_method = stats::p.adjust.methods,
-        is_normal = logical(1),
-        is_var_equal = logical(1),
-        is_balance = logical(1),
-        checker_func = list("outliers" = outlying::Grubbs_test,
-                            "normality" = normality::is_normal,
-                            "variance" = varequal::is_var_equal,
-                            "balance" = is_balance),
-        pre_hoc_func = list("O_O" = "Fisher_ANOVA",
-                            "O_X" = "Welch_ANOVA",
-                            "X_O" = "ART_ANOVA",
-                            "X_X" = "ART_ANOVA"),
-        post_hoc_func = list("O_O_O" = "REGWQ_test",
-                             "O_O_X" = "Tukey_Kramer_test",
-                             "O_X_X" = "Games_Howell_test"),
-        plot_param = list()
+        checker_func    = list("normality" = normality::is_normal,
+                               "variance" = varequal::is_var_equal,
+                               "balance" = is_balance),
+        pre_hoc_func    = list("O_O" = "Fisher_ANOVA",
+                               "O_X" = "Welch_ANOVA",
+                               "X_O" = "ART_ANOVA",
+                               "X_X" = "ART_ANOVA"),
+        post_hoc_func   = list("O_O_O" = "REGWQ_test",
+                               "O_O_X" = "Tukey_Kramer_test",
+                               "O_X_X" = "Games_Howell_test"),
+        plot_param      = list(),
+        ...
 ) {
     list(
-        method,
-        pre_hoc,
-        post_hoc,
-        summary,
-        data,
-        formula,
-        alpha,
-        p_adjust_method,
-        is_normal,
-        is_var_equal,
-        is_balance,
-        checker_func,
-        pre_hoc_func,
-        post_hoc_func
+        "method" = method,
+        "pre_hoc" = pre_hoc,
+        "post_hoc" = post_hoc,
+        "summary" = summary,
+        "alternative" = alternative,
+        "alpha" = alpha,
+        "p_adjust_method" = p_adjust_method,
+        "checker_func" = checker_func,
+        "pre_hoc_func" = pre_hoc_func,
+        "post_hoc_func" = post_hoc_func,
+        "plot_param" = plot_param,
+        ...
     )
 }
 
 
-tidy_to_dataframe <- function(data, formula = NULL)
+oneway_summary <- function(
+        GROUP = NA_character_,
+        CLD = NA_character_,
+        N = NA_integer_,
+        AVG = NA_real_,
+        MED = NA_real_,
+        SD = NA_real_,
+        CI_lower = NA_real_,
+        CI_upper = NA_real_,
+        MIN = NA_real_,
+        MAX = NA_real_,
+        skewness = NA_real_,
+        kurtosis = NA_real_,
+        is_normal = NA,
+        n_outliers = NA_integer_,
+        ...
+) {
+    data.frame(
+        "GROUP" = GROUP,
+        "CLD" = CLD,
+        "N" = N,
+        "AVG" = AVG,
+        "SD" = SD,
+        "MED" = MED,
+        "MIN" = MIN,
+        "MAX" = MAX,
+        "CI_lower" = CI_lower,
+        "CI_upper" = CI_upper,
+        ...
+    )
+}
+
+
+oneway_comparison <- function(
+        method = "Which post-hoc test?",
+        y1 = NA_character_,
+        y2 = NA_character_,
+        diff = NA_real_,
+        standard_value = c("t_val" = NA_real_),
+        critical_value = c("t_crit" = NA_real_),
+        pvalue = NA_real_,
+        padj = c("none" = NA_real_),
+        effect_size = c("Cohen's d" = NA_real_),
+        CI_lower = NA_real_,
+        CI_upper = NA_real_,
+        ...)
 {
-    ret <- NULL
+    df0 <- data.frame(
+        check.names = FALSE,
+        "method" = method,
+        "y1" = y1,
+        "y2" = y2,
+        "y1 - y2" = diff,
+        "standard_value" = unname(standard_value),
+        "critical_value" = unname(critical_value),
+        "pvalue" = pvalue,
+        "padj" = unname(padj),
+        "effect_size" = unname(effect_size),
+        "CI_lower" = CI_lower,
+        "CI_upper" = CI_upper,
+        ...
+    )
 
-    # Data frame is also a kind of list, so `is.null(dim(data))` is necessary
-    if (is.list(data) & is.null(dim(data)))
+    colnames(df0)[colnames(df0) == "padj"] <- sprintf("padj (%s)", names(padj))
+    colnames(df0)[colnames(df0) == "standard_value"] <- names(standard_value)
+    colnames(df0)[colnames(df0) == "critical_value"] <- names(critical_value)
+    colnames(df0)[colnames(df0) == "effect_size"] <- names(effect_size)
+
+    structure(
+        .Data = df0,
+        class = c("oneway.comparison", "data.frame")
+    )
+}
+
+
+tidy_to_list <- function(data, formula, factor_levels = NULL)
+{
+    # If data is a vector
+    if (is.atomic(data) & is.null(dim(data)))
     {
-        data <- lapply(data, function(x) x[stats::complete.cases(x)])
-        isub <- seq_along(data)
-
-        if (is.null(names(data)))
-            names(data) <- as.character(isub)
-
-        grp <- names(data)
-
-        lst <- lapply(isub,
-                      function(i)
-                      {
-                          vct <- data[[i]]
-                          vct <- vct[stats::complete.cases(vct)]
-                          if (is.null(vct) || length(vct) == 0)
-                              df0 <- data.frame(y = NA_real_, x = grp[i])
-                          else
-                              df0 <- data.frame(y = vct, x = grp[i])
-                      })
-        ret <- do.call(rbind.data.frame, lst)
-        ret <- ret[stats::complete.cases(ret[["y"]]), ]
-        ret[["x"]] <- as.character(ret[["x"]])
-        attr(ret, "x_name") <- "IV"
-        attr(ret, "y_name") <- "DV"
+        data <- data[stats::complete.cases(data)]
+        lst <- list(data)
+        names(lst) <- names(data)
     }
 
+    # If data is a matrix
     if (is.matrix(data))
         data <- as.data.frame(data)
 
+    # If data is a data frame
     if (is.data.frame(data))
     {
         if (is.null(formula) || missing(formula))
-            stop("Please specify the `formula`, for example: lhs ~ rhs")
+            stop("`formula` must be specified, for example: y ~ x")
+
+        all_vars <- all.vars(formula)
+        if (length(all_vars) > 2)
+        {
+            warning(sprintf("Only the first independent variable (%s) is used.", all_vars[2]))
+            formula <- sprintf("%s ~ %s", all_vars[1], all_vars[2])
+            formula <- stats::as.formula(formula)
+        }
+
         df0 <- stats::model.frame(formula, data, drop.unused.levels = TRUE)
-        x_name <- colnames(df0)[2]
-        y_name <- colnames(df0)[1]
-        colnames(df0) <- c("y", "x")
-        df0[["x"]] <- as.character(df0[["x"]])
-        ret <- df0[stats::complete.cases(df0[["y"]]), ]
-        attr(ret, "x_name") <- x_name
-        attr(ret, "y_name") <- y_name
+        data <- split(df0[, 1], df0[, 2])
     }
 
-    ret <- ret[order(ret[["x"]]), ]
+    # If data is a list
+    # `is.null(dim(data))` is necessary as data frame is also a kind of list
+    if (is.list(data) & is.null(dim(data)))
+    {
+        data <- lapply(data, function(x) x[stats::complete.cases(x)])
+        n <- unlist(lapply(data, length), use.names = FALSE)
 
-    return(ret)
+        if (any(n < 3))
+            warning("All group sizes should be greater than 2.")
+
+        if (is.null(names(data)))
+            names(data) <- seq_along(data)
+
+        lst <- data
+    }
+
+    if (!is.null(factor_levels) & !missing(factor_levels))
+    {
+        if (all(names(lst) %in% factor_levels))
+            lst <- lst[factor_levels]
+        else
+            warning("`factor_levels` doesn't match the input data factor levels.")
+    }
+
+    return(lst)
 }
+
+
 
 
 is_balance <- function(data, formula, buffer_ratio = 0.2)
 {
-    df0 <- tidy_to_dataframe(data, formula)
-    n <- tapply(df0[["y"]], df0[["x"]], length)
+    lst <- tidy_to_list(data, formula)
+    n <- unlist(lapply(lst, length), use.names = FALSE)
     if (length(unique(n)) == 1)
         return(TRUE)
     a <- (max(n) / stats::median(n)) <= (1 + buffer_ratio)
@@ -141,10 +219,10 @@ pval2asterisk <- function(
 }
 
 
-VAR_pooled <- function(val, grp)
+var_pooled <- function(y, x)
 {
-    N <- c(tapply(val, grp, length))
-    VAR <- c(tapply(val, grp, stats::var))
+    N <- c(tapply(y, x, length))
+    VAR <- c(tapply(y, x, stats::var))
     N_ratio <- (N - 1) / sum(N - 1)
     var_pooled <- sum(N_ratio * VAR)
     return(var_pooled)
@@ -153,15 +231,15 @@ VAR_pooled <- function(val, grp)
 
 describe <- function(data, formula)
 {
-    df0 <- tidy_to_dataframe(data, formula)
-    n_grps <- length(unique(df0[["x"]]))
+    lst <- tidy_to_list(data, formula)
+    n_grps <- length(lst)
     mat0 <- vapply(
         X = c("length", "mean", stats::sd, stats::median, "min", "max"),
-        function(fn) tapply(df0[["y"]], df0[["x"]], fn),
+        function(fn) unlist(lapply(lst, fn)),
         FUN.VALUE = numeric(n_grps)
     )
     mat0 <- mat0[order(mat0[, 4], decreasing = TRUE), ]
-    ret <- as.data.frame(mat0)
-    colnames(ret) <- c("N", "AVG", "SD", "MED", "MIN", "MAX")
-    return(ret)
+    df0 <- as.data.frame(mat0)
+    colnames(df0) <- c("N", "AVG", "SD", "MED", "MIN", "MAX")
+    return(df0)
 }

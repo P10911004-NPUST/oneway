@@ -13,10 +13,14 @@ Description: An integrated toolkit for one-way statistical analyses. The package
              consistent interface to support reproducible and user-friendly 
              statistical workflows.
 License: MIT + file LICENSE
+URL: https://github.com/P10911004-NPUST/oneway
+BugReports: https://github.com/P10911004-NPUST/oneway/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Imports: 
     normality,
-    outlying,
     varequal
+Suggests: 
+    ggplot2,
+    testthat (>= 3.0.0)

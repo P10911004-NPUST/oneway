@@ -69,18 +69,17 @@ oneway_summary <- function(
 }
 
 
-oneway_comparison <- function(
+oneway_post_hoc_tab <- function(
         method = "Which post-hoc test?",
         y1 = NA_character_,
         y2 = NA_character_,
         diff = NA_real_,
+        diff_CI = c("diff 95% CI" = "[0.00, 0.00]"),
         standard_value = c("t_val" = NA_real_),
         critical_value = c("t_crit" = NA_real_),
         pvalue = NA_real_,
         padj = c("none" = NA_real_),
         effect_size = c("Cohen's d" = NA_real_),
-        CI_lower = NA_real_,
-        CI_upper = NA_real_,
         ...)
 {
     df0 <- data.frame(
@@ -88,17 +87,17 @@ oneway_comparison <- function(
         "method" = method,
         "y1" = y1,
         "y2" = y2,
-        "y1 - y2" = diff,
+        "diff (y1 - y2)" = diff,
+        "diff_CI" = unname(diff_CI),
         "standard_value" = unname(standard_value),
         "critical_value" = unname(critical_value),
         "pvalue" = pvalue,
         "padj" = unname(padj),
         "effect_size" = unname(effect_size),
-        "CI_lower" = CI_lower,
-        "CI_upper" = CI_upper,
         ...
     )
 
+    colnames(df0)[colnames(df0) == "diff_CI"] <- names(diff_CI)
     colnames(df0)[colnames(df0) == "padj"] <- sprintf("padj (%s)", names(padj))
     colnames(df0)[colnames(df0) == "standard_value"] <- names(standard_value)
     colnames(df0)[colnames(df0) == "critical_value"] <- names(critical_value)
@@ -172,7 +171,6 @@ tidy_to_list <- function(data, formula, factor_levels = NULL)
 
 
 
-
 is_balance <- function(data, formula, buffer_ratio = 0.2)
 {
     lst <- tidy_to_list(data, formula)
@@ -219,27 +217,61 @@ pval2asterisk <- function(
 }
 
 
-var_pooled <- function(y, x)
-{
-    N <- c(tapply(y, x, length))
-    VAR <- c(tapply(y, x, stats::var))
-    N_ratio <- (N - 1) / sum(N - 1)
-    var_pooled <- sum(N_ratio * VAR)
-    return(var_pooled)
-}
+# var_pooled <- function(y, x)
+# {
+#     N <- c(tapply(y, x, length))
+#     VAR <- c(tapply(y, x, stats::var))
+#     N_ratio <- (N - 1) / sum(N - 1)
+#     var_pooled <- sum(N_ratio * VAR)
+#     return(var_pooled)
+# }
 
 
-describe <- function(data, formula)
+describe <- function(data, formula, CI = 0.95, CI_digits = 2)
 {
     lst <- tidy_to_list(data, formula)
     n_grps <- length(lst)
-    mat0 <- vapply(
-        X = c("length", "mean", stats::sd, stats::median, "min", "max"),
-        function(fn) unlist(lapply(lst, fn)),
-        FUN.VALUE = numeric(n_grps)
+
+    # .combine_CI <- function(y)
+    # {
+    #     ci <- CI_population(y, alpha = 1 - CI)
+    #     ci_lower <- unname(round(ci[[1]], CI_digits))
+    #     ci_upper <- unname(round(ci[[2]], CI_digits))
+    #     ret <- sprintf("[%s, %s]", ci_lower, ci_upper)
+    #     return(ret)
+    # }
+
+    GROUP <- names(lst)
+    N <- unlist(lapply(lst, length), use.names = FALSE)
+    AVG <- unlist(lapply(lst, mean), use.names = FALSE)
+    SD <- unlist(lapply(lst, stats::sd), use.names = FALSE)
+    MED <- unlist(lapply(lst, stats::median), use.names = FALSE)
+    MIN <- unlist(lapply(lst, min), use.names = FALSE)
+    MAX <- unlist(lapply(lst, max), use.names = FALSE)
+
+    CI_low_up <- lapply(lst,
+                        function(y)
+                        {
+                            ci <- CI_population(y, alpha = 1 - CI)
+                            ci_lower <- unname(round(ci[[1]], CI_digits))
+                            ci_upper <- unname(round(ci[[2]], CI_digits))
+                            ret <- sprintf("[%s, %s]", ci_lower, ci_upper)
+                            return(ret)
+                        })
+    CI_low_up <- unlist(CI_low_up, use.names = FALSE)
+
+    df0 <- data.frame(
+        check.names = FALSE,
+        "GROUP" = GROUP,
+        "N" = N,
+        "AVG" = AVG,
+        "SD" = SD,
+        "MED" = MED,
+        "MIN" = MIN,
+        "MAX" = MAX
     )
-    mat0 <- mat0[order(mat0[, 4], decreasing = TRUE), ]
-    df0 <- as.data.frame(mat0)
-    colnames(df0) <- c("N", "AVG", "SD", "MED", "MIN", "MAX")
+
+    df0[sprintf("%s%% CI", CI * 100)] <- CI_low_up
+
     return(df0)
 }

@@ -48,16 +48,20 @@ t_test <- function(
         pre_hoc <- NULL
 
         if (isTRUE(is.var.equal))
-        {
-            post_hoc <- .two_sample_student_t_test(y1, y2, alternative, alpha, mu)
-            method <- post_hoc[["method"]]
-        } else {
-            post_hoc <- .two_sample_welch_t_test(y1, y2, alternative, alpha, mu)
-            method <- post_hoc[["method"]]
-        }
+            comparison <- .two_sample_student_t_test(y1, y2, alternative, alpha, mu)
+        else
+            comparison <- .two_sample_welch_t_test(y1, y2, alternative, alpha, mu)
 
-        post_hoc[["y1"]] <- grp_names[1]
-        post_hoc[["y2"]] <- grp_names[2]
+        post_hoc <- oneway_post_hoc(
+            method = comparison[["method"]],
+            y1 = grp_names[1],
+            y2 = grp_names[2],
+            diff = comparison[["diff"]],
+            diff_CI = comparison[["diff_CI"]],
+            standard_value = comparison["tval"],
+            critical_value = comparison["tcrit"],
+            pvalue = comparison[["pval"]]
+        )
     }
 
     #--------------------------------------------------------------------------#
@@ -120,7 +124,6 @@ t_test <- function(
 }
 
 
-
 .two_sample_student_t_test <- function(
         y1,
         y2,
@@ -138,35 +141,38 @@ t_test <- function(
     avg <- unlist(lapply(data, mean), use.names = FALSE)
     vars <- unlist(lapply(data, stats::var), use.names = FALSE)
 
-    DF <- sum(n - 1)
-    Sp2 <- sum((n - 1) * vars) / DF
-    StdErr <- sqrt(sum(Sp2 / n))
+    DF_total <- sum(n - 1)
+    pooled_var <- sum((n - 1) * vars) / DF_total
+    StdErr <- sqrt(sum(pooled_var / n))
     diff <- avg[1] - avg[2]
 
     tval <- (diff - mu) / StdErr
 
-    tcrit <- stats::qt(alpha, DF, lower.tail = FALSE)
+    tcrit <- stats::qt(alpha, DF_total, lower.tail = FALSE)
     tcrit <- sign(tval) * tcrit
 
-    pval <- stats::pt(abs(tval), DF, lower.tail = FALSE)
+    pval <- stats::pt(abs(tval), DF_total, lower.tail = FALSE)
     pval <- if (alt == "two.sided") pval * 2 else pval
-
-    Cohen_d <- diff / sqrt(Sp2)
-    Hedges_g <- Cohen_d * (1 - (3 / (4 * sum(n) - 9)))
-    effect_size <- stats::setNames(Hedges_g, "Hedges's g")
-
-    t_ncp <- calc_t_ncp(tval, DF, alt, ALPHA)
-    ES_CI <- t_ncp * sqrt(sum(1 / n))
 
     diff_CI_lower <- diff - tcrit * StdErr
     diff_CI_upper <- diff + tcrit * StdErr
 
+    effect_size <- Hedges_g_s(diff = diff,
+                              sample_sizes = n,
+                              standard_value = tval,
+                              pooled_var = pooled_var,
+                              DF_total = DF_total,
+                              alternative = alt,
+                              alpha = alpha,
+                              mu = mu,
+                              dist_func = stats::qt)
+
     ret <- list(
-        "method" = "Student's t",
-        "DF" = DF, "Sp2" = Sp2, "SE" = StdErr,
+        "method" = "Student's t", "DF_total" = DF_total,
+        "pooled_var" = pooled_var, "SE" = StdErr,
         "tval" = tval, "tcrit" = tcrit, "pval" = pval,
         "diff" = diff, "diff_CI" = c(diff_CI_lower, diff_CI_upper),
-        "ES" = effect_size, "ES_CI" = ES_CI
+        "ES" = effect_size
     )
 
     return(ret)
@@ -178,9 +184,9 @@ t_test <- function(
     df0 <- data.frame(y = c(y1, y2),
                       x = c(rep("Modified", length(y1)),
                             rep("Unmodified", length(y2))))
-    effectsize::hedges_g(y1, y2)
     .two_sample_student_t_test(y1, y2)
     stats::t.test(y1, y2, var.equal = TRUE)
+    effectsize::hedges_g(y1, y2)
 }
 
 
@@ -201,37 +207,38 @@ t_test <- function(
     avg <- unlist(lapply(data, mean), use.names = FALSE)
     vars <- unlist(lapply(data, stats::var), use.names = FALSE)
 
-    print(list("n" = n, "mean" = avg, "vars" = vars))
-
-    DF <- sum(vars / n) ^ 2 / sum((vars / n) ^ 2 / (n - 1))
-    Sp2 <- sum((n - 1) * vars) / DF  # not used to calculate tval
+    DF_total <- sum(vars / n) ^ 2 / sum((vars / n) ^ 2 / (n - 1))
+    pooled_var <- mean(vars)
     StdErr <- sqrt(sum(vars / n))
     diff <- avg[1] - avg[2]
 
     tval <- (diff - mu) / StdErr
 
-    tcrit <- stats::qt(alpha, DF, lower.tail = FALSE)
+    tcrit <- stats::qt(alpha, DF_total, lower.tail = FALSE)
     tcrit <- sign(tval) * tcrit
 
-    pval <- stats::pt(abs(tval), DF, lower.tail = FALSE)
+    pval <- stats::pt(abs(tval), DF_total, lower.tail = FALSE)
     pval <- if (alt == "two.sided") pval * 2 else pval
-
-    Cohen_d <- tval * sqrt(sum(1 / n))
-    Hedges_g <- Cohen_d * (1 - (3 / (4 * sum(n) - 9)))
-    effect_size <- stats::setNames(Hedges_g, "Hedges's g")
-
-    t_ncp <- calc_t_ncp(tval, sum(n - 1), alt, ALPHA)
-    ES_CI <- t_ncp * sqrt(sum(1 / n))
 
     diff_CI_lower <- diff - tcrit * StdErr
     diff_CI_upper <- diff + tcrit * StdErr
 
+    effect_size <- Hedges_g_s(diff = diff,
+                              sample_sizes = n,
+                              standard_value = tval,
+                              pooled_var = pooled_var,
+                              DF_total = sum(n - 1),
+                              alternative = alt,
+                              alpha = alpha,
+                              mu = mu,
+                              dist_func = stats::qt)
+
     ret <- list(
-        "method" = "Welch's t",
-        "DF" = DF, "Sp2" = NA_real_, "SE" = StdErr,
+        "method" = "Welch's t", "DF_total" = DF_total,
+        "pooled_var" = pooled_var, "SE" = StdErr,
         "tval" = tval, "tcrit" = tcrit, "pval" = pval,
         "diff" = diff, "diff_CI" = c(diff_CI_lower, diff_CI_upper),
-        "ES" = effect_size, "ES_CI" = ES_CI
+        "ES" = effect_size
     )
 
     return(ret)
@@ -243,8 +250,9 @@ t_test <- function(
     df0 <- data.frame(y = c(y1, y2),
                       x = c(rep("Nerve", length(y1)),
                             rep("Muscle", length(y2))))
-    effectsize::hedges_g(y1, y2)
     .two_sample_welch_t_test(y1, y2)
+    stats::t.test(y1, y2)
+    effectsize::hedges_g(y1, y2, pooled_sd = FALSE)
 }
 
 

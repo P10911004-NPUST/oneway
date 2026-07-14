@@ -69,7 +69,7 @@ oneway_summary <- function(
 }
 
 
-oneway_post_hoc_tab <- function(
+oneway_post_hoc <- function(
         method = "Which post-hoc test?",
         y1 = NA_character_,
         y2 = NA_character_,

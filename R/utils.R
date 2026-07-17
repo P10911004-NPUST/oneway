@@ -1,115 +1,3 @@
-oneway_standard_output <- function(
-        method          = "which priori + post-hoc tests ?",
-        pre_hoc         = data.frame(),
-        post_hoc        = data.frame(),
-        summary         = data.frame(),
-        alternative     = c("two.sided", "less", "greater"),
-        alpha           = 0.05,
-        p_adjust_method = stats::p.adjust.methods,
-        checker_func    = list("normality" = normality::is_normal,
-                               "variance" = varequal::is_var_equal,
-                               "balance" = is_balance),
-        pre_hoc_func    = list("O_O" = "Fisher_ANOVA",
-                               "O_X" = "Welch_ANOVA",
-                               "X_O" = "ART_ANOVA",
-                               "X_X" = "ART_ANOVA"),
-        post_hoc_func   = list("O_O_O" = "REGWQ_test",
-                               "O_O_X" = "Tukey_Kramer_test",
-                               "O_X_X" = "Games_Howell_test"),
-        plot_param      = list(),
-        ...
-) {
-    list(
-        "method" = method,
-        "pre_hoc" = pre_hoc,
-        "post_hoc" = post_hoc,
-        "summary" = summary,
-        "alternative" = alternative,
-        "alpha" = alpha,
-        "p_adjust_method" = p_adjust_method,
-        "checker_func" = checker_func,
-        "pre_hoc_func" = pre_hoc_func,
-        "post_hoc_func" = post_hoc_func,
-        "plot_param" = plot_param,
-        ...
-    )
-}
-
-
-oneway_summary <- function(
-        GROUP = NA_character_,
-        CLD = NA_character_,
-        N = NA_integer_,
-        AVG = NA_real_,
-        MED = NA_real_,
-        SD = NA_real_,
-        CI_lower = NA_real_,
-        CI_upper = NA_real_,
-        MIN = NA_real_,
-        MAX = NA_real_,
-        skewness = NA_real_,
-        kurtosis = NA_real_,
-        is_normal = NA,
-        n_outliers = NA_integer_,
-        ...
-) {
-    data.frame(
-        "GROUP" = GROUP,
-        "CLD" = CLD,
-        "N" = N,
-        "AVG" = AVG,
-        "SD" = SD,
-        "MED" = MED,
-        "MIN" = MIN,
-        "MAX" = MAX,
-        "CI_lower" = CI_lower,
-        "CI_upper" = CI_upper,
-        ...
-    )
-}
-
-
-oneway_post_hoc <- function(
-        method = "Which post-hoc test?",
-        y1 = NA_character_,
-        y2 = NA_character_,
-        diff = NA_real_,
-        diff_CI = c("diff 95% CI" = "[0.00, 0.00]"),
-        standard_value = c("t_val" = NA_real_),
-        critical_value = c("t_crit" = NA_real_),
-        pvalue = NA_real_,
-        padj = c("none" = NA_real_),
-        effect_size = c("Cohen's d" = NA_real_),
-        ...)
-{
-    df0 <- data.frame(
-        check.names = FALSE,
-        "method" = method,
-        "y1" = y1,
-        "y2" = y2,
-        "diff (y1 - y2)" = diff,
-        "diff_CI" = unname(diff_CI),
-        "standard_value" = unname(standard_value),
-        "critical_value" = unname(critical_value),
-        "pvalue" = pvalue,
-        "padj" = unname(padj),
-        "effect_size" = unname(effect_size),
-        ...
-    )
-
-    colnames(df0)[colnames(df0) == "diff_CI"] <- names(diff_CI)
-    colnames(df0)[colnames(df0) == "padj"] <- sprintf("padj (%s)", names(padj))
-    colnames(df0)[colnames(df0) == "standard_value"] <- names(standard_value)
-    colnames(df0)[colnames(df0) == "critical_value"] <- names(critical_value)
-    colnames(df0)[colnames(df0) == "effect_size"] <- names(effect_size)
-
-    structure(
-        .Data = df0,
-        class = c("oneway.comparison", "data.frame")
-    )
-}
-
-
 tidy_to_list <- function(data, formula, factor_levels = NULL)
 {
     # If data is a vector
@@ -170,108 +58,159 @@ tidy_to_list <- function(data, formula, factor_levels = NULL)
 }
 
 
-
+#' Check Balance of Sample Sizes Among Groups
+#'
+#' Determines whether sample sizes are approximately balanced across groups.
+#' Sample sizes are considered balanced when the smallest and largest group
+#' sizes are within the specified tolerance range relative to the average
+#' sample size.
+#'
+#' @param data A data frame or a list containing observations from each group.
+#' @param formula A formula specifying the dependent variable (DV) and the
+#'        independent variable (IV) in the form `DV ~ IV`. This argument is required
+#'        when `data` is a data frame and is ignored when `data` is already a list.
+#' @param buffer_ratio Numeric value between 0 and 1 (default: 0.2). The allowable
+#'        proportional deviation from the mean sample size.
+#'        For example, `buffer_ratio = 0.2` allows group sizes to differ from the
+#'        mean by up to 20%. When `buffer_ratio = 0`, the function requires exact
+#'        equality of sample sizes among groups.
+#'
+#' @returns
+#' A logical value:
+#' \describe{
+#'   \item{TRUE}{Sample sizes among groups are considered balanced.}
+#'   \item{FALSE}{At least one group has a sample size outside the specified
+#'   tolerance range.}
+#' }
+#'
+#' @details
+#' The function compares each group's sample size with the mean sample size
+#' across groups. The sample sizes are considered balanced if:
+#'
+#' \deqn{
+#' (1-r) \leq \frac{\min(n)}{\bar{n}} \leq
+#' \frac{\max(n)}{\bar{n}} \leq (1+r)
+#' }
+#'
+#' where \eqn{\bar{n}} is the mean sample size across groups and `r` is `buffer_ratio`.
+#'
+#' @examples
+#' is_balance(list(rnorm(10), rnorm(13)), buffer_ratio = 0.2)
+#' is_balance(list(rnorm(10), rnorm(13)), buffer_ratio = 0.1)
+#' @export
 is_balance <- function(data, formula, buffer_ratio = 0.2)
 {
     lst <- tidy_to_list(data, formula)
     n <- unlist(lapply(lst, length), use.names = FALSE)
     if (length(unique(n)) == 1)
         return(TRUE)
-    a <- (max(n) / stats::median(n)) <= (1 + buffer_ratio)
-    b <- (min(n) / stats::median(n)) >= (1 - buffer_ratio)
+    a <- (max(n) / mean(n)) <= (1 + buffer_ratio)
+    b <- (min(n) / mean(n)) >= (1 - buffer_ratio)
     return(a & b)
 }
 
 
-pval2asterisk <- function(
-        x,
-        break_points = c(0.055, 0.05, 0.01, 0.001, 0),
-        symbols = c("ns", ".", "\U273D")
-) {
-    bp <- break_points[stats::complete.cases(break_points)]
-    bp <- sort(bp, decreasing = TRUE)
-    n <- length(bp)
-
-    vapply(
-        x,
-        function(pval)
-        {
-            if (pval > bp[1])
-                return(symbols[1])
-            if (pval < bp[1] & pval > bp[2])
-                return(symbols[2])
-            if (pval <= bp[2] & pval > bp[3])
-                return(symbols[3])
-
-            for (i in 3:(n - 1))
-            {
-                if (pval <= bp[i] & pval > bp[i + 1])
-                    ret <- paste(rep(symbols[3], i - 1), collapse = "")
-                else
-                    next
-            }
-            return(ret)
-        },
-        FUN.VALUE = character(1)
-    )
-}
-
-
-# var_pooled <- function(y, x)
-# {
-#     N <- c(tapply(y, x, length))
-#     VAR <- c(tapply(y, x, stats::var))
-#     N_ratio <- (N - 1) / sum(N - 1)
-#     var_pooled <- sum(N_ratio * VAR)
-#     return(var_pooled)
-# }
-
-
-describe <- function(data, formula, CI = 0.95, CI_digits = 2)
+#' Descriptive statistics
+#'
+#' Compute and summarize descriptive statistics for one or more groups.
+#'
+#' @param data A data frame or a list.
+#' @param formula A formula with a dependent variable (DV) and an independent variable (IV).
+#'        For example: `DV ~ IV`.
+#' @param digits Integer (default: 2). Rounding digits.
+#'
+#' @returns
+#' A data frame with 13 columns:
+#' \describe{
+#'   \item{GROUP}{Group name.}
+#'   \item{CLD}{Compact letter display for multiple comparisons. This column is
+#'   returned as an empty character vector and is intended to be filled by
+#'   post hoc comparison functions. See `oneway::compact_letter_display`.}
+#'   \item{N}{Sample size.}
+#'   \item{AVG}{Arithmetic mean.}
+#'   \item{SD}{Sample standard deviation.}
+#'   \item{MED}{Median.}
+#'   \item{MIN}{Minimum observed value.}
+#'   \item{MAX}{Maximum observed value.}
+#'   \item{CI (95%)}{Two-sided 95% confidence interval for the population mean.}
+#'   \item{SKEW (= 0)}{Normal distribution has a skewness of 0. See `normality::skewness`.}
+#'   \item{KURT (= 3)}{Normal distribution has a kurtosis of 3. See `normality::kurtosis`.}
+#'   \item{normality}{Is the data normally distributed? See `normality::is_normal`.}
+#'   \item{n_outliers}{Number of possible outliers. See `outlying::Grubbs_test`.}
+#' }
+#'
+#' @examples
+#' y1 <- c(stats::rnorm(20), 7)
+#' y2 <- c(stats::rnorm(22), -7, 9)
+#' describe(list("apple" = y1, "banana" = y2))
+#' @export
+describe <- function(data, formula, digits = 2)
 {
     lst <- tidy_to_list(data, formula)
     n_grps <- length(lst)
+    grp_names <- names(lst)
 
-    # .combine_CI <- function(y)
-    # {
-    #     ci <- CI_population(y, alpha = 1 - CI)
-    #     ci_lower <- unname(round(ci[[1]], CI_digits))
-    #     ci_upper <- unname(round(ci[[2]], CI_digits))
-    #     ret <- sprintf("[%s, %s]", ci_lower, ci_upper)
-    #     return(ret)
-    # }
+    .skew <- function(x)
+    {
+        skew <- normality::skewness(x, silent = TRUE)[["statistic"]][["G1"]]
+        round(skew, digits)
+    }
 
-    GROUP <- names(lst)
-    N <- unlist(lapply(lst, length), use.names = FALSE)
-    AVG <- unlist(lapply(lst, mean), use.names = FALSE)
-    SD <- unlist(lapply(lst, stats::sd), use.names = FALSE)
-    MED <- unlist(lapply(lst, stats::median), use.names = FALSE)
-    MIN <- unlist(lapply(lst, min), use.names = FALSE)
-    MAX <- unlist(lapply(lst, max), use.names = FALSE)
+    .kurt <- function(x)
+    {
+        kurt <- normality::kurtosis(x, silent = TRUE)[["statistic"]][["G2"]]
+        round(kurt, digits)
+    }
 
-    CI_low_up <- lapply(lst,
-                        function(y)
-                        {
-                            ci <- CI_population(y, alpha = 1 - CI)
-                            ci_lower <- unname(round(ci[[1]], CI_digits))
-                            ci_upper <- unname(round(ci[[2]], CI_digits))
-                            ret <- sprintf("[%s, %s]", ci_lower, ci_upper)
-                            return(ret)
-                        })
-    CI_low_up <- unlist(CI_low_up, use.names = FALSE)
+    .outliers <- function(x)
+    {
+        suppressWarnings(
+            out <- outlying::Grubbs_test(x)
+        )
+        n_out <- sum(unname(out))
+        return(n_out)
+    }
+
+    CI_lower <- unlist(lapply(lst, function(x) CI_pop_mean(x)[[1]]), use.names = FALSE)
+    CI_upper <- unlist(lapply(lst, function(x) CI_pop_mean(x)[[2]]), use.names = FALSE)
+    confidence_interval <- sprintf("[%s, %s]",
+                                   round(CI_lower, digits),
+                                   round(CI_upper, digits))
 
     df0 <- data.frame(
-        check.names = FALSE,
-        "GROUP" = GROUP,
-        "N" = N,
-        "AVG" = AVG,
-        "SD" = SD,
-        "MED" = MED,
-        "MIN" = MIN,
-        "MAX" = MAX
+        row.names      = NULL,
+        check.names    = FALSE,
+        "GROUP"        = grp_names,
+        "CLD"          = character(n_grps),
+        "N"            = unlist(lapply(lst, length), use.names = FALSE),
+        "AVG"          = round(unlist(lapply(lst, mean), use.names = FALSE), digits),
+        "SD"           = round(unlist(lapply(lst, stats::sd), use.names = FALSE), digits),
+        "MED"          = round(unlist(lapply(lst, stats::median), use.names = FALSE), digits),
+        "MIN"          = round(unlist(lapply(lst, min), use.names = FALSE), digits),
+        "MAX"          = round(unlist(lapply(lst, max), use.names = FALSE), digits),
+        "CI (95%)"     = confidence_interval,
+        "SKEW (= 0)"   = unlist(lapply(lst, .skew), use.names = FALSE),
+        "KURT (= 3)"   = unlist(lapply(lst, .kurt), use.names = FALSE),
+        "normality"    = unlist(lapply(lst, normality::is_normal), use.names = FALSE),
+        "n_outliers"   = unlist(lapply(lst, .outliers), use.names = FALSE)
     )
 
-    df0[sprintf("%s%% CI", CI * 100)] <- CI_low_up
-
     return(df0)
+}
+
+
+function_to_character <- function(func)
+{
+    if (!is.function(func)) stop("`func` must be a function.")
+    pkg <- environmentName(environment(func))
+    fns <- getNamespaceExports(pkg)
+    ind <- vapply(X = fns,
+                  function(fn)
+                  {
+                      fn <- getExportedValue(pkg, fn)
+                      identical(fn, func)
+                  },
+                  FUN.VALUE = logical(1))
+
+    paste(pkg, fns[ind], sep = "::")
 }

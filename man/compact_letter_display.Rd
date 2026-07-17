@@ -33,7 +33,7 @@ compact_letter_display(
 
 \item{display_letters}{Character vector (default: \code{base::letters}). Display symbols.}
 
-\item{display_null_letter}{Character (default: ""). Symbol for filling the letters' gap.}
+\item{display_null_letter}{Character (default: ""). Symbol for filling the letter's gap.}
 }
 \value{
 A character vector.
@@ -56,12 +56,14 @@ compact_letter_display(
     grp_names = names(avg),
     centers = unname(avg)
 )
+
 }
 \references{
 Piepho, H.-P. (2004).
 An algorithm for a letter-based representation of all-pairwise comparisons.
 Journal of Computational and Graphical Statistics, 13(2), 456–466.
 https://doi.org/10.1198/1061860043515
+
 Piepho, H.-P. (2018).
 Letters in mean comparisons: What they do and don't mean.
 Agronomy Journal, 110(2), 431–434.

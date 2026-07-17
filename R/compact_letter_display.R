@@ -10,7 +10,7 @@
 #' @param alpha Numeric (default: 0.05). Significance level, range from 0 to 1.
 #' @param descending Logical (default: TRUE). If `TRUE`, sort the centers in decreasing order.
 #' @param display_letters Character vector (default: `base::letters`). Display symbols.
-#' @param display_null_letter Character (default: ""). Symbol for filling the letters' gap.
+#' @param display_null_letter Character (default: ""). Symbol for filling the letter's gap.
 #'
 #' @return A character vector.
 #'
@@ -29,11 +29,13 @@
 #'     grp_names = names(avg),
 #'     centers = unname(avg)
 #' )
+#'
 #' @references
 #' Piepho, H.-P. (2004).
 #' An algorithm for a letter-based representation of all-pairwise comparisons.
 #' Journal of Computational and Graphical Statistics, 13(2), 456–466.
 #' https://doi.org/10.1198/1061860043515
+#'
 #' Piepho, H.-P. (2018).
 #' Letters in mean comparisons: What they do and don't mean.
 #' Agronomy Journal, 110(2), 431–434.
@@ -126,3 +128,82 @@ compact_letter_display <- function(
 
 
 
+#' Convert p-values into asterisks
+#'
+#' Converts numeric p-values into categorical significance labels based on
+#' user-defined break points. This function is commonly used for annotating
+#' statistical significance levels in plots.
+#'
+#' The break points are sorted in decreasing order and define intervals for
+#' assigning symbols. Missing values in `break_points` are removed before
+#' classification.
+#'
+#' @param x A numeric vector of p-values.
+#' @param break_points A numeric vector defining the boundaries for p-value
+#'        categories. The default values correspond approximately to:
+#'        \itemize{
+#'          \item p > 0.055: "ns"
+#'          \item 0.05 < p <= 0.055: "."
+#'          \item 0.01 < p <= 0.05: one significance symbol
+#'          \item 0.001 < p <= 0.01: two significance symbol
+#'          \item smaller p-values: increasing numbers of significance symbols
+#'        }
+#' @param symbols A character vector containing the symbols used for each
+#'        significance level. The first element represents non-significance,
+#'        the second element represents the first significance level, and the
+#'        third element is repeated for stronger significance levels.
+#'
+#' @return A character vector with the same length as `x`, containing the
+#'         corresponding significance symbols for each p-value.
+#'
+#' @details
+#' The function applies the following logic:
+#' \itemize{
+#'   \item p-values larger than the largest break point are assigned
+#'   `symbols[1]`.
+#'   \item Intermediate p-values are assigned symbols according to their
+#'   corresponding intervals.
+#'   \item For increasingly smaller p-values, `symbols[3]` is repeated to
+#'   represent stronger significance levels.
+#' }
+#'
+#' The function assumes that `break_points` and `symbols` are supplied in a
+#' meaningful order. The number of significance levels supported depends on the
+#' length of `break_points`.
+#'
+#' @examples
+#' p <- c(0.2, 0.04, 0.008, 0.0005, 1e-6)
+#' pval2asterisk(p)
+#' @export
+pval2asterisk <- function(
+        x,
+        break_points = c(0.055, 0.05, 0.01, 0.001, 0),
+        symbols = c("ns", ".", "\U273D")
+) {
+    bp <- break_points[stats::complete.cases(break_points)]
+    bp <- sort(bp, decreasing = TRUE)
+    n <- length(bp)
+
+    vapply(
+        x,
+        function(pval)
+        {
+            if (pval > bp[1])
+                return(symbols[1])
+            if (pval < bp[1] & pval > bp[2])
+                return(symbols[2])
+            if (pval <= bp[2] & pval > bp[3])
+                return(symbols[3])
+
+            for (i in 3:(n - 1))
+            {
+                if (pval <= bp[i] & pval > bp[i + 1])
+                    ret <- paste(rep(symbols[3], i - 1), collapse = "")
+                else
+                    next
+            }
+            return(ret)
+        },
+        FUN.VALUE = character(1)
+    )
+}

@@ -178,11 +178,13 @@ compact_letter_display <- function(
 pval2asterisk <- function(
         x,
         break_points = c(0.055, 0.05, 0.01, 0.001, 0),
-        symbols = c("ns", ".", "\U273D")
+        symbols = c("ns", ".", "*")
 ) {
     bp <- break_points[stats::complete.cases(break_points)]
     bp <- sort(bp, decreasing = TRUE)
     n <- length(bp)
+
+    symbols[grep("*", symbols)] <- "\U273D"
 
     vapply(
         x,

@@ -2,3 +2,4 @@
 ^oneway\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^cran-comments\.md$

@@ -7,7 +7,7 @@
 pval2asterisk(
   x,
   break_points = c(0.055, 0.05, 0.01, 0.001, 0),
-  symbols = c("ns", ".", "✽")
+  symbols = c("ns", ".", "*")
 )
 }
 \arguments{

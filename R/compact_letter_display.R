@@ -52,6 +52,9 @@ compact_letter_display <- function(
         display_letters = base::letters,
         display_null_letter = ""
 ) {
+    if (all(pvalues > alpha))
+        return(stats::setNames(display_letters[1], grp_names))
+
     n_grps <- length(grp_names)
 
     #--------------------------------------------------------------------------#

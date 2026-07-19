@@ -64,9 +64,9 @@ t_test <- function(
             diff_CI = comparison[["diff_CI"]],
             standard_value = comparison[["standard_value"]],
             critical_value = comparison[["critical_value"]],
-            pvalue = comparison[["pval"]],
+            Pvalue = comparison[["pval"]],
             p_adjust_method = "none",
-            padj = NA_real_,
+            Padj = NA_real_,
             effect_size = comparison[["effect_size"]][[1]]
         )
 

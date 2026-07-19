@@ -201,16 +201,29 @@ describe <- function(data, formula, digits = 2)
 
 function_to_character <- function(func)
 {
-    if (!is.function(func)) stop("`func` must be a function.")
-    pkg <- environmentName(environment(func))
-    fns <- getNamespaceExports(pkg)
-    ind <- vapply(X = fns,
-                  function(fn)
-                  {
-                      fn <- getExportedValue(pkg, fn)
-                      identical(fn, func)
-                  },
-                  FUN.VALUE = logical(1))
+    if (!is.function(func))
+        stop("`func` must be a function.")
 
-    paste(pkg, fns[ind], sep = "::")
+    env <- environmentName(environment(func))
+
+    if (env == "R_GlobalEnv")
+    {
+        pkg <- NULL
+        fn <- deparse(substitute(func))
+        ret <- fn
+    } else {
+        pkg <- env
+        fns <- getNamespaceExports(env)
+        ind <- vapply(X = fns,
+                      function(fn)
+                      {
+                          fn <- getExportedValue(pkg, fn)
+                          identical(fn, func)
+                      },
+                      FUN.VALUE = logical(1))
+        ret <- paste(pkg, fns[ind], sep = "::")
+    }
+
+    return(ret)
 }
+

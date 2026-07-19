@@ -20,10 +20,6 @@ oneway_standard_output <- function(
         plot_param      = list(),
         ...
 ) {
-    checker_func <- lapply(checker_func, function(x) as.character(x))
-    pre_hoc_func <- lapply(pre_hoc_func, function(x) deparse(substitute(x)))
-    post_hoc_func <- lapply(post_hoc_func, function(x) deparse(substitute(x)))
-
     list(
         "method"          = method,
         "pre_hoc"         = pre_hoc,
@@ -52,9 +48,9 @@ oneway_post_hoc <- function(
         diff_CI = c(NA_real_, NA_real_),
         standard_value = c("tval" = NA_real_),
         critical_value = c("tcrit" = NA_real_),
-        pvalue = NA_real_,
+        Pvalue = NA_real_,
         p_adjust_method = "none",
-        padj = NA_real_,
+        Padj = NA_real_,
         effect_size = NA_real_,
         ...)
 {
@@ -65,8 +61,8 @@ oneway_post_hoc <- function(
         "y2"             = y2,
         "diff"           = diff,
         "Hedges's g"     = round(effect_size, 4),
-        "pvalue"         = round(pvalue, 4),
-        "padj"           = round(padj, 4),
+        "Pvalue"         = round(Pvalue, 4),
+        "Padj"           = round(Padj, 4),
         "diff_CI"        = sprintf("[%.2f, %.2f]", diff_CI[1], diff_CI[2]),
         "mu"             = mu,
         "standard_value" = round(unname(standard_value), 4),

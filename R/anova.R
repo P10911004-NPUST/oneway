@@ -1,3 +1,96 @@
+#' One-Way Aligned Ranked Transformed Analysis of Variance (ART-ANOVA)
+#'
+#' Performs a one-way analysis of variance (ANOVA) to compare the means of two
+#' or more independent groups. By default, the function automatically selects
+#' between the classical Fisher ANOVA and Welch's ANOVA according to whether
+#' the group variances are judged to be homogeneous.
+#'
+#' If `var_equal = TRUE`, Fisher's ANOVA is performed on the transformed response variable.
+#' If `var_equal = FALSE`, Welch's ANOVA is performed. When `var_equal = NA` (the default),
+#' homogeneity of variances is assessed using [varequal::is_var_equal()], and the appropriate
+#' test is selected automatically.
+#'
+#' @param data A data frame containing the response and grouping variables.
+#' @param formula A two-sided formula specifying the response and grouping
+#'   variables in the form `response ~ group`.
+#' @param alpha A numeric significance level used to compute the critical
+#'   F-value. The default is `0.05`.
+#' @param var_equal A logical value indicating whether equal variances should be
+#'   assumed. If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA
+#'   is performed. If `NA` (default), equality of variances is determined
+#'   automatically using [varequal::is_var_equal()].
+#'
+#' @return
+#' A data frame representing the ANOVA table with the following columns:
+#' \describe{
+#'   \item{DF}{Degrees of freedom.}
+#'   \item{SS}{Sum of squares.}
+#'   \item{MS}{Mean square.}
+#'   \item{Fvalue}{Observed F statistic.}
+#'   \item{Fcrit}{Critical F value at the specified significance level.}
+#'   \item{Pvalue}{P-value associated with the F statistic.}
+#'   \item{signif}{Significance code corresponding to the p-value.}
+#'   \item{method}{A character specifying this is an ART-ANOVA procedure.}
+#' }
+#'
+#' The rows correspond to the treatment groups ("Group"), residual error
+#' ("Residuals"), and total variation ("Total").
+#'
+#' @references
+#' Wobbrock, J. O., Findlater, L., Gergle, D., & Higgins, J. J. (2011).
+#' The aligned rank transform for nonparametric factorial analyses using only ANOVA procedures.
+#' Proceedings of the SIGCHI Conference on Human Factors in Computing Systems, 2011, 143–146.
+#' https://doi.org/10.1145/1978942.1978963
+#'
+#' Elkin, L. A., Kay, M., Higgins, J. J., & Wobbrock, J. O. (2021).
+#' An aligned rank transform procedure for multifactor contrast tests.
+#' Proceedings of the 34th Annual ACM Symposium on User Interface Software and Technology, 754–768.
+#' https://doi.org/10.1145/3472749.3474784
+#'
+#' @examples
+#' oneway_art(anorexia, weight_gain ~ therapy)
+#'
+#' @export
+oneway_art <- function(
+        data,
+        formula,
+        alpha = 0.05,
+        var_equal = NA
+) {
+
+    #----------------------------------------------------------------------------------------------#
+    #                             Aligned Ranked Transform (ART)
+    #----------------------------------------------------------------------------------------------#
+    df0 <- tidy_to_dataframe(data, formula)
+
+    aov_mod <- stats::aov(y ~ x, df0)
+    df0[["residuals"]] <- stats::residuals(aov_mod)
+
+    yij <- df0[["y"]]
+    y_bar <- mean(yij)
+    estimated_effect <- tapply(yij, df0[["x"]], function(x) mean(x) - y_bar)
+    df0[["estimated_effect"]] <- vapply(X = df0[["x"]],
+                                        function(x)
+                                        {
+                                            ind <- match(x, names(estimated_effect))
+                                            return(estimated_effect[[ind]])
+                                        },
+                                        FUN.VALUE = numeric(1))
+
+    rounding <- abs(floor(log10(.Machine$double.eps)))
+    df0[["aligned_y"]] <- round(df0[["residuals"]] + df0[["estimated_effect"]], rounding)
+    df0[["ranked_y"]] <- rank(df0[["aligned_y"]])
+
+    #----------------------------------------------------------------------------------------------#
+    #                                    ANOVA
+    #----------------------------------------------------------------------------------------------#
+    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha = alpha)
+    aov_tab[["method"]] <- "ART-ANOVA"
+
+    return(aov_tab)
+}
+
+
 #' One-Way Analysis of Variance
 #'
 #' Performs a one-way analysis of variance (ANOVA) to compare the means of two
@@ -55,6 +148,7 @@
 #'
 #' # Welch's ANOVA
 #' oneway_anova(anorexia, weight_gain ~ therapy, var_equal = FALSE)
+#'
 #' @export
 oneway_anova <- function(
         data,

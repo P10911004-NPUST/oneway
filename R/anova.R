@@ -87,7 +87,13 @@ oneway_art <- function(
     aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha = alpha)
     aov_tab[["method"]] <- "ART-ANOVA"
 
-    return(aov_tab)
+    df0 <- tidy_to_dataframe(data, formula)
+
+    structure(
+        aov_tab,
+        "data" = df0,
+        class = c("oneway.anova_table", "data.frame")
+    )
 }
 
 
@@ -154,9 +160,10 @@ oneway_anova <- function(
         data,
         formula,
         alpha = 0.05,
-        var_equal = NA
+        var_equal = NA,
+        factor_levels = NULL
 ) {
-    lst <- tidy_to_list(data, formula)
+    lst <- tidy_to_list(data, formula, factor_levels)
 
     if (isTRUE(var_equal) || isFALSE(var_equal))
         is_var_equal <- var_equal
@@ -168,7 +175,13 @@ oneway_anova <- function(
     else
         aov_tab <- .welch_anova(lst, alpha = alpha)
 
-    return(aov_tab)
+    df0 <- tidy_to_dataframe(data, formula, factor_levels)
+
+    structure(
+        aov_tab,
+        "data" = df0,
+        class = c("oneway.anova_table", "data.frame")
+    )
 }
 
 
@@ -187,8 +200,8 @@ oneway_anova <- function(
     k <- length(lst)  # group numbers
     N <- length(yij)  # Total sample size
     y_bar <- mean(yij)  # Grand mean
-    n <- unlist(lapply(lst, length), use.names = FALSE)  # Each group sample size
-    yi_bar <- unlist(lapply(lst, mean), use.names = FALSE)  # Each group mean
+    n <- unlist(lapply(lst, length), use.names = FALSE)  # Each group sample sizes
+    yi_bar <- unlist(lapply(lst, mean), use.names = FALSE)  # Each group means
 
     DF_between <- k - 1
     DF_within <- N - k

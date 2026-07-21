@@ -104,6 +104,7 @@ compact_letter_display <- function(
 
     bool_mat <- bool_mat[, !redundant_col, drop = FALSE]
     bool_mat[upper.tri(bool_mat)] <- TRUE  # avoid injecting letters to duplicated pairs
+    print(bool_mat)
 
     letter_mat <- bool_mat
     for (i in 1:ncol(bool_mat))
@@ -118,13 +119,14 @@ compact_letter_display <- function(
                                   },
                                   FUN.VALUE = character(1))
     }
+    print(letter_mat)
 
     #--------------------------------------------------------------------------#
     # Output:
     # The matrix will be reduced to a named-vector after row-wise collapsing.
     # The named-vector will also be resorted as the `grp_names` order.
     #--------------------------------------------------------------------------#
-    ret <- apply(letter_mat, 1, function(x) paste(x, collapse = ""))
+    ret <- apply(letter_mat, 1, function(x) paste(x, collapse = display_null_letter))
     ret <- ret[grp_names] # sort to the original `grp_names` order
     return(ret)
 }

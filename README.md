@@ -12,8 +12,8 @@
 An R package for one-way statistical analyses.
 
 There are also other nice alternatives such as 
-[`car`](https://cran.r-project.org/package=car),
 [`agricolae`](https://cran.r-project.org/package=agricolae),
+[`car`](https://cran.r-project.org/package=car),
 [`onewaytests`](https://cran.r-project.org/package=onewaytests),
 and other friends.
 

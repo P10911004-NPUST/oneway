@@ -1,20 +1,27 @@
 Cohen_d_s <- function(
         diff,
         sample_sizes,
-        standard_value,
         pooled_var,
-        DF_within,
-        alternative = "two.sided",
         alpha = 0.05,
         mu = 0,
+        return_CI = FALSE,
+        standard_value,
+        DF_within,
+        alternative = "two.sided",
         dist_func = stats::qt
 ) {
     d <- (diff - mu) / sqrt(pooled_var)
-    ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
-    se <- sqrt(sum(1 / sample_sizes))
-    ci_lower <- ncp[1] * se
-    ci_upper <- ncp[2] * se
-    ret <- c("Cohen's d" = d, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
+    ret <- d
+
+    if (isTRUE(return_CI))
+    {
+        ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
+        se <- sqrt(sum(1 / sample_sizes))
+        ci_lower <- ncp[1] * se
+        ci_upper <- ncp[2] * se
+        ret <- c("Cohen's d" = d, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
+    }
+
     return(ret)
     #-------------------------------- Testing --------------------------------#
     # load_all()
@@ -37,21 +44,28 @@ Cohen_d_s <- function(
 Hedges_g_s <- function(
         diff,
         sample_sizes,
-        standard_value,
         pooled_var,
-        DF_within,
-        alternative = "two.sided",
         alpha = 0.05,
         mu = 0,
+        return_CI = FALSE,
+        standard_value,
+        DF_within,
+        alternative = "two.sided",
         dist_func = stats::qt
 ) {
     d <- (diff - mu) / sqrt(pooled_var)
     g <- d * (1 - (3 / (4 * sum(sample_sizes) - 9)))
-    ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
-    se <- sqrt(sum(1 / sample_sizes))
-    ci_lower <- ncp[1] * se
-    ci_upper <- ncp[2] * se
-    ret <- c("Hedges's g" = g, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
+    ret <- g
+
+    if (isTRUE(return_CI))
+    {
+        ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
+        se <- sqrt(sum(1 / sample_sizes))
+        ci_lower <- ncp[1] * se
+        ci_upper <- ncp[2] * se
+        ret <- c("Hedges's g" = g, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
+    }
+
     return(ret)
     #-------------------------------- Testing --------------------------------#
     # load_all()

@@ -4,7 +4,7 @@
 \alias{oneway_anova}
 \title{One-Way Analysis of Variance}
 \usage{
-oneway_anova(data, formula, alpha = 0.05, var_equal = NA)
+oneway_anova(data, formula, alpha = 0.05, var_equal = NA, factor_levels = NULL)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}

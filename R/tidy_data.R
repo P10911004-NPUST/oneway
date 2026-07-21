@@ -1,4 +1,4 @@
-tidy_to_list <- function(data, formula, factor_levels = NULL)
+tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
 {
     # If data is a vector
     if (is.atomic(data) & is.null(dim(data)))
@@ -63,7 +63,7 @@ tidy_to_list <- function(data, formula, factor_levels = NULL)
 }
 
 
-tidy_to_dataframe <- function(data, formula)
+tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
 {
     # If data is a list
     # `is.null(dim(data))` is necessary as data frame is also a kind of list
@@ -100,18 +100,32 @@ tidy_to_dataframe <- function(data, formula)
     # If data is a data frame
     if (is.data.frame(data))
     {
-        if (missing(formula)) stop("Please specify the `formula`.")
+        if (missing(formula))
+            stop("Please specify the `formula`.")
+
         df0 <- stats::model.frame(formula, data, drop.unused.levels = TRUE)
         x_name <- colnames(df0)[2]
         y_name <- colnames(df0)[1]
         colnames(df0) <- c("y", "x")
+
+        if (is.factor(df0[["x"]]))
+            factor_levels <- levels(df0[["x"]])
+
         df0[["x"]] <- as.character(df0[["x"]])
         ret <- df0[stats::complete.cases(df0[["y"]]), ]
         attr(ret, "x_name") <- x_name
         attr(ret, "y_name") <- y_name
     }
 
-    ret <- ret[order(ret[["x"]]), ]
+    if ( ! is.null(factor_levels) & ! missing(factor_levels) )
+    {
+        if ( ! all(unique(df0[["x"]]) %in% factor_levels) )
+            warning("`factor_levels` doesn't match the input data factor levels.")
+        ret <- ret[order(match(df0[["x"]], factor_levels)), ]
+    } else {
+        ret <- ret[order(ret[["x"]]), ]
+    }
 
     return(ret)
 }
+

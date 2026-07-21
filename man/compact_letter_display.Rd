@@ -13,7 +13,8 @@ compact_letter_display(
   alpha = 0.05,
   descending = TRUE,
   display_letters = base::letters,
-  display_null_letter = ""
+  display_null_letter = "",
+  misc = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ compact_letter_display(
 \item{display_letters}{Character vector (default: \code{base::letters}). Display symbols.}
 
 \item{display_null_letter}{Character (default: ""). Symbol for filling the letter's gap.}
+
+\item{misc}{Logical (default: FALSE). Return other unimportant variables, not for users.}
 }
 \value{
 A character vector.

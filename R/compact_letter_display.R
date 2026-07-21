@@ -11,6 +11,7 @@
 #' @param descending Logical (default: TRUE). If `TRUE`, sort the centers in decreasing order.
 #' @param display_letters Character vector (default: `base::letters`). Display symbols.
 #' @param display_null_letter Character (default: ""). Symbol for filling the letter's gap.
+#' @param misc Logical (default: FALSE). Return other unimportant variables, not for users.
 #'
 #' @return A character vector.
 #'
@@ -50,10 +51,13 @@ compact_letter_display <- function(
         alpha = 0.05,
         descending = TRUE,
         display_letters = base::letters,
-        display_null_letter = ""
+        display_null_letter = "",
+        misc = FALSE
 ) {
     if (all(pvalues > alpha))
         return(stats::setNames(display_letters[1], grp_names))
+
+    misc_lst <- list()
 
     n_grps <- length(grp_names)
 
@@ -75,12 +79,16 @@ compact_letter_display <- function(
                        ncol = n_grps,
                        dimnames = list(g, g))
 
+    misc_lst[["bool_mat_NULL"]] <- bool_mat
+
     for (i in seq_along(x1))
     {
         # The upper and lower triangle should be symmetric
         bool_mat[x1[i], x2[i]] <- bool[i]
         bool_mat[x2[i], x1[i]] <- bool[i]
     }
+
+    misc_lst[["bool_mat_injected"]] <- bool_mat
 
     #--------------------------------------------------------------------------#
     # Absorption
@@ -104,7 +112,8 @@ compact_letter_display <- function(
 
     bool_mat <- bool_mat[, !redundant_col, drop = FALSE]
     bool_mat[upper.tri(bool_mat)] <- TRUE  # avoid injecting letters to duplicated pairs
-    print(bool_mat)
+
+    misc_lst[["bool_mat_absorbed"]] <- bool_mat
 
     letter_mat <- bool_mat
     for (i in 1:ncol(bool_mat))
@@ -119,17 +128,156 @@ compact_letter_display <- function(
                                   },
                                   FUN.VALUE = character(1))
     }
-    print(letter_mat)
+
+    misc_lst[["letter_mat"]] <- letter_mat
 
     #--------------------------------------------------------------------------#
     # Output:
     # The matrix will be reduced to a named-vector after row-wise collapsing.
     # The named-vector will also be resorted as the `grp_names` order.
     #--------------------------------------------------------------------------#
-    ret <- apply(letter_mat, 1, function(x) paste(x, collapse = display_null_letter))
+    ret <- apply(letter_mat, 1, function(x) paste(x, collapse = ""))
     ret <- ret[grp_names] # sort to the original `grp_names` order
-    return(ret)
+
+    misc_lst[["cld"]] <- ret
+
+    if (isTRUE(misc))
+        return(misc_lst)
+    else
+        return(ret)
 }
+
+
+insert_absorb <- function(
+        x1,
+        x2,
+        pvalues,
+        grp_names,
+        centers,
+        alpha = 0.05,
+        descending = TRUE,
+        display_letters = base::letters,
+        display_null_letter = "",
+        misc = FALSE
+) {
+    if (all(pvalues > alpha))
+        return(stats::setNames(display_letters[1], grp_names))
+
+    misc_lst <- list()
+
+    n_grps <- length(grp_names)
+
+    #--------------------------------------------------------------------------#
+    # Ordered by the mean / median value of each groups
+    #--------------------------------------------------------------------------#
+    ind <- order(centers, decreasing = descending)
+    g <- grp_names[ind]  # independent variable
+    y <- centers[ind]    # response variable
+
+    #--------------------------------------------------------------------------#
+    # Insertion
+    # Significantly different group-pairs will be annotated as `TRUE`
+    # So, later, the letters will be inserted into the `FALSE` cells
+    #--------------------------------------------------------------------------#
+    bool <- pvalues < alpha
+    bool_mat <- matrix(data = logical(n_grps * n_grps),
+                       nrow = n_grps,
+                       ncol = n_grps,
+                       dimnames = list(g, g))
+
+    misc_lst[["bool_mat_NULL"]] <- bool_mat
+
+    for (i in seq_along(x1))
+    {
+        # The upper and lower triangle should be symmetric
+        bool_mat[x1[i], x2[i]] <- bool[i]
+        bool_mat[x2[i], x1[i]] <- bool[i]
+    }
+
+    misc_lst[["bool_mat_injected"]] <- bool_mat
+
+    #--------------------------------------------------------------------------#
+    # Absorption
+    # Remove duplicated columns
+    #--------------------------------------------------------------------------#
+    redundant_col <- vector("logical", n_grps)
+    for (i in 1:n_grps)
+    {
+        if (i == 1)
+        {
+            # keep the first row, it is not redundant
+            redundant_col[i] <- FALSE
+            next
+        }
+
+        col_head <- bool_mat[, i, drop = TRUE]
+        col_tail <- bool_mat[, 1:(i - 1), drop = FALSE]
+        is_redundant <- apply(col_tail, 2, function(x) identical(x, col_head))
+        redundant_col[i] <- any(is_redundant)
+    }
+
+    bool_mat <- bool_mat[, !redundant_col, drop = FALSE]
+    bool_mat[upper.tri(bool_mat)] <- TRUE  # avoid injecting letters to duplicated pairs
+
+    misc_lst[["bool_mat_absorbed"]] <- bool_mat
+
+    letter_mat <- bool_mat
+    for (i in 1:ncol(bool_mat))
+    {
+        letter_mat[, i] <- vapply(bool_mat[, i, drop = TRUE],
+                                  function(x)
+                                  {
+                                      if (isFALSE(x))
+                                          return(display_letters[i])
+                                      else
+                                          return(display_null_letter)
+                                  },
+                                  FUN.VALUE = character(1))
+    }
+
+    misc_lst[["letter_mat"]] <- letter_mat
+
+    #--------------------------------------------------------------------------#
+    # Output:
+    # The matrix will be reduced to a named-vector after row-wise collapsing.
+    # The named-vector will also be resorted as the `grp_names` order.
+    #--------------------------------------------------------------------------#
+    ret <- apply(letter_mat, 1, function(x) paste(x, collapse = ""))
+    ret <- ret[grp_names] # sort to the original `grp_names` order
+
+    misc_lst[["cld"]] <- ret
+
+    if (isTRUE(misc))
+        return(misc_lst)
+    else
+        return(ret)
+}
+
+
+insert_absorb_sweep <- function(
+        x1,
+        x2,
+        pvalues,
+        grp_names,
+        centers,
+        alpha = 0.05,
+        descending = TRUE,
+        display_letters = base::letters,
+        display_null_letter = "",
+        misc = FALSE
+) {
+    misc_lst <- insert_absorb(x1,
+                              x2,
+                              pvalues,
+                              grp_names,
+                              centers,
+                              alpha,
+                              descending,
+                              display_letters,
+                              display_null_letter,
+                              misc = TRUE)
+}
+
 
 
 

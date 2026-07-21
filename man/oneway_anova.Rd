@@ -19,6 +19,8 @@ F-value. The default is \code{0.05}.}
 assumed. If \code{TRUE}, Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA
 is performed. If \code{NA} (default), equality of variances is determined
 automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
+
+\item{factor_levels}{Specify the order of the factor levels (default: NULL).}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:

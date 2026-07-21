@@ -19,6 +19,7 @@
 #'   assumed. If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA
 #'   is performed. If `NA` (default), equality of variances is determined
 #'   automatically using [varequal::is_var_equal()].
+#' @param factor_levels Specify the order of the factor levels (default: NULL).
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -55,13 +56,14 @@ oneway_art <- function(
         data,
         formula,
         alpha = 0.05,
-        var_equal = NA
+        var_equal = NA,
+        factor_levels = NULL
 ) {
 
     #----------------------------------------------------------------------------------------------#
     #                             Aligned Ranked Transform (ART)
     #----------------------------------------------------------------------------------------------#
-    df0 <- tidy_to_dataframe(data, formula)
+    df0 <- tidy_to_dataframe(data, formula, factor_levels)
 
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
@@ -119,6 +121,7 @@ oneway_art <- function(
 #'   assumed. If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA
 #'   is performed. If `NA` (default), equality of variances is determined
 #'   automatically using [varequal::is_var_equal()].
+#' @param factor_levels Specify the order of the factor levels (default: NULL).
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:

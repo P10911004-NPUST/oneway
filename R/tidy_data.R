@@ -51,8 +51,9 @@ tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
         lst <- data
     }
 
-    if (!is.null(factor_levels) & !missing(factor_levels))
+    if ( ! is.null(factor_levels) & ! missing(factor_levels) )
     {
+        factor_levels <- as.character(factor_levels)
         if (all(names(lst) %in% factor_levels))
             lst <- lst[factor_levels]
         else
@@ -119,6 +120,7 @@ tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
 
     if ( ! is.null(factor_levels) & ! missing(factor_levels) )
     {
+        factor_levels <- as.character(factor_levels)
         if ( ! all(unique(df0[["x"]]) %in% factor_levels) )
             warning("`factor_levels` doesn't match the input data factor levels.")
         ret <- ret[order(match(df0[["x"]], factor_levels)), ]

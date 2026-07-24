@@ -19,7 +19,7 @@
 #'   assumed. If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA
 #'   is performed. If `NA` (default), equality of variances is determined
 #'   automatically using [varequal::is_var_equal()].
-#' @param factor_levels Specify the order of the factor levels (default: NULL).
+#' @param rounding Integer (default: 4). Rounding digits.
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -57,13 +57,13 @@ oneway_art <- function(
         formula,
         alpha = 0.05,
         var_equal = NA,
-        factor_levels = NULL
+        rounding = 4
 ) {
 
-    #----------------------------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------------------------- #
     #                             Aligned Ranked Transform (ART)
-    #----------------------------------------------------------------------------------------------#
-    df0 <- tidy_to_dataframe(data, formula, factor_levels)
+    # -------------------------------------------------------------------------------------------- #
+    df0 <- tidy_to_dataframe(data, formula)
 
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
@@ -79,22 +79,20 @@ oneway_art <- function(
                                         },
                                         FUN.VALUE = numeric(1))
 
-    rounding <- abs(floor(log10(.Machine$double.eps)))
-    df0[["aligned_y"]] <- round(df0[["residuals"]] + df0[["estimated_effect"]], rounding)
+    digits <- abs(floor(log10(.Machine$double.eps)))
+    df0[["aligned_y"]] <- round(df0[["residuals"]] + df0[["estimated_effect"]], digits)
     df0[["ranked_y"]] <- rank(df0[["aligned_y"]])
 
-    #----------------------------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------------------------- #
     #                                    ANOVA
-    #----------------------------------------------------------------------------------------------#
-    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha = alpha)
+    # -------------------------------------------------------------------------------------------- #
+    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha, rounding = rounding)
     aov_tab[["method"]] <- "ART-ANOVA"
-
-    df0 <- tidy_to_dataframe(data, formula)
 
     structure(
         aov_tab,
         "data" = df0,
-        class = c("oneway.anova_table", "data.frame")
+        class = c("oneway.anova_table", "oneway.art", "data.frame")
     )
 }
 
@@ -121,7 +119,7 @@ oneway_art <- function(
 #'   assumed. If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA
 #'   is performed. If `NA` (default), equality of variances is determined
 #'   automatically using [varequal::is_var_equal()].
-#' @param factor_levels Specify the order of the factor levels (default: NULL).
+#' @param rounding Integer (default: 4). Rounding digits.
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -164,9 +162,9 @@ oneway_anova <- function(
         formula,
         alpha = 0.05,
         var_equal = NA,
-        factor_levels = NULL
+        rounding = 4
 ) {
-    lst <- tidy_to_list(data, formula, factor_levels)
+    lst <- tidy_to_list(data, formula)
 
     if (isTRUE(var_equal) || isFALSE(var_equal))
         is_var_equal <- var_equal
@@ -174,11 +172,11 @@ oneway_anova <- function(
         is_var_equal <- varequal::is_var_equal(lst)
 
     if (isTRUE(is_var_equal))
-        aov_tab <- .fisher_anova(lst, alpha = alpha)
+        aov_tab <- .fisher_anova(lst, alpha = alpha, rounding = rounding)
     else
-        aov_tab <- .welch_anova(lst, alpha = alpha)
+        aov_tab <- .welch_anova(lst, alpha = alpha, rounding = rounding)
 
-    df0 <- tidy_to_dataframe(data, formula, factor_levels)
+    df0 <- tidy_to_dataframe(data, formula)
 
     structure(
         aov_tab,
@@ -188,13 +186,14 @@ oneway_anova <- function(
 }
 
 
-#--------------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------------ #
 #                                        Internal function                                         #
-#--------------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------------ #
 .fisher_anova <- function(
         data,
         formula,
-        alpha = 0.05
+        alpha = 0.05,
+        rounding = 4
 ) {
     lst <- tidy_to_list(data, formula)
 
@@ -227,11 +226,11 @@ oneway_anova <- function(
     aov_tab <- data.frame(
         row.names   = c("Group", "Residuals", "Total"),
         "DF"        = c(DF_between, DF_within, DF_total),
-        "SS"        = c(SS_between, SS_within, SS_total),
-        "MS"        = c(MS_between, MS_within, NA_real_),
-        "Fvalue"    = c(Fval, NA_real_, NA_real_),
-        "Fcrit"     = c(Fval_crit, NA_real_, NA_real_),
-        "Pvalue"    = c(pval, NA_real_, NA_real_),
+        "SS"        = round(c(SS_between, SS_within, SS_total), rounding),
+        "MS"        = round(c(MS_between, MS_within, NA_real_), rounding),
+        "Fvalue"    = round(c(Fval, NA_real_, NA_real_), rounding),
+        "Fcrit"     = round(c(Fval_crit, NA_real_, NA_real_), rounding),
+        "Pvalue"    = round(c(pval, NA_real_, NA_real_), rounding),
         "signif"    = c(asterisk, NA_character_, NA_character_),
         "method"    = "Fisher's ANOVA"
     )
@@ -243,7 +242,8 @@ oneway_anova <- function(
 .welch_anova <- function(
         data,
         formula,
-        alpha = 0.05
+        alpha = 0.05,
+        rounding = 4
 ) {
     lst <- tidy_to_list(data, formula)
 
@@ -280,11 +280,11 @@ oneway_anova <- function(
     aov_tab <- data.frame(
         row.names   = c("Group", "Residuals", "Total"),
         "DF"        = c(DF_between, DF_within, DF_total),
-        "SS"        = c(SS_between, SS_within, SS_total),
-        "MS"        = c(MS_between, MS_within, NA_real_),
-        "Fvalue"    = c(Fval, NA_real_, NA_real_),
-        "Fcrit"     = c(Fval_crit, NA_real_, NA_real_),
-        "Pvalue"    = c(pval, NA_real_, NA_real_),
+        "SS"        = round(c(SS_between, SS_within, SS_total), rounding),
+        "MS"        = round(c(MS_between, MS_within, NA_real_), rounding),
+        "Fvalue"    = round(c(Fval, NA_real_, NA_real_), rounding),
+        "Fcrit"     = round(c(Fval_crit, NA_real_, NA_real_), rounding),
+        "Pvalue"    = round(c(pval, NA_real_, NA_real_), rounding),
         "signif"    = c(asterisk, NA_character_, NA_character_),
         "method"    = "Welch's ANOVA"
     )

@@ -5,7 +5,7 @@ tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
     {
         data <- data[stats::complete.cases(data)]
         lst <- list(data)
-        names(lst) <- names(data)
+        names(lst) <- if (is.null(names(data))) "V1" else (names(data))
     }
 
     # If data is a matrix

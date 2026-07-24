@@ -13,10 +13,6 @@ A data frame with 72 observations and 2 variables:
 treatment.}
 }
 }
-\source{
-Howell, D. C. (2013). \emph{Statistical methods for psychology} (8th ed.).
-Cengage Learning. Chapter 11, Table 11.5, p. 342.
-}
 \usage{
 anorexia
 }
@@ -39,7 +35,7 @@ Group sample sizes are:
 }
 }
 \references{
-Everitt, B. S. (1977). \emph{The analysis of contingency tables}. Chapman
-and Hall.
+Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
+Cengage. Chapter 11, Table 11.5, pg. 342.
 }
 \keyword{datasets}

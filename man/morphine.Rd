@@ -38,7 +38,7 @@ demonstrating one-way ANOVA, nonparametric alternatives, homogeneity of
 variance tests, post hoc comparisons, and effect size estimation.
 }
 \references{
-Howell, D. C. (2013). \emph{Statistical methods for psychology} (8th ed.).
-Cengage Learning. Chapter 11, Table 12.1, p. 375.
+Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
+Cengage. Chapter 11, Table 12.1, pg. 375.
 }
 \keyword{datasets}

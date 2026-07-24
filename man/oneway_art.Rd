@@ -4,7 +4,7 @@
 \alias{oneway_art}
 \title{One-Way Aligned Ranked Transformed Analysis of Variance (ART-ANOVA)}
 \usage{
-oneway_art(data, formula, alpha = 0.05, var_equal = NA, factor_levels = NULL)
+oneway_art(data, formula, alpha = 0.05, var_equal = NA, rounding = 4)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}
@@ -20,7 +20,7 @@ assumed. If \code{TRUE}, Fisher's ANOVA is performed. If \code{FALSE}, Welch's A
 is performed. If \code{NA} (default), equality of variances is determined
 automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
 
-\item{factor_levels}{Specify the order of the factor levels (default: NULL).}
+\item{rounding}{Integer (default: 4). Rounding digits.}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:

@@ -1,15 +1,17 @@
 oneway_standard_output <- function(
-        method          = "which priori + post-hoc tests ?",
-        pre_hoc         = NULL,
-        post_hoc        = NULL,
-        summary         = NULL,
+        method       = "which priori + post-hoc tests ?",
+        data         = NULL,
+        pre_hoc      = NULL,
+        post_hoc     = NULL,
+        summary      = NULL,
         ...
 ) {
     list(
-        "method"          = method,
-        "pre_hoc"         = pre_hoc,
-        "post_hoc"        = post_hoc,
-        "summary"         = summary,
+        "method"     = method,
+        "data"       = data,
+        "pre_hoc"    = pre_hoc,
+        "post_hoc"   = post_hoc,
+        "summary"    = summary,
         ...
     )
 }
@@ -30,21 +32,24 @@ oneway_post_hoc <- function(
         p_adjust_method = "none",
         Padj = NA_real_,
         effect_size = NA_real_,
+        rounding = 4,
         ...)
 {
+    diff_CI <- round(diff_CI, rounding)
+
     df0 <- data.frame(
         row.names = NULL,
         check.names = FALSE,
         "x1"             = x1,
         "x2"             = x2,
         "diff"           = diff,
-        "Hedges's g"     = round(effect_size, 4),
-        "Pvalue"         = round(Pvalue, 4),
-        "Padj"           = round(Padj, 4),
-        "diff_CI"        = sprintf("[%.2f, %.2f]", diff_CI[1], diff_CI[2]),
+        "Hedges's g"     = round(effect_size, rounding),
+        "Pvalue"         = round(Pvalue, rounding),
+        "Padj"           = round(Padj, rounding),
+        "diff_CI"        = sprintf("[%s, %s]", diff_CI[1], diff_CI[2]),
         "mu"             = mu,
-        "standard_value" = round(unname(standard_value), 4),
-        "critical_value" = round(unname(critical_value), 4),
+        "standard_value" = round(unname(standard_value), rounding),
+        "critical_value" = round(unname(critical_value), rounding),
         "method"         = method,
         "alternative"    = alternative,
         "alpha"          = alpha,
@@ -54,7 +59,7 @@ oneway_post_hoc <- function(
     conf_lvl <- 100 * (1 - alpha)
 
     colnames(df0)[colnames(df0) == "diff"] <- "[x1 - x2]"
-    colnames(df0)[colnames(df0) == "diff_CI"] <- sprintf("%s%% [x1 - x2] CI", conf_lvl)
+    colnames(df0)[colnames(df0) == "diff_CI"] <- sprintf("[x1 - x2] %s%% CI", conf_lvl)
     colnames(df0)[colnames(df0) == "standard_value"] <- names(standard_value)
     colnames(df0)[colnames(df0) == "critical_value"] <- names(critical_value)
     colnames(df0)[colnames(df0) == "padj"] <- sprintf("padj (%s)", p_adjust_method)

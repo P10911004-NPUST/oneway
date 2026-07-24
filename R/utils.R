@@ -57,7 +57,7 @@ is_balance <- function(data, formula, buffer_ratio = 0.2)
 #' @param data A data frame or a list.
 #' @param formula A formula with a dependent variable (DV) and an independent variable (IV).
 #'        For example: `DV ~ IV`.
-#' @param digits Integer (default: 2). Rounding digits.
+#' @param rounding Integer (default: 2). Rounding digits.
 #'
 #' @returns
 #' A data frame with 13 columns:
@@ -84,7 +84,7 @@ is_balance <- function(data, formula, buffer_ratio = 0.2)
 #' y2 <- c(stats::rnorm(22), -7, 9)
 #' describe(list("apple" = y1, "banana" = y2))
 #' @export
-describe <- function(data, formula, digits = 2)
+describe <- function(data, formula, rounding = 2)
 {
     lst <- tidy_to_list(data, formula)
     n_grps <- length(lst)
@@ -93,13 +93,13 @@ describe <- function(data, formula, digits = 2)
     .skew <- function(x)
     {
         skew <- normality::skewness(x, silent = TRUE)[["statistic"]][["G1"]]
-        round(skew, digits)
+        round(skew, rounding)
     }
 
     .kurt <- function(x)
     {
         kurt <- normality::kurtosis(x, silent = TRUE)[["statistic"]][["G2"]]
-        round(kurt, digits)
+        round(kurt, rounding)
     }
 
     .outliers <- function(x)
@@ -114,8 +114,8 @@ describe <- function(data, formula, digits = 2)
     CI_lower <- unlist(lapply(lst, function(x) CI_pop_mean(x)[[1]]), use.names = FALSE)
     CI_upper <- unlist(lapply(lst, function(x) CI_pop_mean(x)[[2]]), use.names = FALSE)
     confidence_interval <- sprintf("[%s, %s]",
-                                   round(CI_lower, digits),
-                                   round(CI_upper, digits))
+                                   round(CI_lower, rounding),
+                                   round(CI_upper, rounding))
 
     df0 <- data.frame(
         row.names      = NULL,
@@ -123,11 +123,11 @@ describe <- function(data, formula, digits = 2)
         "GROUP"        = grp_names,
         "CLD"          = character(n_grps),
         "N"            = unlist(lapply(lst, length), use.names = FALSE),
-        "AVG"          = round(unlist(lapply(lst, mean), use.names = FALSE), digits),
-        "SD"           = round(unlist(lapply(lst, stats::sd), use.names = FALSE), digits),
-        "MED"          = round(unlist(lapply(lst, stats::median), use.names = FALSE), digits),
-        "MIN"          = round(unlist(lapply(lst, min), use.names = FALSE), digits),
-        "MAX"          = round(unlist(lapply(lst, max), use.names = FALSE), digits),
+        "AVG"          = round(unlist(lapply(lst, mean), use.names = FALSE), rounding),
+        "SD"           = round(unlist(lapply(lst, stats::sd), use.names = FALSE), rounding),
+        "MED"          = round(unlist(lapply(lst, stats::median), use.names = FALSE), rounding),
+        "MIN"          = round(unlist(lapply(lst, min), use.names = FALSE), rounding),
+        "MAX"          = round(unlist(lapply(lst, max), use.names = FALSE), rounding),
         "CI (95%)"     = confidence_interval,
         "SKEW (= 0)"   = unlist(lapply(lst, .skew), use.names = FALSE),
         "KURT (= 3)"   = unlist(lapply(lst, .kurt), use.names = FALSE),

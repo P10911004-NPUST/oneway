@@ -4,7 +4,7 @@
 \alias{describe}
 \title{Descriptive statistics}
 \usage{
-describe(data, formula, digits = 2)
+describe(data, formula, rounding = 2)
 }
 \arguments{
 \item{data}{A data frame or a list.}
@@ -12,7 +12,7 @@ describe(data, formula, digits = 2)
 \item{formula}{A formula with a dependent variable (DV) and an independent variable (IV).
 For example: \code{DV ~ IV}.}
 
-\item{digits}{Integer (default: 2). Rounding digits.}
+\item{rounding}{Integer (default: 2). Rounding digits.}
 }
 \value{
 A data frame with 13 columns:

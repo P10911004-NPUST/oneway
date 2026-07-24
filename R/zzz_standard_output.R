@@ -62,7 +62,7 @@ oneway_post_hoc <- function(
     colnames(df0)[colnames(df0) == "diff_CI"] <- sprintf("[x1 - x2] %s%% CI", conf_lvl)
     colnames(df0)[colnames(df0) == "standard_value"] <- names(standard_value)
     colnames(df0)[colnames(df0) == "critical_value"] <- names(critical_value)
-    colnames(df0)[colnames(df0) == "padj"] <- sprintf("padj (%s)", p_adjust_method)
+    colnames(df0)[colnames(df0) == "Padj"] <- sprintf("Padj (%s)", p_adjust_method)
 
     return(df0)
 }

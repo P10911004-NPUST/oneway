@@ -28,6 +28,7 @@ oneway_post_hoc <- function(
         diff_CI = c(NA_real_, NA_real_),
         standard_value = c("tval" = NA_real_),
         critical_value = c("tcrit" = NA_real_),
+        StdErr = NA_real_,
         Pvalue = NA_real_,
         p_adjust_method = "none",
         Padj = NA_real_,
@@ -36,6 +37,8 @@ oneway_post_hoc <- function(
         ...)
 {
     diff_CI <- round(diff_CI, rounding)
+    pval <- if (is.null(Padj) || is.na(Padj)) Pvalue else Padj
+    asterisks <- pval2asterisk(pval, break_points = c(0.055, alpha, 0.01, 0.001, 0))
 
     df0 <- data.frame(
         row.names = NULL,
@@ -46,10 +49,12 @@ oneway_post_hoc <- function(
         "Hedges's g"     = round(effect_size, rounding),
         "Pvalue"         = round(Pvalue, rounding),
         "Padj"           = round(Padj, rounding),
+        "signif"         = asterisks,
         "diff_CI"        = sprintf("[%s, %s]", diff_CI[1], diff_CI[2]),
         "mu"             = mu,
         "standard_value" = round(unname(standard_value), rounding),
         "critical_value" = round(unname(critical_value), rounding),
+        "StdErr"         = StdErr,
         "method"         = method,
         "alternative"    = alternative,
         "alpha"          = alpha,

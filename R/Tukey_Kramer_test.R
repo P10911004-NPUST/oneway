@@ -14,7 +14,7 @@
 #' \describe{
 #'   \item{method}{Statistical procedures that were conducted.}
 #'   \item{data}{The input data and possibly other transformed data.}
-#'   \item{pre_hoc}{Priori test result.}
+#'   \item{pre_hoc}{*a priori* test result.}
 #'   \item{post_hoc}{Post-hoc test result.}
 #'   \item{summary}{Descriptive statistics.}
 #' }
@@ -26,7 +26,7 @@
 #'
 #' @references
 #' Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
-#' Cengage. Chapter 12, Table 12.1, pg. 394.
+#' Cengage. Chapter 12, pg. 394.
 #'
 #' @export
 Tukey_Kramer_test <- function(
@@ -104,7 +104,7 @@ Tukey_Kramer_test <- function(
         effect_size = Hedges_g_s(diff = diff, sample_sizes = n, pooled_var = pooled_var)
 
         post_hoc[[i]] <- oneway_post_hoc(
-            method = "Tukey-HSD",
+            method = "Tukey-Kramer",
             alternative = "two.sided",
             alpha = alpha,
             mu = 0,
@@ -114,6 +114,7 @@ Tukey_Kramer_test <- function(
             diff_CI = c(diff_CI_lower, diff_CI_upper),
             standard_value = c("qval" = qval),
             critical_value = c("qcrit" = qcrit),
+            StdErr = SE,
             Pvalue = pval,
             Padj = pval,
             p_adjust_method = "tukey",
@@ -135,7 +136,7 @@ Tukey_Kramer_test <- function(
         df0[["y"]] <- raw_y
 
     oneway_standard_output(
-        method = "Tukey-Kramer test",
+        method = "Tukey-Kramer pairwise comparison",
         data = df0,
         pre_hoc = pre_hoc,
         post_hoc = post_hoc,

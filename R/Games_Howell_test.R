@@ -1,4 +1,4 @@
-#' Tukey's Honestly Significant Difference (Tukey-HSD) test
+#' Games-Howell test
 #'
 #' Represent significance statements resulting from all-pairwise comparisons.
 #'
@@ -20,16 +20,16 @@
 #' }
 #'
 #' @examples
-#' out <- Tukey_HSD_test(morphine, tolerance ~ grp)
+#' out <- Games_Howell_test(morphine, tolerance ~ grp)
 #' out$summary
 #' out$post_hoc
 #'
 #' @references
 #' Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
-#' Cengage. Chapter 12, pg. 393.
+#' Cengage. Chapter 12, pg. 395.
 #'
 #' @export
-Tukey_HSD_test <- function(
+Games_Howell_test <- function(
         data,
         formula = NULL,
         alpha = 0.05,
@@ -52,24 +52,20 @@ Tukey_HSD_test <- function(
         pre_hoc <- oneway_anova(df0, y ~ x, alpha, rounding = rounding)
     }
 
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     # Check data
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     if (isFALSE(silent))
     {
         is_normal <- normality::is_normal(df0, y ~ x)
-        is_var_equal <- varequal::is_var_equal(df0, y ~ x)
-        is_balance <- is_balance(df0, y ~ x, buffer_ratio = 0)
         if (isFALSE(is_normal)) warning("Normality assumption is violated.")
-        if (isFALSE(is_var_equal)) warning("Homogeneity of variance assumption is violated.")
-        if (isFALSE(is_balance)) warning("Sample sizes are not equal.")
     }
 
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     # Summary
     ## The information from the `desc` data frame are (column-wise):
     ## GROUP, CLD, N, AVG, SD, MED, MIN, MAX, CI, SKEW, KURT, normality, n_outliers
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     desc <- describe(df0, y ~ x, rounding)
     group_names <- desc[["GROUP"]]
     group_sizes <- stats::setNames(desc[["N"]], group_names)
@@ -80,9 +76,9 @@ Tukey_HSD_test <- function(
     DF_within <- pre_hoc[["DF"]][2]  # DFerror: Residuals' degree of freedom
     MS_within <- pre_hoc[["MS"]][2]  # MSE: Mean Square Error
 
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     # Group combinations
-    # ----------------------------------------------------------------- #
+    # -------------------------------------------------------------------------------------- #
     g_comb <- utils::combn(desc[["GROUP"]], 2)
 
     post_hoc <- vector("list", ncol(g_comb))
@@ -96,17 +92,18 @@ Tukey_HSD_test <- function(
 
         pooled_var <- sum((n - 1) * vars) / DF_within
         diff <- group_means[[x1]] - group_means[[x2]]
-        SE <- sqrt(MS_within / mean(group_sizes))
+        SE <- sqrt(sum(vars / n) / 2)
+        DF_prime <- (sum(vars / n) ^ 2) / sum((vars / n) ^ 2 / (n - 1))
         qval <- abs(diff / SE)
-        qcrit <- stats::qtukey(alpha, n_grps, DF_within, lower.tail = FALSE)  # Studentized range
-        pval <- stats::ptukey(qval, n_grps, DF_within, lower.tail = FALSE)
+        qcrit <- stats::qtukey(alpha, n_grps, DF_prime, lower.tail = FALSE)  # Studentized range
+        pval <- stats::ptukey(qval, n_grps, DF_prime, lower.tail = FALSE)
         diff_CI_lower <- diff - qcrit * SE
         diff_CI_upper <- diff + qcrit * SE
 
         effect_size = Hedges_g_s(diff = diff, sample_sizes = n, pooled_var = pooled_var)
 
         post_hoc[[i]] <- oneway_post_hoc(
-            method = "Tukey-HSD",
+            method = "Games-Howell",
             alternative = "two.sided",
             alpha = alpha,
             mu = 0,
@@ -121,6 +118,7 @@ Tukey_HSD_test <- function(
             Padj = pval,
             p_adjust_method = "tukey",
             effect_size = effect_size,
+            DF_prime = round(DF_prime, rounding),
             rounding = rounding
         )
     }
@@ -138,7 +136,7 @@ Tukey_HSD_test <- function(
         df0[["y"]] <- raw_y
 
     oneway_standard_output(
-        method = "Tukey-HSD pairwise comparison",
+        method = "Games-Howell pairwise comparison",
         data = df0,
         pre_hoc = pre_hoc,
         post_hoc = post_hoc,

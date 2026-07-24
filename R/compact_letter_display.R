@@ -61,18 +61,18 @@ compact_letter_display <- function(
 
     n_grps <- length(grp_names)
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Ordered by the mean / median value of each groups
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     ind <- order(centers, decreasing = descending)
     g <- grp_names[ind]  # independent variable
     y <- centers[ind]    # response variable
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Insertion
     # Significantly different group-pairs will be annotated as `TRUE`
     # So, later, the letters will be inserted into the `FALSE` cells
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     bool <- pvalues < alpha
     bool_mat <- matrix(data = logical(n_grps * n_grps),
                        nrow = n_grps,
@@ -90,10 +90,10 @@ compact_letter_display <- function(
 
     misc_lst[["bool_mat_injected"]] <- bool_mat
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Absorption
     # Remove duplicated columns
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     redundant_col <- vector("logical", n_grps)
     for (i in 1:n_grps)
     {
@@ -131,11 +131,11 @@ compact_letter_display <- function(
 
     misc_lst[["letter_mat"]] <- letter_mat
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Output:
     # The matrix will be reduced to a named-vector after row-wise collapsing.
     # The named-vector will also be resorted as the `grp_names` order.
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     ret <- apply(letter_mat, 1, function(x) paste(x, collapse = ""))
     ret <- ret[grp_names] # sort to the original `grp_names` order
 
@@ -167,18 +167,18 @@ insert_absorb <- function(
 
     n_grps <- length(grp_names)
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Ordered by the mean / median value of each groups
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     ind <- order(centers, decreasing = descending)
     g <- grp_names[ind]  # independent variable
     y <- centers[ind]    # response variable
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Insertion
     # Significantly different group-pairs will be annotated as `TRUE`
     # So, later, the letters will be inserted into the `FALSE` cells
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     bool <- pvalues < alpha
     bool_mat <- matrix(data = logical(n_grps * n_grps),
                        nrow = n_grps,
@@ -196,10 +196,10 @@ insert_absorb <- function(
 
     misc_lst[["bool_mat_injected"]] <- bool_mat
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Absorption
     # Remove duplicated columns
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     redundant_col <- vector("logical", n_grps)
     for (i in 1:n_grps)
     {
@@ -237,11 +237,11 @@ insert_absorb <- function(
 
     misc_lst[["letter_mat"]] <- letter_mat
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Output:
     # The matrix will be reduced to a named-vector after row-wise collapsing.
     # The named-vector will also be resorted as the `grp_names` order.
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     ret <- apply(letter_mat, 1, function(x) paste(x, collapse = ""))
     ret <- ret[grp_names] # sort to the original `grp_names` order
 
@@ -337,7 +337,7 @@ pval2asterisk <- function(
     bp <- sort(bp, decreasing = TRUE)
     n <- length(bp)
 
-    symbols[grep("*", symbols)] <- "\U273D"
+    # symbols[grep("*", symbols)] <- "\U273D"
 
     vapply(
         x,

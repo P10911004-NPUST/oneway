@@ -49,7 +49,7 @@ Games_Howell_test <- function(
             df0[["y"]] <- df0[["ranked_y"]]
     } else {
         df0 <- tidy_to_dataframe(data, formula, factor_levels)  # from ./tidy_data.R
-        pre_hoc <- oneway_anova(df0, y ~ x, alpha, rounding = rounding)
+        pre_hoc <- oneway_anova(df0, y ~ x, alpha, rounding = rounding)  # from ./anova.R
     }
 
     # -------------------------------------------------------------------------------------- #
@@ -66,7 +66,7 @@ Games_Howell_test <- function(
     ## The information from the `desc` data frame are (column-wise):
     ## GROUP, CLD, N, AVG, SD, MED, MIN, MAX, CI, SKEW, KURT, normality, n_outliers
     # -------------------------------------------------------------------------------------- #
-    desc <- describe(df0, y ~ x, rounding)
+    desc <- describe(df0, y ~ x, rounding)  # from ./utils.R
     group_names <- desc[["GROUP"]]
     group_sizes <- stats::setNames(desc[["N"]], group_names)
     group_means <- stats::setNames(desc[["AVG"]], group_names)
@@ -100,9 +100,11 @@ Games_Howell_test <- function(
         diff_CI_lower <- diff - qcrit * SE
         diff_CI_upper <- diff + qcrit * SE
 
-        effect_size = Hedges_g_s(diff = diff, sample_sizes = n, pooled_var = pooled_var)
+        effect_size <- Hedges_g_s(diff = diff,   # from ./effect_size.R
+                                  sample_sizes = n,
+                                  pooled_var = pooled_var)
 
-        post_hoc[[i]] <- oneway_post_hoc(
+        post_hoc[[i]] <- oneway_post_hoc(  # from ./zzz_standard_output.R
             method = "Games-Howell",
             alternative = "two.sided",
             alpha = alpha,
@@ -135,7 +137,7 @@ Games_Howell_test <- function(
     if (isTRUE(is_art))
         df0[["y"]] <- raw_y
 
-    oneway_standard_output(
+    oneway_standard_output(  # from ./zzz_standard_output.R
         method = "Games-Howell pairwise comparison",
         data = df0,
         pre_hoc = pre_hoc,

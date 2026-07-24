@@ -32,7 +32,7 @@ A list with 4 elements:
 \describe{
 \item{method}{Statistical procedures that were conducted.}
 \item{data}{The input data and possibly other transformed data.}
-\item{pre_hoc}{Priori test result.}
+\item{pre_hoc}{\emph{a priori} test result.}
 \item{post_hoc}{Post-hoc test result.}
 \item{summary}{Descriptive statistics.}
 }
@@ -48,5 +48,5 @@ out$post_hoc
 }
 \references{
 Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
-Cengage. Chapter 12, Table 12.1, pg. 394.
+Cengage. Chapter 12, pg. 394.
 }

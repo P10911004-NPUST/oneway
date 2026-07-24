@@ -54,7 +54,7 @@ oneway_post_hoc <- function(
         "mu"             = mu,
         "standard_value" = round(unname(standard_value), rounding),
         "critical_value" = round(unname(critical_value), rounding),
-        "StdErr"         = StdErr,
+        "StdErr"         = round(StdErr, rounding),
         "method"         = method,
         "alternative"    = alternative,
         "alpha"          = alpha,

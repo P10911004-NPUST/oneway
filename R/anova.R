@@ -131,6 +131,7 @@ oneway_art <- function(
 #'   \item{Fcrit}{Critical F value at the specified significance level.}
 #'   \item{Pvalue}{P-value associated with the F statistic.}
 #'   \item{signif}{Significance code corresponding to the p-value.}
+#'   \item{p_omega2}{Effect size. Partial omega squared.}
 #'   \item{method}{Show whether Fisher's or Welch's ANOVA was conducted.}
 #' }
 #'
@@ -221,6 +222,8 @@ oneway_anova <- function(
     Fval_crit <- stats::qf(alpha, DF_between, DF_within, lower.tail = FALSE)
     pval <- stats::pf(Fval, DF_between, DF_within, lower.tail = FALSE)
 
+    effect_size <- omega_square_partial(DF_between, DF_within, MS_between, MS_within)
+
     asterisk <- pval2asterisk(pval, break_points = c(alpha + 0.005, alpha, 0.01, 0.001, 0))
 
     aov_tab <- data.frame(
@@ -232,6 +235,7 @@ oneway_anova <- function(
         "Fcrit"     = round(c(Fval_crit, NA_real_, NA_real_), rounding),
         "Pvalue"    = round(c(pval, NA_real_, NA_real_), rounding),
         "signif"    = c(asterisk, NA_character_, NA_character_),
+        "p_omega2"  = round(c(effect_size, NA_real_, NA_real_), rounding),
         "method"    = "Fisher's ANOVA"
     )
 
@@ -275,18 +279,21 @@ oneway_anova <- function(
     Fval_crit <- stats::qf(alpha, DF_between, DF_within, lower.tail = FALSE)
     pval <- stats::pf(Fval, DF_between, DF_within, lower.tail = FALSE)
 
+    effect_size <- omega_square_partial(DF_between, DF_within, MS_between, MS_within)
+
     asterisk <- pval2asterisk(pval, break_points = c(alpha + 0.005, alpha, 0.01, 0.001, 0))
 
     aov_tab <- data.frame(
-        row.names   = c("Group", "Residuals", "Total"),
-        "DF"        = c(DF_between, DF_within, DF_total),
-        "SS"        = round(c(SS_between, SS_within, SS_total), rounding),
-        "MS"        = round(c(MS_between, MS_within, NA_real_), rounding),
-        "Fvalue"    = round(c(Fval, NA_real_, NA_real_), rounding),
-        "Fcrit"     = round(c(Fval_crit, NA_real_, NA_real_), rounding),
-        "Pvalue"    = round(c(pval, NA_real_, NA_real_), rounding),
-        "signif"    = c(asterisk, NA_character_, NA_character_),
-        "method"    = "Welch's ANOVA"
+        row.names     = c("Group", "Residuals", "Total"),
+        "DF"          = c(DF_between, DF_within, DF_total),
+        "SS"          = round(c(SS_between, SS_within, SS_total), rounding),
+        "MS"          = round(c(MS_between, MS_within, NA_real_), rounding),
+        "Fvalue"      = round(c(Fval, NA_real_, NA_real_), rounding),
+        "Fcrit"       = round(c(Fval_crit, NA_real_, NA_real_), rounding),
+        "Pvalue"      = round(c(pval, NA_real_, NA_real_), rounding),
+        "signif"      = c(asterisk, NA_character_, NA_character_),
+        "p_omega2"    = round(c(effect_size, NA_real_, NA_real_), rounding),
+        "method"      = "Welch's ANOVA"
     )
 
     return(aov_tab)

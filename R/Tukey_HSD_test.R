@@ -21,6 +21,7 @@
 #'
 #' @examples
 #' out <- Tukey_HSD_test(morphine, tolerance ~ grp)
+#' out$pre_hoc
 #' out$summary
 #' out$post_hoc
 #'
@@ -43,10 +44,13 @@ Tukey_HSD_test <- function(
     if (isTRUE(is_aov)) {
         pre_hoc <- data
         df0 <- attr(data, "data")
-        raw_y <- df0[["y"]]
 
         if (isTRUE(is_art))
+        {
+            colnames(df0)[colnames(df0) == "y"] <- "raw_y"
             df0[["y"]] <- df0[["ranked_y"]]
+        }
+
     } else {
         df0 <- tidy_to_dataframe(data, formula, factor_levels)  # from ./tidy_data.R
         pre_hoc <- oneway_anova(df0, y ~ x, alpha, rounding = rounding)  # from ./anova.R
@@ -135,9 +139,6 @@ Tukey_HSD_test <- function(
                                             grp_names = desc[["GROUP"]],
                                             centers = desc[["MED"]],
                                             alpha = alpha)
-
-    if (isTRUE(is_art))
-        df0[["y"]] <- raw_y
 
     oneway_standard_output(  # from ./zzz_standard_output.R
         method = "Tukey-HSD pairwise comparison",

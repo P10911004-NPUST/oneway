@@ -128,3 +128,22 @@ calc_ncp <- function(
 }
 
 
+omega_square_partial <- function(
+        DF_between,
+        DF_within,
+        MS_between,
+        MS_within
+) {
+    # if (!inherits(aov_tab, "oneway.anova_table"))
+    #     stop("Accepts only object class of `oneway.anova_table`.")
+    #
+    # DF_between <- aov_tab[["DF"]][1]
+    # DF_within <- aov_tab[["DF"]][2]
+    # MS_between <- aov_tab[["MS"]][1]
+    # MS_within <- aov_tab[["MS"]][2]
+
+    num <- DF_between * (MS_within - MS_between)
+    denom <- DF_between * MS_between + (DF_within + 1) * MS_within
+    wp2 <- abs(num / denom)
+    return(wp2)
+}

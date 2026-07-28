@@ -12,7 +12,7 @@ A data frame with 120 rows and 2 columns:
 \item{val}{A numeric response variable.}
 }
 
-An object of class \code{data.frame} with 120 rows and 2 columns.
+An object of class \code{data.frame} with 180 rows and 2 columns.
 }
 \usage{
 O_O_O

@@ -142,6 +142,9 @@ REGWQ_test <- function(
         )
     }
 
+    # The Padj should be compared with the modified alpha, not the original alpha.
+    # Labeling with different number of asterisks to show the level of significance seems not feasible.
+    # So, just label with 3 asterisks to show significance.
     post_hoc <- do.call(rbind.data.frame, post_hoc)
     signif <- post_hoc[["Pvalue"]] < post_hoc[["modified_alpha"]]
     post_hoc[["signif"]] <- vapply(signif,
@@ -165,45 +168,4 @@ REGWQ_test <- function(
 
     invisible(ret)
 }
-
-
-
-if (FALSE)
-{
-    load_all()
-
-    # m1 <- c(51, 84, 50, 48, 79, 61, 53, 54)
-    # m2 <- c(82, 91, 92, 80, 52, 85, 73, 74)
-    # m3 <- c(79, 84, 74, 98, 63, 83, 85, 58)
-    # m4 <- c(85, 80, 65, 71, 67, 51, 63, 93)
-    # m5 <- c(37, 40, 61, 51, 76, 55, 60, 70)
-    #
-    # df0 <- data.frame(
-    #     grp = rep(c("m1", "m2", "m3", "m4", "m5"), each = 8),
-    #     val = c(m1, m2, m3, m4, m5)
-    # )
-    #
-    # out <- REGWQ_test(df0, val ~ grp, rounding = 7)
-    # post_hoc <- (out$post_hoc)
-
-    # REGWQ_test(morphine, tolerance ~ grp)
-    # Tukey_HSD_test(morphine, tolerance ~ grp)
-
-    mut <- mutoss::regwq(tolerance ~ grp, morphine, alpha = 0.05)
-    mut <- data.frame(
-        comparisons = rownames(mut$confIntervals),
-        confIntervals = mut$confIntervals[, 1, drop = TRUE],
-        qval = mut$statistic,
-        padj = mut$adjPValues,
-        rejected = mut$rejected
-    )
-
-    regwq <- REGWQ_test(morphine, tolerance ~ grp)
-    regwq <- regwq$post_hoc
-
-    print(mut)
-    print(regwq)
-}
-
-
 

@@ -140,11 +140,13 @@ Tukey_HSD_test <- function(
                                             centers = desc[["MED"]],
                                             alpha = alpha)
 
-    oneway_standard_output(  # from ./zzz_standard_output.R
+    ret <- oneway_standard_output(  # from ./zzz_standard_output.R
         method = "Tukey-HSD pairwise comparison",
         data = df0,
         pre_hoc = pre_hoc,
         post_hoc = post_hoc,
         summary = desc
     )
+
+    invisible(ret)
 }

@@ -118,7 +118,7 @@ t_test <- function(
         p_adjust_method = p_adjust_method
     )
 
-    return(ret)
+    invisible(ret)
 
     # ----------------------------- Testing ------------------------------------ #
     # load_all()

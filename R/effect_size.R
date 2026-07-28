@@ -1,130 +1,127 @@
-Cohen_d_s <- function(
-        diff,
-        sample_sizes,
-        pooled_var,
-        alpha = 0.05,
-        mu = 0,
-        return_CI = FALSE,
-        standard_value,
-        DF_within,
-        alternative = "two.sided",
-        dist_func = stats::qt
-) {
-    d <- (diff - mu) / sqrt(pooled_var)
-    ret <- d
+#' Effect size
+#'
+#' Calculate Cohen's d and Hedges' g introduced in Lakens (2013).
+#'
+#' @param y1 A numeric vector.
+#' @param y2 A numeric vector.
+#' @param alternative Character (default: `"two.sided"`). Specifies the alternative hypothesis.
+#'        Available options are `c("two.sided", "less", "greater")`.
+#' @param alpha Numeric (default: 0.05). Significance level (0 - 1) for hypothesis testing.
+#' @param mu Numeric (default: 0).
+#' @param return_CI Logical (default: FALSE). Whether to return the confidence interval of the effect size.
+#'
+#' @returns A numeric scalar or a numeric vector of length 3, depends on `return_CI`.
+#'
+#' @details
+#' Refer to Lakens (2013), the Cohen's d is the formula 1, the Hedges' g is the formula 4.
+#' Their confidence interval (CI) were calculated based on formula 2, by transforming the `d` and `g`
+#' back to `t` to fit the general confidence interval calculation.
+#' For detailed and precise CI estimates, please use the `effectsize` package.
+#'
+#' @references
+#' Lakens, D. (2013).
+#' Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs.
+#' Frontiers in Psychology, 4.
+#' https://doi.org/10.3389/fpsyg.2013.00863
+#' @export
+Cohen_d_s <- function(y1, y2, alternative = "two.sided", alpha = 0.05, mu = 0, return_CI = FALSE)
+{
+    alt <- match.arg(alternative[1], c("two.sided", "less", "greater"))
+    ALPHA <- alpha
+    alpha <- if (alt == "two.sided") ALPHA / 2 else ALPHA
 
+    data <- list(y1, y2)
+
+    is_var_equal <- varequal::is_var_equal(data)
+
+    n <- unlist(lapply(data, length), use.names = FALSE)
+    avg <- unlist(lapply(data, mean), use.names = FALSE)
+    vars <- unlist(lapply(data, stats::var), use.names = FALSE)
+
+    if (isTRUE(is_var_equal))
+    {
+        DF_within <- sum(n - 1)
+        pooled_var <- sum((n - 1) * vars) / DF_within
+        StdErr <- sqrt(sum(pooled_var / n))
+    }
+    else {
+        DF_within <- sum(vars / n) ^ 2 / sum((vars / n) ^ 2 / (n - 1))
+        pooled_var <- mean(vars)
+        StdErr <- sqrt(sum(vars / n))
+    }
+
+    diff <- avg[1] - avg[2]
+
+    cohen_d <- (diff - mu) / sqrt(pooled_var)
+    ret <- c("Cohen's d" = cohen_d)
+
+    # ------------------------------------------------------------------------------------------- #
+    #                              Confidence interval of effect size                             #
+    # ------------------------------------------------------------------------------------------- #
     if (isTRUE(return_CI))
     {
-        ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
-        se <- sqrt(sum(1 / sample_sizes))
-        ci_lower <- ncp[1] * se
-        ci_upper <- ncp[2] * se
-        ret <- c("Cohen's d" = d, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
+        tval <- (diff - mu) / StdErr
+        init_val <- if (abs(tval) < 2) sign(tval) * 2 else tval / 2
+
+        # --------------------------- Non-centrality parameters (NCP) -------------------------- #
+        conf_int_points <- c(NA_real_, NA_real_)
+        if (alt == "two.sided")
+        {
+            alpha <- alpha / 2
+            conf_int_points <- c(alpha, 1 - alpha)
+        } else {
+            if (alt == "less")
+                conf_int_points <- c(alpha, Inf)
+            if (alt == "greater")
+                conf_int_points <- c(-Inf, alpha)
+        }
+
+        suppressWarnings(
+            ncp <- stats::optim(par = c(init_val, init_val),
+                                fn = function(x)
+                                {
+                                    qt_points <- stats::qt(p = conf_int_points,
+                                                           df = DF_within,
+                                                           ncp = x)
+                                    err <- sum(abs(qt_points - tval))
+                                    return(err)
+                                },
+                                control = list(abstol = 1e-09))
+        )
+
+        ncp <- unname(sort(ncp$par))
+
+        SE <- sqrt(sum(1 / n))
+        ci_lower <- ncp[1] * SE
+        ci_upper <- ncp[2] * SE
+
+        ret <- c("Cohen's d" = cohen_d, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
     }
 
     return(ret)
-    #-------------------------------- Testing --------------------------------#
-    # load_all()
-    # y1 <- c(16.85, 16.40, 17.21, 16.35, 16.52, 17.04, 16.96, 17.15, 16.59, 16.57)
-    # y2 <- c(16.62, 16.75, 17.37, 17.12, 16.98, 16.87, 17.34, 17.02, 17.08, 17.27)
-    # sample_sizes <- c(length(y1), length(y2))
-    #
-    # t_out <- .two_sample_student_t_test(y1, y2)
-    # Cohen_d_s(t_out$diff, sample_sizes, t_out$tval, t_out$pooled_var, t_out$DF_within)
-    # ef_out <- effectsize::cohens_d(y1, y2)
-    # print(c("Cohen's d" = ef_out$Cohens_d, "CI_lower" = ef_out$CI_low, "CI_upper" = ef_out$CI_high))
-    #
-    # t_out <- .two_sample_welch_t_test(y1, y2)
-    # Cohen_d_s(t_out$diff, sample_sizes, t_out$tval, t_out$pooled_var, t_out$DF_within)
-    # ef_out <- effectsize::cohens_d(y1, y2, pooled_sd = FALSE)
-    # print(c("Cohen's d" = ef_out$Cohens_d, "CI_lower" = ef_out$CI_low, "CI_upper" = ef_out$CI_high))
 }
 
 
-Hedges_g_s <- function(
-        diff,
-        sample_sizes,
-        pooled_var,
-        alpha = 0.05,
-        mu = 0,
-        return_CI = FALSE,
-        standard_value,
-        DF_within,
-        alternative = "two.sided",
-        dist_func = stats::qt
-) {
-    d <- (diff - mu) / sqrt(pooled_var)
-    g <- d * (1 - (3 / (4 * sum(sample_sizes) - 9)))
-    ret <- g
+#' @rdname Cohen_d_s
+#' @export
+Hedges_g_s <- function(y1, y2, alternative = "two.sided", alpha = 0.05, mu = 0, return_CI = FALSE)
+{
+    out <- Cohen_d_s(y1, y2, alternative, alpha, mu, return_CI)
+    cohen_d <- out[[1]]
+    N <- length(y1) + length(y2)
+    adjust_factor <- 1 - (3 / (4 * N - 9))
+    hedges_g <- cohen_d * adjust_factor
 
     if (isTRUE(return_CI))
     {
-        ncp <- calc_ncp(standard_value, DF_within, alternative, alpha, dist_func)
-        se <- sqrt(sum(1 / sample_sizes))
-        ci_lower <- ncp[1] * se
-        ci_upper <- ncp[2] * se
-        ret <- c("Hedges's g" = g, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
-    }
-
-    return(ret)
-    #-------------------------------- Testing --------------------------------#
-    # load_all()
-    # y1 <- c(16.85, 16.40, 17.21, 16.35, 16.52, 17.04, 16.96, 17.15, 16.59, 16.57)
-    # y2 <- c(16.62, 16.75, 17.37, 17.12, 16.98, 16.87, 17.34, 17.02, 17.08, 17.27)
-    # sample_sizes <- c(length(y1), length(y2))
-    #
-    # t_out <- .two_sample_student_t_test(y1, y2, mu = 1)
-    # Hedges_g_s(t_out$diff, sample_sizes, t_out$tval, t_out$pooled_var, t_out$DF_within, mu = 1)
-    # ef_out <- effectsize::hedges_g(y1, y2, mu = 1)
-    # print(c("Hedges's g" = ef_out$Hedges_g, "CI_lower" = ef_out$CI_low, "CI_upper" = ef_out$CI_high))
-    #
-    # t_out <- .two_sample_welch_t_test(y1, y2, mu = 1)
-    # Hedges_g_s(t_out$diff, sample_sizes, t_out$tval, t_out$pooled_var, t_out$DF_within, mu = 1)
-    # ef_out <- effectsize::hedges_g(y1, y2, pooled_sd = FALSE, mu = 1)
-    # print(c("Hedges's g" = ef_out$Hedges_g, "CI_lower" = ef_out$CI_low, "CI_upper" = ef_out$CI_high))
-}
-
-
-calc_ncp <- function(
-        standard_value,
-        degree_freedom,
-        alternative = "two.sided",
-        alpha = 0.05,
-        dist_func = stats::qt
-) {
-    conf_int_points <- c(NA_real_, NA_real_)
-    if (alternative == "two.sided")
-    {
-        alpha <- alpha / 2
-        conf_int_points <- c(alpha, 1 - alpha)
+        ci_lower <- out[[2]] * adjust_factor
+        ci_upper <- out[[3]] * adjust_factor
+        ret <- c("Hedges' g" = hedges_g, "CI_lower" = ci_lower, "CI_upper" = ci_upper)
     } else {
-        if (alternative == "less")
-            conf_int_points <- c(alpha, Inf)
-        if (alternative == "greater")
-            conf_int_points <- c(-Inf, alpha)
+        ret <- c("Hedges' g" = hedges_g)
     }
 
-    if (abs(standard_value) < 2)
-        init_value <- sign(standard_value) * 2
-    else
-        init_value <- standard_value / 2
-
-    suppressWarnings(
-        ncp <- stats::optim(par = c(init_value, init_value),
-                            fn = function(x)
-                            {
-                                qt_points <- dist_func(p = conf_int_points,
-                                                       df = degree_freedom,
-                                                       ncp = x)
-                                err <- sum(abs(qt_points - standard_value))
-                                return(err)
-                            },
-                            control = list(abstol = 1e-09))
-
-    )
-
-    t_ncp <- unname(sort(ncp$par))
-    return(t_ncp)
+    return(ret)
 }
 
 
@@ -134,16 +131,7 @@ omega_square_partial <- function(
         MS_between,
         MS_within
 ) {
-    # if (!inherits(aov_tab, "oneway.anova_table"))
-    #     stop("Accepts only object class of `oneway.anova_table`.")
-    #
-    # DF_between <- aov_tab[["DF"]][1]
-    # DF_within <- aov_tab[["DF"]][2]
-    # MS_between <- aov_tab[["MS"]][1]
-    # MS_within <- aov_tab[["MS"]][2]
-
     num <- DF_between * (MS_within - MS_between)
     denom <- DF_between * MS_between + (DF_within + 1) * MS_within
-    wp2 <- abs(num / denom)
-    return(wp2)
+    abs(num / denom)
 }

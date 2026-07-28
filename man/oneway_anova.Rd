@@ -32,6 +32,7 @@ A data frame representing the ANOVA table with the following columns:
 \item{Fcrit}{Critical F value at the specified significance level.}
 \item{Pvalue}{P-value associated with the F statistic.}
 \item{signif}{Significance code corresponding to the p-value.}
+\item{p_omega2}{Effect size. Partial omega squared.}
 \item{method}{Show whether Fisher's or Welch's ANOVA was conducted.}
 }
 

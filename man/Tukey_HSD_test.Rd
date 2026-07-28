@@ -42,6 +42,7 @@ Represent significance statements resulting from all-pairwise comparisons.
 }
 \examples{
 out <- Tukey_HSD_test(morphine, tolerance ~ grp)
+out$pre_hoc
 out$summary
 out$post_hoc
 

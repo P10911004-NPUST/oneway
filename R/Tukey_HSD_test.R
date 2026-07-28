@@ -107,9 +107,9 @@ Tukey_HSD_test <- function(
         diff_CI_lower <- diff - qcrit * SE
         diff_CI_upper <- diff + qcrit * SE
 
-        effect_size <- Hedges_g_s(diff = diff,   # from ./effect_size.R
-                                 sample_sizes = n,
-                                 pooled_var = pooled_var)
+        y1 <- df0[df0[["x"]] == x1, ][["y"]]
+        y2 <- df0[df0[["x"]] == x2, ][["y"]]
+        effect_size <- Hedges_g_s(y1, y2)
 
         post_hoc[[i]] <- oneway_post_hoc(  # from ./zzz_standard_output.R
             method = "Tukey-HSD",

@@ -26,9 +26,9 @@ t_test <- function(
 
     summary <- describe(lst, ...)
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # One-sample t-test
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     if (nsub == 1)
     {
         p_adjust_method <- "none"
@@ -37,9 +37,9 @@ t_test <- function(
         return(NA)
     }
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Two-sample t-test
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     if (nsub == 2)
     {
         y1 <- lst[[1]]
@@ -73,9 +73,9 @@ t_test <- function(
         return(post_hoc)
     }
 
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     # Pairwise t-test
-    #--------------------------------------------------------------------------#
+    # -------------------------------------------------------------------------- #
     if (nsub > 2)
     {
         cat("Pairwise t-test is not yet available.")
@@ -120,7 +120,7 @@ t_test <- function(
 
     return(ret)
 
-    #----------------------------- Testing ------------------------------------#
+    # ----------------------------- Testing ------------------------------------ #
     # load_all()
     # y1 <- c(6625, 6000, 5450, 5200, 5175, 4900, 4750, 4500, 3985,  900,  450, 2800)
     # y2 <- c(3900, 3500, 3450, 3200, 2980, 2800, 2500, 2400, 2200, 1200, 1150, 1130)
@@ -169,15 +169,17 @@ t_test <- function(
     diff_CI_lower <- diff - tcrit * StdErr
     diff_CI_upper <- diff + tcrit * StdErr
 
-    effect_size <- Hedges_g_s(diff = diff,
-                              sample_sizes = n,
-                              standard_value = tval,
-                              pooled_var = pooled_var,
-                              DF_within = DF_within,
-                              alternative = alt,
-                              alpha = alpha,
-                              mu = mu,
-                              dist_func = stats::qt)
+    # effect_size <- Hedges_g_s(diff = diff,
+    #                           sample_sizes = n,
+    #                           standard_value = tval,
+    #                           pooled_var = pooled_var,
+    #                           DF_within = DF_within,
+    #                           alternative = alt,
+    #                           alpha = alpha,
+    #                           mu = mu,
+    #                           dist_func = stats::qt)
+
+    effect_size <- Hedges_g_s(y1, y2, alternative, alpha, mu)
 
     ret <- list(
         "method" = "Student's t", "DF_within" = DF_within,
@@ -191,7 +193,7 @@ t_test <- function(
 
     return(ret)
 
-    #----------------------------- Testing ------------------------------------#
+    # ----------------------------- Testing ------------------------------------ #
     # load_all()
     # y1 <- c(16.85, 16.40, 17.21, 16.35, 16.52, 17.04, 16.96, 17.15, 16.59, 16.57)
     # y2 <- c(16.62, 16.75, 17.37, 17.12, 16.98, 16.87, 17.34, 17.02, 17.08, 17.27)
@@ -236,15 +238,17 @@ t_test <- function(
     diff_CI_lower <- diff - tcrit * StdErr
     diff_CI_upper <- diff + tcrit * StdErr
 
-    effect_size <- Hedges_g_s(diff = diff,
-                              sample_sizes = n,
-                              standard_value = tval,
-                              pooled_var = pooled_var,
-                              DF_within = sum(n - 1),
-                              alternative = alt,
-                              alpha = alpha,
-                              mu = mu,
-                              dist_func = stats::qt)
+    # effect_size <- Hedges_g_s(diff = diff,
+    #                           sample_sizes = n,
+    #                           standard_value = tval,
+    #                           pooled_var = pooled_var,
+    #                           DF_within = sum(n - 1),
+    #                           alternative = alt,
+    #                           alpha = alpha,
+    #                           mu = mu,
+    #                           dist_func = stats::qt)
+
+    effect_size <- Hedges_g_s(y1, y2, alternative, alpha, mu)
 
     ret <- list(
         "method" = "Welch's t", "DF_within" = DF_within,
@@ -258,7 +262,7 @@ t_test <- function(
 
     return(ret)
 
-    #----------------------------- Testing ------------------------------------#
+    # ----------------------------- Testing ------------------------------------ #
     # load_all()
     # y1 <- c(6625, 6000, 5450, 5200, 5175, 4900, 4750, 4500, 3985,  900,  450, 2800)
     # y2 <- c(3900, 3500, 3450, 3200, 2980, 2800, 2500, 2400, 2200, 1200, 1150, 1130)

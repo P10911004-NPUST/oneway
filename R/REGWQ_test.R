@@ -8,7 +8,7 @@
 #' @param factor_levels Character vectors (default: NULL). Specify the levels of the factor.
 #'        By default, the levels are ordered alphabetically.
 #' @param rounding Integer (default: 4). Rounding digits.
-#' @param silent Logical (default: FALSE). Raise warning message.
+#' @param silent Logical (default: FALSE). Suppress warnings and messages.
 #'
 #' @return A list with 4 elements:
 #' \describe{
@@ -26,7 +26,7 @@
 #' out$post_hoc
 #'
 #' @references
-#' Howell, D. C. (2010). Statistical methods for psychology (7th ed.).
+#' Howell, D. C. (2010). Statistical methods for psychology (7th edition).
 #' Cengage. Chapter 12, pg. 393-394.
 #'
 #' @export

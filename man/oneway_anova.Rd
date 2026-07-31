@@ -4,7 +4,14 @@
 \alias{oneway_anova}
 \title{One-Way Analysis of Variance}
 \usage{
-oneway_anova(data, formula, alpha = 0.05, var_equal = NA, rounding = 4)
+oneway_anova(
+  data,
+  formula,
+  alpha = 0.05,
+  var_equal = NA,
+  rounding = 4,
+  silent = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}
@@ -21,6 +28,8 @@ is performed. If \code{NA} (default), equality of variances is determined
 automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
 
 \item{rounding}{Integer (default: 4). Rounding digits.}
+
+\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:
@@ -69,5 +78,6 @@ oneway_anova(anorexia, weight_gain ~ therapy, var_equal = FALSE)
 
 }
 \references{
-Howell, D. C. (2013). Statistical methods for psychology (Eighth edition). Cengage.
+Howell, D. C. (2013). Statistical methods for psychology (8th edition).
+Cengage. Chapter 11, pg. 325-345.
 }

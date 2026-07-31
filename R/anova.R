@@ -120,6 +120,7 @@ oneway_art <- function(
 #'   is performed. If `NA` (default), equality of variances is determined
 #'   automatically using [varequal::is_var_equal()].
 #' @param rounding Integer (default: 4). Rounding digits.
+#' @param silent Logical (default: FALSE). Suppress warnings and messages.
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -145,7 +146,8 @@ oneway_art <- function(
 #' adjusting the test statistic and denominator degrees of freedom.
 #'
 #' @references
-#' Howell, D. C. (2013). Statistical methods for psychology (Eighth edition). Cengage.
+#' Howell, D. C. (2013). Statistical methods for psychology (8th edition).
+#' Cengage. Chapter 11, pg. 325-345.
 #'
 #' @examples
 #' # Automatically select the appropriate procedure
@@ -163,10 +165,21 @@ oneway_anova <- function(
         formula,
         alpha = 0.05,
         var_equal = NA,
-        rounding = 4
+        rounding = 4,
+        silent = FALSE
 ) {
     lst <- tidy_to_list(data, formula)
 
+    # ------------------------------------------------------------------------------------- #
+    #                                 Check normality                                       #
+    # ------------------------------------------------------------------------------------- #
+    # is_normal <- normality::is_normal(lst)
+    # if (isFALSE(is_normal) & isFALSE(silent))
+    #     warning("Normality assumption is violated. Consider ART-ANOVA or Kruskal-Wallis.")
+
+    # ------------------------------------------------------------------------------------- #
+    #                              Check homoscedasticity                                   #
+    # ------------------------------------------------------------------------------------- #
     if (isTRUE(var_equal) || isFALSE(var_equal))
         is_var_equal <- var_equal
     else
@@ -177,11 +190,9 @@ oneway_anova <- function(
     else
         aov_tab <- .welch_anova(lst, alpha = alpha, rounding = rounding)
 
-    df0 <- tidy_to_dataframe(data, formula)
-
     structure(
         aov_tab,
-        "data" = df0,
+        "data" = tidy_to_dataframe(data, formula),
         class = c("oneway.anova_table", "data.frame")
     )
 }
@@ -200,7 +211,7 @@ oneway_anova <- function(
 
     yij <- unlist(lst, use.names = FALSE)  # All observations
     yi <- unlist(lapply(lst, sum), use.names = FALSE)  # Sum of each groups
-    k <- length(lst)  # group numbers
+    k <- length(lst)  # Number of groups
     N <- length(yij)  # Total sample size
     y_bar <- mean(yij)  # Grand mean
     n <- unlist(lapply(lst, length), use.names = FALSE)  # Each group sample sizes
@@ -285,7 +296,7 @@ oneway_anova <- function(
 
     aov_tab <- data.frame(
         row.names     = c("Group", "Residuals", "Total"),
-        "DF"          = c(DF_between, DF_within, DF_total),
+        "DF"          = round(c(DF_between, DF_within, DF_total), rounding),
         "SS"          = round(c(SS_between, SS_within, SS_total), rounding),
         "MS"          = round(c(MS_between, MS_within, NA_real_), rounding),
         "Fvalue"      = round(c(Fval, NA_real_, NA_real_), rounding),
@@ -297,5 +308,127 @@ oneway_anova <- function(
     )
 
     return(aov_tab)
+}
+
+
+#' Kruskal–Wallis one-way analysis of variance
+#'
+#'
+#' @param data A data frame containing the response and grouping variables.
+#' @param formula A two-sided formula specifying the response and grouping
+#'        variables in the form `response ~ group`.
+#' @param alpha A numeric significance level used to compute the critical
+#'        Chi-squared value. The default is `0.05`.
+#' @param rounding Integer (default: 4). Rounding digits.
+#' @param silent Logical (default: FALSE). Suppress warnings and messages.
+#'
+#' @return
+#' A data frame representing the ANOVA table with the following columns:
+#' \describe{
+#'   \item{DF}{Degrees of freedom.}
+#'   \item{SS}{Sum of squares.}
+#'   \item{MS}{Mean square.}
+#'   \item{H}{Observed H statistic.}
+#'   \item{Hcrit}{Critical Chi-squared value at the specified significance level.}
+#'   \item{Pvalue}{P-value associated with the F statistic.}
+#'   \item{signif}{Significance code corresponding to the p-value.}
+#'   \item{p_omega2}{Effect size. Partial omega squared.}
+#'   \item{method}{Kruskal-Wallis test.}
+#' }
+#'
+#' The rows correspond to the treatment groups ("Group"), residual error
+#' ("Residuals"), and total variation ("Total").
+#'
+#' @details
+#' Fisher's ANOVA assumes independent observations, normally distributed
+#' populations, and equal population variances. When the equal-variance
+#' assumption is violated, Welch's ANOVA provides a more robust alternative by
+#' adjusting the test statistic and denominator degrees of freedom.
+#'
+#' @references
+#' Howell, D. C. (2013). Statistical methods for psychology (8th edition).
+#' Cengage. Chapter 18, Section 18.9, pg. 678-679.
+#'
+#' Hollander, M., Wolfe, D. A., & Chicken, E. (2014).
+#' Nonparametric Statistical Methods (3rd ed.).
+#' Wiley. Chapter 6, pg. 204-206.
+#'
+#' @examples
+#' lst <- list(
+#'     "depressant" = c(55, 0, 1, 0, 50, 60, 44),
+#'     "stimulant" = c(73, 85, 51, 63, 85, 85, 66, 69),
+#'     "placebo" = c(61, 54, 80, 47)
+#' )
+#'
+#' Kruskal_Wallis_test(lst, y ~ x)
+#' @export
+Kruskal_Wallis_test <- function(
+        data,
+        formula,
+        alpha = 0.05,
+        rounding = 4,
+        silent = FALSE
+) {
+    df0 <- tidy_to_dataframe(data, formula)
+    df0[["ranked_y"]] <- rank(df0[["y"]])
+
+    # aov_tab <- .fisher_anova(df0, ranked_y ~ x, alpha, rounding)
+    # colnames(aov_tab)[colnames(aov_tab) == "Fvalue"] <- "H"
+    # colnames(aov_tab)[colnames(aov_tab) == "Fcrit"] <- "Hcrit"
+
+    xi <- df0[["x"]]
+    yij <- df0[["ranked_y"]]
+    n <- tapply(yij, xi, length)
+    N <- sum(n)
+    k <- length(unique(xi))
+    yi_bar <- tapply(yij, xi, mean)  # group means
+    y_bar <- (N + 1) / 2  # grand mean
+
+    DF_between <- k - 1
+    DF_within <- N - k
+    DF_total <- N - 1
+
+    # Not sure whether the SS_between is valid or not.
+    # The formula 6.5 in Hollander et al. (2014) seems very similar
+    # to the formula of SS_between in Fisher's ANOVA
+    SS_between <- sum(n * ((yi_bar - y_bar) ^ 2))
+    SS_within <- NA_real_
+    SS_total <- NA_real_
+
+    MS_between <- SS_between / DF_between
+    MS_within <- NA_real_
+
+    sum_i <- tapply(df0[["ranked_y"]], df0[["x"]], function(x) sum(x) ^ 2 / length(x))
+    ranked_sum <- sum(sum_i)
+
+    ties <- table(df0[["ranked_y"]])
+    ties <- 1 - sum(ties ^ 3 - ties) / (N ^ 3 - N)
+
+    H <- (12 / (N * (N + 1)) * ranked_sum - (3 * (N + 1))) / ties
+    Hcrit <- stats::qchisq(alpha, DF_between, lower.tail = FALSE)
+    pval <- stats::pchisq(H, DF_between, lower.tail = FALSE)
+
+    effect_size <- NA_real_
+
+    asterisk <- pval2asterisk(pval, break_points = c(alpha + 0.005, alpha, 0.01, 0.001, 0))
+
+    aov_tab <- data.frame(
+        row.names    = c("Group", "Residuals", "Total"),
+        "DF"         = round(c(DF_between, DF_within, DF_total), rounding),
+        "SS"         = round(c(SS_between, SS_within, SS_total), rounding),
+        "MS"         = round(c(MS_between, MS_within, NA_real_), rounding),
+        "H"          = round(c(H, NA_real_, NA_real_), rounding),
+        "Hcrit"      = round(c(Hcrit, NA_real_, NA_real_), rounding),
+        "Pvalue"     = round(c(pval, NA_real_, NA_real_), rounding),
+        "signif"     = c(asterisk, NA_character_, NA_character_),
+        "p_omega2"   = round(c(effect_size, NA_real_, NA_real_), rounding),
+        "method"     = "Kruskal-Wallis"
+    )
+
+    structure(
+        aov_tab,
+        "data" = df0,
+        class = c("oneway.anova_table", "data.frame")
+    )
 }
 

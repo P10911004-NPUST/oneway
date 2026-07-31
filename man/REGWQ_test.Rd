@@ -25,7 +25,7 @@ By default, the levels are ordered alphabetically.}
 
 \item{rounding}{Integer (default: 4). Rounding digits.}
 
-\item{silent}{Logical (default: FALSE). Raise warning message.}
+\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
 }
 \value{
 A list with 4 elements:
@@ -48,6 +48,6 @@ out$post_hoc
 
 }
 \references{
-Howell, D. C. (2010). Statistical methods for psychology (7th ed.).
+Howell, D. C. (2010). Statistical methods for psychology (7th edition).
 Cengage. Chapter 12, pg. 393-394.
 }

@@ -48,6 +48,6 @@ out$post_hoc
 
 }
 \references{
-Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
+Howell, D. C. (2013). Statistical methods for psychology (8th edition).
 Cengage. Chapter 12, pg. 395.
 }

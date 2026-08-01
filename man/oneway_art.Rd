@@ -4,23 +4,28 @@
 \alias{oneway_art}
 \title{One-Way Aligned Ranked Transformed Analysis of Variance (ART-ANOVA)}
 \usage{
-oneway_art(data, formula, alpha = 0.05, var_equal = NA, rounding = 4)
+oneway_art(
+  data,
+  formula,
+  alpha = 0.05,
+  var_equal = NA,
+  rounding = 4,
+  silent = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}
 
-\item{formula}{A two-sided formula specifying the response and grouping
-variables in the form \code{response ~ group}.}
+\item{formula}{A two-sided formula specifying the response and grouping variables.}
 
-\item{alpha}{A numeric significance level used to compute the critical
-F-value. The default is \code{0.05}.}
+\item{alpha}{Numeric (default: 0.05). Significance level (range from 0 to 1).}
 
-\item{var_equal}{A logical value indicating whether equal variances should be
-assumed. If \code{TRUE}, Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA
-is performed. If \code{NA} (default), equality of variances is determined
-automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
+\item{var_equal}{A logical value passes into the \code{oneway_anova()} to perform regular ANOVA on
+the ranked-response variable.}
 
-\item{rounding}{Integer (default: 4). Rounding digits.}
+\item{rounding}{Integer (default: 4). Number of decimal places displayed in the output.}
+
+\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:

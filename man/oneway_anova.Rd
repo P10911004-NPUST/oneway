@@ -16,18 +16,15 @@ oneway_anova(
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}
 
-\item{formula}{A two-sided formula specifying the response and grouping
-variables in the form \code{response ~ group}.}
+\item{formula}{A two-sided formula specifying the response and grouping variables.}
 
-\item{alpha}{A numeric significance level used to compute the critical
-F-value. The default is \code{0.05}.}
+\item{alpha}{Numeric (default: 0.05). Significance level (range from 0 to 1).}
 
-\item{var_equal}{A logical value indicating whether equal variances should be
-assumed. If \code{TRUE}, Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA
-is performed. If \code{NA} (default), equality of variances is determined
-automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
+\item{var_equal}{A logical value indicating whether equal variances should be assumed. If \code{TRUE},
+Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA is performed. If \code{NA} (default),
+equality of variances is determined automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
 
-\item{rounding}{Integer (default: 4). Rounding digits.}
+\item{rounding}{Integer (default: 4). Number of decimal places displayed in the output.}
 
 \item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
 }
@@ -49,22 +46,18 @@ The rows correspond to the treatment groups ("Group"), residual error
 ("Residuals"), and total variation ("Total").
 }
 \description{
-Performs a one-way analysis of variance (ANOVA) to compare the means of two
-or more independent groups. By default, the function automatically selects
-between the classical Fisher ANOVA and Welch's ANOVA according to whether
-the group variances are judged to be homogeneous.
+Performs a one-way analysis of variance (ANOVA) to compare the means of two or more independent
+groups. By default, the function automatically selects between the classical Fisher ANOVA and
+Welch's ANOVA according to whether the group variances are judged to be homogeneous.
 }
 \details{
-If \code{var_equal = TRUE}, Fisher's ANOVA is performed. If
-\code{var_equal = FALSE}, Welch's ANOVA is performed. When
-\code{var_equal = NA} (the default), homogeneity of variances is assessed using
-\code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}, and the appropriate test is selected
-automatically.
+If \code{var_equal = TRUE}, Fisher's ANOVA is performed. If \code{var_equal = FALSE}, Welch's ANOVA is
+performed. When \code{var_equal = NA} (the default), homogeneity of variances is assessed using
+\code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}, and the appropriate test is selected automatically.
 
-Fisher's ANOVA assumes independent observations, normally distributed
-populations, and equal population variances. When the equal-variance
-assumption is violated, Welch's ANOVA provides a more robust alternative by
-adjusting the test statistic and denominator degrees of freedom.
+Fisher's ANOVA assumes independent observations, normally distributed populations, and equal
+population variances. When the equal-variance assumption is violated, Welch's ANOVA provides
+a more robust alternative by adjusting the test statistic and denominator degrees of freedom.
 }
 \examples{
 # Automatically select the appropriate procedure

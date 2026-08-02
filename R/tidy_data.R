@@ -119,7 +119,7 @@ tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
     }
 
     # Reorder the group names
-    if ( ! is.null(factor_levels) & ! missing(factor_levels) )
+    if ( ! is.null(factor_levels) )
     {
         factor_levels <- as.character(factor_levels)
         if ( ! all(unique(df0[["x"]]) %in% factor_levels) )

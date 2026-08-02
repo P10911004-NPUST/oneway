@@ -12,6 +12,13 @@ A data frame with 72 observations and 2 variables:
 \item{weight_gain}{A numeric vector giving the observed weight gain after
 treatment.}
 }
+
+Group sample sizes are:
+\itemize{
+\item Control: 26
+\item Cognitive-behavior therapy: 29
+\item Family therapy: 17
+}
 }
 \usage{
 anorexia
@@ -21,18 +28,6 @@ A dataset containing weight gain for young girls with anorexia following
 three different treatment conditions: a control group, cognitive-behavior
 therapy, and family therapy. The response variable is weight gain measured
 after treatment.
-}
-\details{
-This dataset is commonly used to illustrate one-way analysis of variance
-(ANOVA) and multiple comparison procedures. The observations were originally
-reported by Everitt and reproduced by Howell (2013).
-
-Group sample sizes are:
-\itemize{
-\item Control: 26
-\item Cognitive-behavior therapy: 29
-\item Family therapy: 17
-}
 }
 \references{
 Howell, D. C. (2013). Statistical methods for psychology (8th ed.).

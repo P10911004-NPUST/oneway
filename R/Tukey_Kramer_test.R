@@ -29,6 +29,9 @@
 #' Howell, D. C. (2013). Statistical methods for psychology (8th edition).
 #' Cengage. Chapter 12, pg. 394.
 #'
+#' Zar, J. H. (2014). Biostatistical analysis (5th edition).
+#' Pearson. Chapter 11: Multiple comparisons, pg. 244-245.
+#'
 #' @export
 Tukey_Kramer_test <- function(
         data,
@@ -61,9 +64,9 @@ Tukey_Kramer_test <- function(
     # ----------------------------------------------------------------- #
     if (isFALSE(silent))
     {
-        is_normal <- normality::is_normal(df0, y ~ x)
+        # is_normal <- normality::is_normal(df0, y ~ x)
         is_var_equal <- varequal::is_var_equal(df0, y ~ x)
-        if (isFALSE(is_normal)) warning("Normality assumption is violated.")
+        # if (isFALSE(is_normal)) warning("Normality assumption is violated.")
         if (isFALSE(is_var_equal)) warning("Homogeneity of variance assumption is violated.")
     }
 
@@ -96,7 +99,7 @@ Tukey_Kramer_test <- function(
         n <- group_sizes[c(x1, x2)]
         vars <- group_vars[c(x1, x2)]
 
-        pooled_var <- sum((n - 1) * vars) / DF_within
+        # pooled_var <- sum((n - 1) * vars) / DF_within
         diff <- group_means[[x1]] - group_means[[x2]]
         SE <- sqrt(sum(MS_within / n) / 2)  # The only difference from Tukey-HSD
         qval <- abs(diff / SE)

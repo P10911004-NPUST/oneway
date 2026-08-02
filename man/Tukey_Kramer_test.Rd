@@ -50,4 +50,7 @@ out$post_hoc
 \references{
 Howell, D. C. (2013). Statistical methods for psychology (8th edition).
 Cengage. Chapter 12, pg. 394.
+
+Zar, J. H. (2014). Biostatistical analysis (5th edition).
+Pearson. Chapter 11: Multiple comparisons, pg. 244-245.
 }

@@ -4,6 +4,10 @@
 \name{simulated_datasets}
 \alias{simulated_datasets}
 \alias{O_O_O}
+\alias{O_O_X}
+\alias{O_X_X}
+\alias{X_X_O}
+\alias{X_X_X}
 \title{Simulated normally distributed data with homogeneous variances and balanced design}
 \format{
 A data frame with 120 rows and 2 columns:
@@ -13,9 +17,25 @@ A data frame with 120 rows and 2 columns:
 }
 
 An object of class \code{data.frame} with 150 rows and 2 columns.
+
+An object of class \code{data.frame} with 128 rows and 2 columns.
+
+An object of class \code{data.frame} with 128 rows and 2 columns.
+
+An object of class \code{data.frame} with 120 rows and 2 columns.
+
+An object of class \code{data.frame} with 110 rows and 2 columns.
 }
 \usage{
 O_O_O
+
+O_O_X
+
+O_X_X
+
+X_X_O
+
+X_X_X
 }
 \description{
 A simulated dataset representing a one-way experimental design with six

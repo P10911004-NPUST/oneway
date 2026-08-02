@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------------------- #
-#               O_O_O: Normally distributed, Homoscedastic, Balance-designed
+#               O_O_O: Normally distributed, Homoscedastic, Balanced-designed
 # ------------------------------------------------------------------------------------------- #
 set.seed(123)
 
@@ -21,5 +21,71 @@ O_O_O <- stats::reshape(
     timevar = "grp",
     times = paste0("G", 1:5)
 )[, c("grp", "val")]
-
 use_data(O_O_O, overwrite = TRUE)
+
+
+# ------------------------------------------------------------------------------------------- #
+#               O_O_X: Normally distributed, Homoscedastic, Unbalanced-designed
+# ------------------------------------------------------------------------------------------- #
+n <- c(27, 24, 16, 30, 11, 20)
+lst <- list(
+    data.frame("grp" = "G1", "val" = stats::rnorm(n[1], 6, 1)),
+    data.frame("grp" = "G2", "val" = stats::rnorm(n[2], 6, 1)),
+    data.frame("grp" = "G3", "val" = stats::rnorm(n[3], 3, 1)),
+    data.frame("grp" = "G4", "val" = stats::rnorm(n[4], 5, 1)),
+    data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 2, 1)),
+    data.frame("grp" = "G6", "val" = stats::rnorm(n[6], 4, 1))
+)
+O_O_X <- do.call(rbind.data.frame, lst)
+use_data(O_O_X, overwrite = TRUE)
+
+
+
+# ------------------------------------------------------------------------------------------- #
+#           O_X_X: Normally distributed, Heteroscedastic, Unbalanced-designed
+# ------------------------------------------------------------------------------------------- #
+n <- c(27, 24, 16, 30, 11, 20)
+lst <- list(
+    data.frame("grp" = "G1", "val" = stats::rnorm(n[1], 16, 2)),
+    data.frame("grp" = "G2", "val" = stats::rnorm(n[2], 10, 3)),
+    data.frame("grp" = "G3", "val" = stats::rnorm(n[3],  9, 2)),
+    data.frame("grp" = "G4", "val" = stats::rnorm(n[4],  5, 1)),
+    data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 12, 4)),
+    data.frame("grp" = "G6", "val" = stats::rnorm(n[6], 14, 1))
+)
+O_X_X <- do.call(rbind.data.frame, lst)
+use_data(O_X_X, overwrite = TRUE)
+
+
+
+# ------------------------------------------------------------------------------------------- #
+#           X_X_0: Distribution-free, Heteroscedastic, Balanced-designed
+# ------------------------------------------------------------------------------------------- #
+n <- rep(20, 6)
+lst <- list(
+    data.frame("grp" = "G1", "val" = stats::rcauchy(n[1], 12, 0.2)),
+    data.frame("grp" = "G2", "val" = stats::runif(n[2], 3, 12)),
+    data.frame("grp" = "G3", "val" = stats::rgamma(n[3], 1) + 5),
+    data.frame("grp" = "G4", "val" = stats::rgamma(n[3], 2) + 8),
+    data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 10, 4)),
+    data.frame("grp" = "G6", "val" = stats::rcauchy(n[1], 7, 1))
+)
+X_X_O <- do.call(rbind.data.frame, lst)
+use_data(X_X_O, overwrite = TRUE)
+
+
+
+# ------------------------------------------------------------------------------------------- #
+#           X_X_X: Distribution-free, Heteroscedastic, Unbalanced-designed
+# ------------------------------------------------------------------------------------------- #
+n <- c(27, 24, 16, 30, 11, 20)
+lst <- list(
+    data.frame("grp" = "G1", "val" = stats::rcauchy(n[1], 10, 0.5)),
+    data.frame("grp" = "G2", "val" = stats::runif(n[2], 1, 9)),
+    data.frame("grp" = "G3", "val" = stats::rgamma(n[3], 1) + 1),
+    data.frame("grp" = "G4", "val" = stats::rgamma(n[3], 2) + 5),
+    data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 12, 3)),
+    data.frame("grp" = "G6", "val" = stats::rgamma(n[3], 3) + 1)
+)
+X_X_X <- do.call(rbind.data.frame, lst)
+use_data(X_X_X, overwrite = TRUE)

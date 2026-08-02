@@ -15,6 +15,14 @@ NULL
 
 #' @rdname simulated_datasets
 "O_O_O"
+#' @rdname simulated_datasets
+"O_O_X"
+#' @rdname simulated_datasets
+"O_X_X"
+#' @rdname simulated_datasets
+"X_X_O"
+#' @rdname simulated_datasets
+"X_X_X"
 
 
 #' Plasma Etching Experiment
@@ -43,11 +51,6 @@ NULL
 #'   \item{weight_gain}{A numeric vector giving the observed weight gain after
 #'   treatment.}
 #' }
-#'
-#' @details
-#' This dataset is commonly used to illustrate one-way analysis of variance
-#' (ANOVA) and multiple comparison procedures. The observations were originally
-#' reported by Everitt and reproduced by Howell (2013).
 #'
 #' Group sample sizes are:
 #' \itemize{
@@ -96,3 +99,5 @@ NULL
 #' Howell, D. C. (2013). Statistical methods for psychology (8th ed.).
 #' Cengage. Chapter 11, Table 12.1, pg. 375.
 "morphine"
+
+

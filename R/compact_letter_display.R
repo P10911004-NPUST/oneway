@@ -281,61 +281,58 @@ insert_absorb_sweep <- function(
 
 
 
-#' Convert p-values into asterisks
+#' Convert p-values to significance labels
 #'
-#' Converts numeric p-values into categorical significance labels based on
-#' user-defined break points. This function is commonly used for annotating
-#' statistical significance levels in plots.
-#'
-#' The break points are sorted in decreasing order and define intervals for
-#' assigning symbols. Missing values in `break_points` are removed before
-#' classification.
+#' Converts numeric p-values into categorical significance labels according to user-defined
+#' thresholds. The function is commonly used to annotate statistical results in tables and figures.
 #'
 #' @param x A numeric vector of p-values.
-#' @param break_points A numeric vector defining the boundaries for p-value
-#'        categories. The default values correspond approximately to:
+#' @param break_points A numeric vector of significance thresholds in
+#'        descending order. Each threshold defines the upper bound of a significance
+#'        interval. The default values correspond to:
 #'        \itemize{
-#'          \item p > 0.055: "ns"
-#'          \item 0.05 < p <= 0.055: "."
-#'          \item 0.01 < p <= 0.05: one significance symbol
-#'          \item 0.001 < p <= 0.01: two significance symbol
-#'          \item smaller p-values: increasing numbers of significance symbols
+#'          \item \eqn{p > 0.055}: `"ns"`
+#'          \item \eqn{0.05 < p \le 0.055}: `"."`
+#'          \item \eqn{0.01 < p \le 0.05}: `"*"`
+#'          \item \eqn{0.001 < p \le 0.01}: `"**"`
+#'          \item \eqn{p \le 0.001}: `"***"`
 #'        }
-#' @param symbols A character vector containing the symbols used for each
-#'        significance level. The first element represents non-significance,
-#'        the second element represents the first significance level, and the
-#'        third element is repeated for stronger significance levels.
+#' @param symbols A character vector of significance labels corresponding to `break_points`.
+#'        The lengths of `break_points` and `symbols` must be identical.
 #'
-#' @return A character vector with the same length as `x`, containing the
-#'         corresponding significance symbols for each p-value.
+#' @returns
+#' A character vector of the same length as `x`, where each element is the corresponding
+#' significance label.
 #'
 #' @details
-#' The function applies the following logic:
-#' \itemize{
-#'   \item p-values larger than the largest break point are assigned
-#'   `symbols[1]`.
-#'   \item Intermediate p-values are assigned symbols according to their
-#'   corresponding intervals.
-#'   \item For increasingly smaller p-values, `symbols[3]` is repeated to
-#'   represent stronger significance levels.
-#' }
+#' Each p-value is assigned to exactly one interval defined by `break_points`. Values greater
+#' than the first threshold are assigned `symbols[1]`, whereas values less than or equal to the
+#' last threshold are assigned the last element of `symbols`. Intermediate intervals are matched
+#' sequentially.
 #'
-#' The function assumes that `break_points` and `symbols` are supplied in a
-#' meaningful order. The number of significance levels supported depends on the
-#' length of `break_points`.
+#' The function assumes that `break_points` are supplied in descending order.
 #'
 #' @examples
-#' p <- c(0.2, 0.04, 0.008, 0.0005, 1e-6)
+#' p <- c(0.20, 0.04, 0.008, 0.0005, 1e-6)
 #' pval2asterisk(p)
+#'
+#' # Custom significance labels
+#' pval2asterisk(
+#'   p,
+#'   break_points = c(0.05, 0.01, 0),
+#'   symbols = c("Not significant", "Significant", "Highly significant")
+#' )
+#'
 #' @export
 pval2asterisk <- function(
         x,
         break_points = c(0.055, 0.05, 0.01, 0.001, 0),
-        symbols = c("ns", ".", "*")
+        symbols = c("ns", ".", "*", "**", "***")
 ) {
-    bp <- break_points[stats::complete.cases(break_points)]
-    bp <- sort(bp, decreasing = TRUE)
-    n <- length(bp)
+    if (length(break_points) != length(symbols))
+        stop("Length of `break_points` and `symbols` should be identical.")
+
+    n <- length(break_points)
 
     # symbols[grep("*", symbols)] <- "\U273D"
 
@@ -343,21 +340,10 @@ pval2asterisk <- function(
         x,
         function(pval)
         {
-            if (pval > bp[1])
-                return(symbols[1])
-            if (pval < bp[1] & pval > bp[2])
-                return(symbols[2])
-            if (pval <= bp[2] & pval > bp[3])
-                return(symbols[3])
-
-            for (i in 3:(n - 1))
-            {
-                if (pval <= bp[i] & pval > bp[i + 1])
-                    ret <- paste(rep(symbols[3], i - 1), collapse = "")
-                else
-                    next
-            }
-            return(ret)
+            if (pval > break_points[1]) return(symbols[1])
+            if (pval <= break_points[n]) return(symbols[n])
+            for (i in 2:n)
+                if (pval > break_points[i] & pval <= break_points[i - 1]) return(symbols[i])
         },
         FUN.VALUE = character(1)
     )

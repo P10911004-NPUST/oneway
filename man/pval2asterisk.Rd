@@ -2,61 +2,56 @@
 % Please edit documentation in R/compact_letter_display.R
 \name{pval2asterisk}
 \alias{pval2asterisk}
-\title{Convert p-values into asterisks}
+\title{Convert p-values to significance labels}
 \usage{
 pval2asterisk(
   x,
   break_points = c(0.055, 0.05, 0.01, 0.001, 0),
-  symbols = c("ns", ".", "*")
+  symbols = c("ns", ".", "*", "**", "***")
 )
 }
 \arguments{
 \item{x}{A numeric vector of p-values.}
 
-\item{break_points}{A numeric vector defining the boundaries for p-value
-categories. The default values correspond approximately to:
+\item{break_points}{A numeric vector of significance thresholds in
+descending order. Each threshold defines the upper bound of a significance
+interval. The default values correspond to:
 \itemize{
-\item p > 0.055: "ns"
-\item 0.05 < p <= 0.055: "."
-\item 0.01 < p <= 0.05: one significance symbol
-\item 0.001 < p <= 0.01: two significance symbol
-\item smaller p-values: increasing numbers of significance symbols
+\item \eqn{p > 0.055}: \code{"ns"}
+\item \eqn{0.05 < p \le 0.055}: \code{"."}
+\item \eqn{0.01 < p \le 0.05}: \code{"*"}
+\item \eqn{0.001 < p \le 0.01}: \code{"**"}
+\item \eqn{p \le 0.001}: \code{"***"}
 }}
 
-\item{symbols}{A character vector containing the symbols used for each
-significance level. The first element represents non-significance,
-the second element represents the first significance level, and the
-third element is repeated for stronger significance levels.}
+\item{symbols}{A character vector of significance labels corresponding to \code{break_points}.
+The lengths of \code{break_points} and \code{symbols} must be identical.}
 }
 \value{
-A character vector with the same length as \code{x}, containing the
-corresponding significance symbols for each p-value.
+A character vector of the same length as \code{x}, where each element is the corresponding
+significance label.
 }
 \description{
-Converts numeric p-values into categorical significance labels based on
-user-defined break points. This function is commonly used for annotating
-statistical significance levels in plots.
+Converts numeric p-values into categorical significance labels according to user-defined
+thresholds. The function is commonly used to annotate statistical results in tables and figures.
 }
 \details{
-The break points are sorted in decreasing order and define intervals for
-assigning symbols. Missing values in \code{break_points} are removed before
-classification.
+Each p-value is assigned to exactly one interval defined by \code{break_points}. Values greater
+than the first threshold are assigned \code{symbols[1]}, whereas values less than or equal to the
+last threshold are assigned the last element of \code{symbols}. Intermediate intervals are matched
+sequentially.
 
-The function applies the following logic:
-\itemize{
-\item p-values larger than the largest break point are assigned
-\code{symbols[1]}.
-\item Intermediate p-values are assigned symbols according to their
-corresponding intervals.
-\item For increasingly smaller p-values, \code{symbols[3]} is repeated to
-represent stronger significance levels.
-}
-
-The function assumes that \code{break_points} and \code{symbols} are supplied in a
-meaningful order. The number of significance levels supported depends on the
-length of \code{break_points}.
+The function assumes that \code{break_points} are supplied in descending order.
 }
 \examples{
-p <- c(0.2, 0.04, 0.008, 0.0005, 1e-6)
+p <- c(0.20, 0.04, 0.008, 0.0005, 1e-6)
 pval2asterisk(p)
+
+# Custom significance labels
+pval2asterisk(
+  p,
+  break_points = c(0.05, 0.01, 0),
+  symbols = c("Not significant", "Significant", "Highly significant")
+)
+
 }

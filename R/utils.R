@@ -9,7 +9,7 @@
 #' @param formula A formula specifying the dependent variable (DV) and the
 #'        independent variable (IV) in the form `DV ~ IV`. This argument is required
 #'        when `data` is a data frame and is ignored when `data` is already a list.
-#' @param buffer_ratio Numeric value between 0 and 1 (default: 0.2). The allowable
+#' @param buffer_ratio Numeric value between 0 and 1 (default: 0). The allowable
 #'        proportional deviation from the mean sample size.
 #'        For example, `buffer_ratio = 0.2` allows group sizes to differ from the
 #'        mean by up to 20%. When `buffer_ratio = 0`, the function requires exact
@@ -38,7 +38,7 @@
 #' is_balance(list(rnorm(10), rnorm(13)), buffer_ratio = 0.2)
 #' is_balance(list(rnorm(10), rnorm(13)), buffer_ratio = 0.1)
 #' @export
-is_balance <- function(data, formula, buffer_ratio = 0.2)
+is_balance <- function(data, formula, buffer_ratio = 0)
 {
     lst <- tidy_to_list(data, formula)
     n <- unlist(lapply(lst, length), use.names = FALSE)
@@ -165,5 +165,83 @@ function_to_character <- function(func)
     }
 
     return(ret)
+}
+
+
+#' Rearrange rows by the order of one or more columns
+#'
+#' Reorders the rows of a data frame according to user-specified ordering of
+#' the values in one or more columns. If `by_order` is omitted, the unique
+#' values in each selected column are sorted and used as the ordering levels.
+#'
+#' @param data A data frame.
+#' @param cols A character or numeric vector specifying the columns used to
+#'   determine the row order. Character values are interpreted as column names,
+#'   and numeric values as column indices.
+#' @param by_order A list specifying the ordering of values for each column in
+#'   `cols`. Each element should be a character vector containing the desired
+#'   ordering of the corresponding column. If a single vector is supplied, it is
+#'   treated as a list of length one. If omitted, the unique values in each
+#'   column are sorted and used as the ordering.
+#'
+#' @returns
+#' A data frame with the same columns as `data`, but with rows reordered
+#' according to the specified column orderings.
+#'
+#' @examples
+#' fct_lvl <- c("A", "B", "C", "D")
+#'
+#' df0 <- data.frame(
+#'   C1 = c("B", "D", "A", "A", "B", "C", "D"),
+#'   C2 = c("D", "C", "D", "A", "C", "B", "A"),
+#'   C3 = 1:7
+#' )
+#'
+#' row_arrange(df0, 1:2, list(fct_lvl, fct_lvl))
+#'
+#' # Use the default ordering (sorted unique values)
+#' row_arrange(df0, c("C2", "C3"))
+#'
+#' @export
+row_arrange <- function(data, cols, by_order)
+{
+    if (!is.data.frame(data))
+        stop("`data` must be a data frame.")
+
+    if (!is.character(cols) && !is.numeric(cols))
+        stop("`cols` accepts only a character or numeric vector.")
+
+    if (missing(cols) || is.null(cols) || length(cols) == 0)
+        stop("No valid columns were specified.")
+
+    if (is.numeric(cols))
+    {
+        cols <- cols[cols >= 1 & cols <= ncol(data)]
+        cols <- colnames(data)[cols]
+    }
+
+    cols <- cols[cols %in% colnames(data)]
+
+
+    if (missing(by_order) || is.null(by_order) || length(by_order) == 0)
+        by_order <- lapply(data[cols], function(x) sort(unique(x)))
+
+    if (is.atomic(by_order) && is.null(dim(by_order)))
+        by_order <- list(by_order)
+
+    if (length(cols) != length(by_order))
+        stop("The length of `cols` and `by_order` should be identical.")
+
+    ## Construct ordering variables
+    ord <- vector("list", length(cols))
+
+    for (i in seq_along(cols))
+        ord[[i]] <- factor(data[[cols[i]]], levels = by_order[[i]])
+
+    ## Obtain row order
+    idx <- lapply(ord, as.numeric)
+    idx <- order(do.call(paste, idx))
+
+    data[idx, , drop = FALSE]
 }
 

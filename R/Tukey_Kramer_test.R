@@ -123,7 +123,7 @@ Tukey_Kramer_test <- function(
             x2 = x2,
             diff = diff,
             diff_CI = c(diff_CI_lower, diff_CI_upper),
-            standard_value = c("qval" = qval),
+            standard_value = c("q" = qval),
             critical_value = c("qcrit" = qcrit),
             StdErr = SE,
             Pvalue = pval,
@@ -135,7 +135,6 @@ Tukey_Kramer_test <- function(
     }
 
     post_hoc <- do.call(rbind.data.frame, post_hoc)
-    print(post_hoc)
 
     cld <- compact_letter_display(x1 = post_hoc[["x1"]],  # from ./compact_letter_display.R
                                   x2 = post_hoc[["x2"]],

@@ -144,7 +144,7 @@ Tukey_HSD_test <- function(
             x2 = x2,
             diff = diff,
             diff_CI = c(diff_CI_lower, diff_CI_upper),
-            standard_value = c("qval" = qval),
+            standard_value = c("q" = qval),
             critical_value = c("qcrit" = qcrit),
             StdErr = SE,
             Pvalue = pval,

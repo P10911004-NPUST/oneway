@@ -91,7 +91,7 @@ oneway_anova <- function(
         aov_tab <- .welch_anova(lst, alpha = alpha, rounding = rounding)
 
     structure(
-        aov_tab,
+        .Data = aov_tab,
         "data" = tidy_to_dataframe(data, formula),
         class = c("oneway_aov", "data.frame")
     )
@@ -323,11 +323,11 @@ oneway_art <- function(
     # -------------------------------------------------------------------------------------------- #
     #                                    ANOVA
     # -------------------------------------------------------------------------------------------- #
-    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha, rounding = rounding, silent = silent)
+    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha, TRUE, rounding, TRUE)
     aov_tab[["method"]] <- "ART-ANOVA"
 
     structure(
-        aov_tab,
+        .Data = aov_tab,
         "data" = df0,
         class = c("oneway_aov", "oneway_ranked_y", "oneway_art", "data.frame")
     )
@@ -459,11 +459,27 @@ Kruskal_Wallis_test <- function(
         "method"     = "Kruskal-Wallis"
     )
 
+    structure(
+        .Data = aov_tab,
+        "DF_between"  = DF_between,
+        "DF_within"   = DF_within,
+        "DF_total"    = DF_total,
+        "SS_between"  = SS_between,
+        "SS_within"   = SS_within,
+        "SS_total"    = SS_total,
+        "MS_between"  = MS_between,
+        "MS_within"   = MS_within,
+        "H"           = H,
+        "Hcrit"       = Hcrit,
+        "Pvalue"      = pval,
+        "p_omega2"    = effect_size
+    )
+
     # Assign a class of "oneway.art", because the subsequent post-hoc function need to
     # retrieve `ranked_y` from the `data` attribute.
     # The Kruskal-Wallis `ranked_y` calculation is different from the ART-ANOVA.
     structure(
-        aov_tab,
+        .Data = aov_tab,
         "data" = df0,
         class = c("oneway_aov", "oneway_ranked_y", "data.frame")
     )

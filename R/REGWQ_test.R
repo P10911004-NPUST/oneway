@@ -61,7 +61,7 @@ REGWQ_test <- function(
     if (inherits(data, "oneway_aov"))
         pre_hoc <- data
     else
-        pre_hoc <- oneway_anova(data, formula, alpha, NA, rounding, silent = TRUE)  # from ./anova.R
+        pre_hoc <- oneway_anova(data, formula, alpha, TRUE, rounding, TRUE)  # from ./anova.R
 
     df0 <- attr(pre_hoc, "data")
     df1 <- df0
@@ -151,7 +151,7 @@ REGWQ_test <- function(
             x2 = x2,
             diff = diff,
             diff_CI = c(diff_CI_lower, diff_CI_upper),
-            standard_value = c("qval" = qval),
+            standard_value = c("q" = qval),
             critical_value = c("qcrit" = qcrit),
             StdErr = SE,
             Pvalue = pval,

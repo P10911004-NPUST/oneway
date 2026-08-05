@@ -55,7 +55,10 @@ compact_letter_display <- function(
         misc = FALSE
 ) {
     if (all(pvalues > alpha))
-        return(stats::setNames(display_letters[1], grp_names))
+    {
+        ret <- rep(display_letters[1], length(grp_names))
+        return(stats::setNames(ret, grp_names))
+    }
 
     misc_lst <- list()
 

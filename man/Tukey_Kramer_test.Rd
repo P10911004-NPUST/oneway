@@ -8,7 +8,6 @@ Tukey_Kramer_test(
   data,
   formula = NULL,
   alpha = 0.05,
-  factor_levels = NULL,
   rounding = 4,
   silent = FALSE
 )
@@ -19,9 +18,6 @@ Tukey_Kramer_test(
 \item{formula}{A formula specifying the model.}
 
 \item{alpha}{Numeric value range from 0 to 1 (default: 0.05). The error tolerance.}
-
-\item{factor_levels}{Character vectors (default: NULL). Specify the levels of the factor.
-By default, the levels are ordered alphabetically.}
 
 \item{rounding}{Integer (default: 4). Rounding digits.}
 
@@ -41,16 +37,16 @@ A list with 4 elements:
 Represent significance statements resulting from all-pairwise comparisons.
 }
 \examples{
-out <- Tukey_Kramer_test(morphine, tolerance ~ grp)
-out$pre_hoc
-out$summary
-out$post_hoc
+out <- Tukey_Kramer_test(O_O_X, val ~ grp)
 
 }
 \references{
-Howell, D. C. (2013). Statistical methods for psychology (8th edition).
-Cengage. Chapter 12, pg. 394.
+Howell, D. C. (2013).
+Statistical Methods for Psychology (8th ed.).
+Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
+Section 12.7: Tukey's test, pg. 394.
 
-Zar, J. H. (2014). Biostatistical analysis (5th edition).
+Zar, J. H. (2014).
+Biostatistical analysis (5th edition).
 Pearson. Chapter 11: Multiple comparisons, pg. 244-245.
 }

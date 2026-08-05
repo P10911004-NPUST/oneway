@@ -64,10 +64,10 @@ a more robust alternative by adjusting the test statistic and denominator degree
 oneway_anova(anorexia, weight_gain ~ therapy)
 
 # Classical one-way ANOVA
-oneway_anova(plasma_etching, etch_rate ~ power, var_equal = TRUE)
+oneway_anova(O_O_X, val ~ grp, var_equal = TRUE)
 
 # Welch's ANOVA
-oneway_anova(anorexia, weight_gain ~ therapy, var_equal = FALSE)
+oneway_anova(O_X_X, val ~ grp, var_equal = FALSE)
 
 }
 \references{

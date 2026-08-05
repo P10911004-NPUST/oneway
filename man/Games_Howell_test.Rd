@@ -2,52 +2,65 @@
 % Please edit documentation in R/Games_Howell_test.R
 \name{Games_Howell_test}
 \alias{Games_Howell_test}
-\title{Games-Howell test}
+\title{Games-Howell multiple comparison test}
 \usage{
 Games_Howell_test(
   data,
   formula = NULL,
   alpha = 0.05,
-  factor_levels = NULL,
   rounding = 4,
   silent = FALSE
 )
 }
 \arguments{
-\item{data}{A data frame in which the variables specified in the formula will be found.}
+\item{data}{A data frame, or an object returned by \code{oneway_anova()}, from which the response
+and grouping variables are obtained.}
 
-\item{formula}{A formula specifying the model.}
+\item{formula}{A two-sided formula specifying the response and grouping variables in the form
+\code{response ~ group}. Ignored if \code{data} is a \code{"oneway_aov"} object.}
 
-\item{alpha}{Numeric value range from 0 to 1 (default: 0.05). The error tolerance.}
+\item{alpha}{A numeric value between 0 and 1 specifying the significance level.
+The default is \code{0.05}.}
 
-\item{factor_levels}{Character vectors (default: NULL). Specify the levels of the factor.
-By default, the levels are ordered alphabetically.}
+\item{rounding}{An integer specifying the number of decimal places to display in the output.
+The default is \code{4}.}
 
-\item{rounding}{Integer (default: 4). Rounding digits.}
-
-\item{silent}{Logical (default: FALSE). Raise warning message.}
+\item{silent}{Logical. If \code{FALSE} (default), assumption checks are performed and informative
+messages or warnings are displayed.}
 }
 \value{
-A list with 4 elements:
+A list containing the following components:
 \describe{
-\item{method}{Statistical procedures that were conducted.}
-\item{data}{The input data and possibly other transformed data.}
-\item{pre_hoc}{\emph{a priori} test result.}
-\item{post_hoc}{Post-hoc test result.}
-\item{summary}{Descriptive statistics.}
+\item{method}{The name of the statistical procedure.}
+\item{data}{The input data used in the analysis.}
+\item{pre_hoc}{The one-way analysis of variance results.}
+\item{post_hoc}{Results of all pairwise Games-Howell comparisons, including mean differences,
+confidence intervals, test statistics, adjusted p-values, and effect sizes.}
+\item{summary}{Descriptive statistics for each group, including compact letter displays (CLD).}
 }
 }
 \description{
-Represent significance statements resulting from all-pairwise comparisons.
+Performs the Games-Howell multiple comparison procedure for all pairwise
+comparisons of group means. The Games-Howell test does not assume equal
+variances or equal sample sizes and is commonly used following a one-way
+analysis of variance when the homogeneity of variance assumption is violated.
+}
+\details{
+The Games-Howell test is based on the studentized range distribution and uses Welch-Satterthwaite
+degrees of freedom for each pairwise comparison. Unlike Tukey's HSD test, it does not require
+equal variances or balanced sample sizes.
 }
 \examples{
-out <- Games_Howell_test(morphine, tolerance ~ grp)
-out$pre_hoc
-out$summary
-out$post_hoc
+out <- Games_Howell_test(O_X_X, val ~ grp)
 
 }
 \references{
-Howell, D. C. (2013). Statistical methods for psychology (8th edition).
-Cengage. Chapter 12, pg. 395.
+Howell, D. C. (2013).
+Statistical Methods for Psychology (8th ed.).
+Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
+Section 12.7: Tukey's test, pg. 395.
+
+Zar, J. H. (2014).
+Biostatistical analysis (5th ed.).
+Pearson. Chapter 11: Multiple comparisons, pg. 246.
 }

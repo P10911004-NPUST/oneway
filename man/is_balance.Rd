@@ -4,7 +4,7 @@
 \alias{is_balance}
 \title{Check Balance of Sample Sizes Among Groups}
 \usage{
-is_balance(data, formula, buffer_ratio = 0.2)
+is_balance(data, formula, buffer_ratio = 0)
 }
 \arguments{
 \item{data}{A data frame or a list containing observations from each group.}
@@ -13,7 +13,7 @@ is_balance(data, formula, buffer_ratio = 0.2)
 independent variable (IV) in the form \code{DV ~ IV}. This argument is required
 when \code{data} is a data frame and is ignored when \code{data} is already a list.}
 
-\item{buffer_ratio}{Numeric value between 0 and 1 (default: 0.2). The allowable
+\item{buffer_ratio}{Numeric value between 0 and 1 (default: 0). The allowable
 proportional deviation from the mean sample size.
 For example, \code{buffer_ratio = 0.2} allows group sizes to differ from the
 mean by up to 20\%. When \code{buffer_ratio = 0}, the function requires exact

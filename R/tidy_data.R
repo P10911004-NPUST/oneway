@@ -1,4 +1,4 @@
-tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
+tidy_to_list <- function(data, formula = NULL)
 {
     # If data is a vector
     if (is.atomic(data) & is.null(dim(data)))
@@ -28,9 +28,6 @@ tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
             formula <- stats::as.formula(formula)
         }
 
-        if (is.factor(data[[x_name]]) & is.null(factor_levels))
-            factor_levels <- levels(data[[x_name]])
-
         df0 <- stats::model.frame(formula, data, drop.unused.levels = TRUE)
         data <- split(df0[, 1], df0[, 2])
     }
@@ -51,27 +48,17 @@ tidy_to_list <- function(data, formula = NULL, factor_levels = NULL)
         lst <- data
     }
 
-    if ( ! is.null(factor_levels) & ! missing(factor_levels) )
-    {
-        factor_levels <- as.character(factor_levels)
-        if (all(names(lst) %in% factor_levels))
-            lst <- lst[factor_levels]
-        else
-            warning("`factor_levels` doesn't match the input data factor levels.")
-    }
-
     return(lst)
 }
 
 
-tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
+tidy_to_dataframe <- function(data, formula = NULL)
 {
     # If data is a list
     # `is.null(dim(data))` is necessary as data frame is also a kind of list
     if (is.list(data) & is.null(dim(data)))
     {
         data <- lapply(data, function(x) x[stats::complete.cases(x)])
-        data <- data
         isub <- seq_along(data)
         grp <- names(data)
         if (is.null(grp)) grp <- isub
@@ -90,8 +77,8 @@ tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
         df0 <- do.call(rbind.data.frame, lst)
         df0 <- df0[stats::complete.cases(df0[["y"]]), ]
         df0[["x"]] <- as.character(df0[["x"]])
-        attr(df0, "x_name") <- "IV"
-        attr(df0, "y_name") <- "DV"
+        attr(df0, "x_name") <- "x"
+        attr(df0, "y_name") <- "y"
     }
 
     # If data is a matrix
@@ -109,25 +96,13 @@ tidy_to_dataframe <- function(data, formula = NULL, factor_levels = NULL)
         y_name <- colnames(df0)[1]
         colnames(df0) <- c("y", "x")
 
-        if (is.factor(df0[["x"]]))
-            factor_levels <- levels(df0[["x"]])
-
         df0[["x"]] <- as.character(df0[["x"]])
         df0 <- df0[stats::complete.cases(df0[["y"]]), ]
         attr(df0, "x_name") <- x_name
         attr(df0, "y_name") <- y_name
     }
 
-    # Reorder the group names
-    if ( ! is.null(factor_levels) )
-    {
-        factor_levels <- as.character(factor_levels)
-        if ( ! all(unique(df0[["x"]]) %in% factor_levels) )
-            warning("`factor_levels` doesn't match the input data factor levels.")
-        ret <- df0[order(match(df0[["x"]], factor_levels)), ]
-    } else {
-        ret <- df0[order(df0[["x"]]), ]
-    }
+    ret <- df0[order(df0[["x"]]), ]
 
     return(ret)
 }

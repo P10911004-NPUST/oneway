@@ -9,7 +9,7 @@ test_that("Tukey_Kramer_test", {
 
     df0 <- do.call(rbind.data.frame, lst)
 
-    out_1 <- Tukey_Kramer_test(df0, val ~ grp, rounding = 7)
+    out_1 <- Tukey_Kramer_test(df0, val ~ grp, rounding = 7, silent = TRUE)
     pval_1 <- round(out_1[["post_hoc"]][["Pvalue"]], 7)
 
     out_2 <- stats::TukeyHSD(stats::aov(val ~ grp, df0))

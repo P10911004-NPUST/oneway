@@ -2,52 +2,64 @@
 % Please edit documentation in R/REGWQ_test.R
 \name{REGWQ_test}
 \alias{REGWQ_test}
-\title{Ryan, Einot, Gabriel, Welsh Studentized Range Q (REGWQ) test}
+\title{Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test}
 \usage{
-REGWQ_test(
-  data,
-  formula = NULL,
-  alpha = 0.05,
-  factor_levels = NULL,
-  rounding = 4,
-  silent = FALSE
-)
+REGWQ_test(data, formula = NULL, alpha = 0.05, rounding = 4, silent = FALSE)
 }
 \arguments{
-\item{data}{A data frame in which the variables specified in the formula will be found.}
+\item{data}{A data frame, or an object returned by \code{oneway_anova()}, from which the response
+and grouping variables are obtained.}
 
-\item{formula}{A formula specifying the model.}
+\item{formula}{A two-sided formula specifying the response and grouping variables in the form
+\code{response ~ group}. Ignored if \code{data} is a \code{"oneway_aov"} object.}
 
-\item{alpha}{Numeric value range from 0 to 1 (default: 0.05). The error tolerance.}
+\item{alpha}{A numeric value between 0 and 1 specifying the significance level.
+The default is \code{0.05}.}
 
-\item{factor_levels}{Character vectors (default: NULL). Specify the levels of the factor.
-By default, the levels are ordered alphabetically.}
+\item{rounding}{An integer specifying the number of decimal places to display in the output.
+The default is \code{4}.}
 
-\item{rounding}{Integer (default: 4). Rounding digits.}
-
-\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
+\item{silent}{Logical. If \code{FALSE} (default), assumption checks are performed and informative
+messages or warnings are displayed.}
 }
 \value{
-A list with 4 elements:
+A list containing the following components:
 \describe{
-\item{method}{Statistical procedures that were conducted.}
-\item{data}{The input data and possibly other transformed data.}
-\item{pre_hoc}{\emph{a priori} test result.}
-\item{post_hoc}{Post-hoc test result.}
-\item{summary}{Descriptive statistics.}
+\item{method}{The name of the statistical procedure.}
+\item{data}{The input data used in the analysis.}
+\item{pre_hoc}{The one-way analysis of variance results.}
+\item{post_hoc}{Results of all pairwise REGWQ comparisons, including mean differences,
+confidence intervals, studentized range statistics, p-values, modified
+significance levels, and effect sizes.}
+\item{summary}{Descriptive statistics for each group, including compact letter displays (CLD).}
 }
 }
 \description{
-Represent significance statements resulting from all-pairwise comparisons.
+Performs the Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) multiple comparison procedure
+for all pairwise comparisons of group means following a one-way analysis of variance. REGWQ is
+a stepwise procedure based on the studentized range distribution that generally provides greater
+statistical power than Tukey's HSD while maintaining strong control of the family-wise error rate
+under balanced designs.
+}
+\details{
+The REGWQ procedure is a stepwise multiple comparison method based on the studentized range
+distribution. Group means are first ordered, after which pairwise comparisons are performed
+using significance levels that depend on the number of ordered means spanned by each comparison.
+This adaptive strategy generally yields greater statistical power than Tukey's HSD while
+maintaining control of the family-wise error rate.
+
+The procedure assumes that observations are independent, residuals are approximately normally
+distributed, and population variances are equal. It is intended primarily for balanced one-way
+designs. When sample sizes are unequal but variances remain homogeneous, consider using
+\code{Tukey_Kramer_test()}. When variances are unequal, consider using \code{Games_Howell_test()}.
 }
 \examples{
 out <- REGWQ_test(morphine, tolerance ~ grp)
-out$pre_hoc
-out$summary
-out$post_hoc
 
 }
 \references{
-Howell, D. C. (2010). Statistical methods for psychology (7th edition).
-Cengage. Chapter 12, pg. 393-394.
+Howell, D. C. (2010).
+Statistical Methods for Psychology (7th ed.).
+Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
+Section 12.6: Post hoc comparisons, pg. 393-394.
 }

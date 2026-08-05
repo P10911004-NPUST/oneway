@@ -45,7 +45,7 @@ oneway_post_hoc <- function(
         check.names = FALSE,
         "x1"             = x1,
         "x2"             = x2,
-        "diff"           = diff,
+        "diff"           = round(diff, rounding),
         "Hedges's g"     = round(effect_size, rounding),
         "Pvalue"         = round(Pvalue, rounding),
         "Padj"           = round(Padj, rounding),

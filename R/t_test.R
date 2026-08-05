@@ -6,7 +6,6 @@ t_test <- function(
         p_adjust_method = "bonferroni",
         mu = 0,
         var_equal = NA,
-        factor_levels = NULL,
         remove_outliers = FALSE,
         ...
 ) {
@@ -19,7 +18,7 @@ t_test <- function(
     else
         is.var.equal <- varequal::is_var_equal(data, formula, ...)
 
-    lst <- tidy_to_list(data, formula, factor_levels)
+    lst <- tidy_to_list(data, formula)
     grp_names <- names(lst)
     nsub <- length(lst)
     isub <- seq_along(lst)
@@ -168,16 +167,6 @@ t_test <- function(
 
     diff_CI_lower <- diff - tcrit * StdErr
     diff_CI_upper <- diff + tcrit * StdErr
-
-    # effect_size <- Hedges_g_s(diff = diff,
-    #                           sample_sizes = n,
-    #                           standard_value = tval,
-    #                           pooled_var = pooled_var,
-    #                           DF_within = DF_within,
-    #                           alternative = alt,
-    #                           alpha = alpha,
-    #                           mu = mu,
-    #                           dist_func = stats::qt)
 
     effect_size <- Hedges_g_s(y1, y2, alternative, alpha, mu)
 

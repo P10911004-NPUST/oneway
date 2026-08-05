@@ -233,15 +233,16 @@ row_arrange <- function(data, cols, by_order)
         stop("The length of `cols` and `by_order` should be identical.")
 
     ## Construct ordering variables
-    ord <- vector("list", length(cols))
+    idx <- vector("list", length(cols))
 
     for (i in seq_along(cols))
-        ord[[i]] <- factor(data[[cols[i]]], levels = by_order[[i]])
+    {
+        fct <- factor(data[[cols[i]]], levels = by_order[[i]])
+        idx[[i]] <- as.numeric(fct)
+    }
 
-    ## Obtain row order
-    idx <- lapply(ord, as.numeric)
-    idx <- order(do.call(paste, idx))
+    ord <- order(do.call(paste, idx))
 
-    data[idx, , drop = FALSE]
+    data[ord, , drop = FALSE]
 }
 

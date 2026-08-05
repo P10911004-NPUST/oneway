@@ -16,7 +16,7 @@ A data frame with 120 rows and 2 columns:
 \item{val}{A numeric response variable.}
 }
 
-An object of class \code{data.frame} with 150 rows and 2 columns.
+An object of class \code{data.frame} with 100 rows and 2 columns.
 
 An object of class \code{data.frame} with 128 rows and 2 columns.
 

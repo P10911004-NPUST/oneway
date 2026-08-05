@@ -3,15 +3,15 @@
 # ------------------------------------------------------------------------------------------- #
 set.seed(123)
 
-n <- 30
+n <- 20
 O_O_O <- stats::reshape(
     new.row.names = 1:(6 * n),
     data = data.frame(
-        G1 = stats::rnorm(n, 6, 1),
+        G1 = stats::rnorm(n, 4.5, 1),
         G2 = stats::rnorm(n, 6, 1),
         G3 = stats::rnorm(n, 3, 1),
         G4 = stats::rnorm(n, 5, 1),
-        G5 = stats::rnorm(n, 2, 1),
+        G5 = stats::rnorm(n, 6, 1),
         G6 = stats::rnorm(n, 4, 1)
     ),
     direction = "long",

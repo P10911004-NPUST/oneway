@@ -40,8 +40,9 @@
 #' a more robust alternative by adjusting the test statistic and denominator degrees of freedom.
 #'
 #' @references
-#' Howell, D. C. (2013). Statistical methods for psychology (8th edition).
-#' Cengage. Chapter 11, pg. 325-345.
+#' Howell, D. C. (2013).
+#' Statistical methods for psychology (8th ed.).
+#' Cengage Learning. Chapter 11, pg. 325-345.
 #'
 #' @examples
 #' # Automatically select the appropriate procedure
@@ -67,25 +68,24 @@ oneway_anova <- function(
     # ------------------------------------------------------------------------------------- #
     #                                 Check normality                                       #
     # ------------------------------------------------------------------------------------- #
-    if (isFALSE(silent))
-    {
-        is_normal <- normality::is_normal(lst)
-        is_var_equal <- varequal::is_var_equal(lst)
-        is_balance <- is_balance(lst)
-
-        if (isFALSE(is_normal))
-            warning("Normality assumption is violated. Consider ART-ANOVA or Kruskal-Wallis.")
-    }
+    is_normal <- normality::is_normal(lst)
+    if ( isFALSE(silent) & ! is_normal )
+        warning(paste("Normality assumption is violated.",
+                      "Please consider ART-ANOVA or Kruskal-Wallis."))
 
     # ------------------------------------------------------------------------------------- #
     #                              Check homoscedasticity                                   #
     # ------------------------------------------------------------------------------------- #
+    IS_VAR_EQUAL <- varequal::is_var_equal(lst)
     if (isTRUE(var_equal) || isFALSE(var_equal))
         is_var_equal <- var_equal
     else
-        is_var_equal <- varequal::is_var_equal(lst)
+        is_var_equal <- IS_VAR_EQUAL
 
-    if (isTRUE(is_var_equal))
+    # ------------------------------------------------------------------------------------- #
+    #                                 ANOVA procedure                                       #
+    # ------------------------------------------------------------------------------------- #
+    if (is_var_equal)
         aov_tab <- .fisher_anova(lst, alpha = alpha, rounding = rounding)
     else
         aov_tab <- .welch_anova(lst, alpha = alpha, rounding = rounding)
@@ -93,19 +93,18 @@ oneway_anova <- function(
     structure(
         .Data = aov_tab,
         "data" = tidy_to_dataframe(data, formula),
+        "is_normal" = is_normal,
+        "is_var_equal" = IS_VAR_EQUAL,
         class = c("oneway_aov", "data.frame")
     )
 }
 
 
 .fisher_anova <- function(
-        data,
-        formula,
+        lst,
         alpha = 0.05,
         rounding = 4
 ) {
-    lst <- tidy_to_list(data, formula)
-
     yij <- unlist(lst, use.names = FALSE)  # All observations
     yi <- unlist(lapply(lst, sum), use.names = FALSE)  # Sum of each groups
     k <- length(lst)  # Number of groups
@@ -166,13 +165,10 @@ oneway_anova <- function(
 
 
 .welch_anova <- function(
-        data,
-        formula,
+        lst,
         alpha = 0.05,
         rounding = 4
 ) {
-    lst <- tidy_to_list(data, formula)
-
     yij <- unlist(lst, use.names = FALSE)  # All observations
     yi <- unlist(lapply(lst, sum), use.names = FALSE)  # Sum of each groups
     k <- length(lst)  # group numbers
@@ -323,7 +319,13 @@ oneway_art <- function(
     # -------------------------------------------------------------------------------------------- #
     #                                    ANOVA
     # -------------------------------------------------------------------------------------------- #
-    aov_tab <- oneway_anova(df0, ranked_y ~ x, alpha, TRUE, rounding, TRUE)
+    aov_tab <- oneway_anova(data      = df0,
+                            formula   = ranked_y ~ x,
+                            alpha     = alpha,
+                            var_equal = var_equal,
+                            rounding  = rounding,
+                            silent    = TRUE)
+
     aov_tab[["method"]] <- "ART-ANOVA"
 
     structure(

@@ -62,7 +62,12 @@ Tukey_HSD_test <- function(
     if (inherits(data, "oneway_aov"))
         pre_hoc <- data
     else
-        pre_hoc <- oneway_anova(data, formula, alpha, NA, rounding, silent = TRUE)  # from ./anova.R
+        pre_hoc <- oneway_anova(data = data,  # from ./anova.R
+                                formula = formula,
+                                alpha = alpha,
+                                var_equal = NA,
+                                rounding = rounding,
+                                silent = TRUE)
 
     df0 <- attr(pre_hoc, "data")
     df1 <- df0

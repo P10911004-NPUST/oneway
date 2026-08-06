@@ -71,6 +71,7 @@ oneway_anova(O_X_X, val ~ grp, var_equal = FALSE)
 
 }
 \references{
-Howell, D. C. (2013). Statistical methods for psychology (8th edition).
-Cengage. Chapter 11, pg. 325-345.
+Howell, D. C. (2013).
+Statistical methods for psychology (8th ed.).
+Cengage Learning. Chapter 11, pg. 325-345.
 }

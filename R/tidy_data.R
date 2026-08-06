@@ -15,7 +15,7 @@ tidy_to_list <- function(data, formula = NULL)
     # If data is a data frame
     if (is.data.frame(data))
     {
-        if (is.null(formula) || missing(formula))
+        if ( is.null(formula) || ! inherits(formula, "formula") )
             stop("`formula` must be specified, for example: y ~ x")
 
         all_vars <- all.vars(formula)

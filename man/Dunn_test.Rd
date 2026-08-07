@@ -45,9 +45,7 @@ effect sizes.}
 }
 \description{
 Performs Dunn's multiple comparison procedure for all pairwise comparisons of groups following
-a significant Kruskal-Wallis test. Dunn's test compares mean ranks between groups using a normal
-approximation and supports multiple testing correction through any method implemented by
-\code{stats::p.adjust()}.
+a significant Kruskal-Wallis test.
 }
 \details{
 Dunn's test is a nonparametric post hoc procedure that compares group mean ranks after a

@@ -30,15 +30,25 @@ oneway_post_hoc <- function(
         critical_value = c("tcrit" = NA_real_),
         StdErr = NA_real_,
         Pvalue = NA_real_,
-        p_adjust_method = "none",
         Padj = NA_real_,
+        p_adjust_method = "none",
+        signif = NA_character_,
         effect_size = NA_real_,
         rounding = 4,
         ...)
 {
     diff_CI <- round(diff_CI, rounding)
-    pval <- if (is.null(Padj) || is.na(Padj)) Pvalue else Padj
-    asterisks <- pval2asterisk(pval, break_points = c(0.055, alpha, 0.01, 0.001, 0))
+
+    if (is.na(Padj))
+        Padj <- Pvalue
+
+    if (is.na(signif))
+    {
+        if (p_adjust_method == "none")
+            asterisks <- pval2asterisk(Pvalue, break_points = c(0.055, alpha, 0.01, 0.001, 0))
+        else
+            asterisks <- pval2asterisk(Padj, break_points = c(0.055, alpha, 0.01, 0.001, 0))
+    }
 
     df0 <- data.frame(
         row.names = NULL,

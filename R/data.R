@@ -1,27 +1,116 @@
-#' Simulated normally distributed data with homogeneous variances and balanced design
+#' Simulated datasets for statistical analysis
 #'
-#' A simulated dataset representing a one-way experimental design with six
-#' independent groups. The dataset was generated under the different assumptions
-#' of normality, homogeneity of variance, and equal sample sizes among groups.
+#' A collection of six simulated datasets representing different combinations
+#' of distributional assumptions, variance homogeneity, and sample-size
+#' balance. These datasets are designed for demonstrating and evaluating
+#' statistical procedures under a range of common experimental conditions.
 #'
-#' @format A data frame with 120 rows and 2 columns:
+#' All datasets contain six groups (`G1` to `G6`) and two variables:
 #' \describe{
-#'   \item{grp}{A factor identifying the experimental group (G1--G6).}
-#'   \item{val}{A numeric response variable.}
+#'   \item{`grp`}{A character variable identifying the group.}
+#'   \item{`val`}{A numeric response variable.}
 #' }
-#' @name simulated_datasets
+#'
+#' The dataset names follow a three-character notation separated by
+#' underscores: `D_V_B`, where each position describes a different property
+#' of the data:
+#' \describe{
+#'   \item{First position (`D`)}{Distribution. `O` indicates normally
+#'   distributed data, whereas `X` indicates distribution-free or
+#'   non-normally distributed data.}
+#'   \item{Second position (`V`)}{Variance. `O` indicates homoscedasticity,
+#'   whereas `X` indicates heteroscedasticity.}
+#'   \item{Third position (`B`)}{Design balance. `O` indicates a balanced
+#'   design, whereas `X` indicates an unbalanced design.}
+#' }
+#'
+#' The six datasets are:
+#' \describe{
+#'   \item{`O_O_O`}{Normally distributed, homoscedastic, and
+#'   balanced-designed data. Each group contains 20 observations.}
+#'   \item{`O_O_X`}{Normally distributed, homoscedastic, and
+#'   unbalanced-designed data. The group sample sizes are 27, 24, 16, 30,
+#'   11, and 20, respectively.}
+#'   \item{`O_X_X`}{Normally distributed, heteroscedastic, and
+#'   unbalanced-designed data. The group sample sizes are 27, 24, 16, 30,
+#'   11, and 20, respectively.}
+#'   \item{`X_O_O`}{Distribution-free or non-normally distributed,
+#'   homoscedastic, and balanced-designed data. Each group contains
+#'   20 observations.}
+#'   \item{`X_X_O`}{Distribution-free or non-normally distributed,
+#'   heteroscedastic, and balanced-designed data. Each group contains
+#'   20 observations.}
+#'   \item{`X_X_X`}{Distribution-free or non-normally distributed,
+#'   heteroscedastic, and unbalanced-designed data. The group sample sizes
+#'   are 27, 24, 16, 30, 11, and 20, respectively.}
+#' }
+#'
+#' The normally distributed datasets were generated using
+#' [stats::rnorm()]. The distribution-free datasets were generated using
+#' combinations of [stats::rcauchy()], [stats::runif()], and
+#' [stats::rgamma()], together with [stats::rnorm()]. Different location and
+#' scale parameters were used to produce the intended distributional and
+#' variance characteristics.
+#'
+#' These datasets are intended for methodological examples, unit tests,
+#' demonstrations, and comparisons of statistical procedures under different
+#' combinations of assumptions. They should not be interpreted as empirical
+#' observations from a real population.
+#'
+#' @format
+#' Six data frames, each containing the following two variables:
+#' \describe{
+#'   \item{`grp`}{Character vector identifying the experimental group.}
+#'   \item{`val`}{Numeric vector containing the simulated response values.}
+#' }
+#'
+#' The number of observations differs according to the experimental design:
+#' balanced datasets contain 120 observations (20 per group), whereas
+#' unbalanced datasets contain 128 observations with group sizes of
+#' 27, 24, 16, 30, 11, and 20.
+#'
+#' @section Dataset characteristics:
+#'
+#' \tabular{llll}{
+#'   Dataset \tab Distribution \tab Variance \tab Design \cr
+#'   `O_O_O` \tab Normal \tab Homoscedastic \tab Balanced \cr
+#'   `O_O_X` \tab Normal \tab Homoscedastic \tab Unbalanced \cr
+#'   `O_X_X` \tab Normal \tab Heteroscedastic \tab Unbalanced \cr
+#'   `X_O_O` \tab Non-normal \tab Homoscedastic \tab Balanced \cr
+#'   `X_X_O` \tab Non-normal \tab Heteroscedastic \tab Balanced \cr
+#'   `X_X_X` \tab Non-normal \tab Heteroscedastic \tab Unbalanced
+#' }
+#'
+#' @examples
+#' data(O_O_O)
+#'
+#' boxplot(val ~ grp, data = O_O_O)
+#'
+#' data(X_X_X)
+#'
+#' boxplot(val ~ grp, data = X_X_X)
+#'
+#' aggregate(val ~ grp, data = O_O_O, FUN = mean)
+#'
+#' aggregate(val ~ grp, data = X_X_X, FUN = mean)
+#'
+#' @name simulated_data
+#' @aliases O_O_O O_O_X O_X_X X_O_O X_X_O X_X_X
+#' @docType data
 NULL
 
 
-#' @rdname simulated_datasets
+#' @rdname simulated_data
 "O_O_O"
-#' @rdname simulated_datasets
+#' @rdname simulated_data
 "O_O_X"
-#' @rdname simulated_datasets
+#' @rdname simulated_data
 "O_X_X"
-#' @rdname simulated_datasets
+#' @rdname simulated_data
+"X_O_O"
+#' @rdname simulated_data
 "X_X_O"
-#' @rdname simulated_datasets
+#' @rdname simulated_data
 "X_X_X"
 
 

@@ -65,6 +65,28 @@ usethis::use_data(O_X_X, overwrite = TRUE)
 
 
 # ------------------------------------------------------------------------------------------- #
+#           X_O_0: Distribution-free, Homoscedastic, Balanced-designed
+# ------------------------------------------------------------------------------------------- #
+# n <- rep(20, 6)
+# lst <- list(
+#     data.frame("grp" = "G1", "val" = stats::rcauchy(n[1], 12, 0.2)),
+#     data.frame("grp" = "G2", "val" = stats::rnorm(n[5], 5, 1)),
+#     data.frame("grp" = "G3", "val" = stats::rgamma(n[3], 1) + 5),
+#     data.frame("grp" = "G4", "val" = stats::rgamma(n[3], 2) + 8),
+#     data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 10, 1)),
+#     data.frame("grp" = "G6", "val" = stats::rcauchy(n[1], 7, 0.2))
+# )
+# X_O_O <- do.call(rbind.data.frame, lst)
+# boxplot(val ~ grp, X_O_O)
+# normality::is_normal(X_O_O, val ~ grp)
+# varequal::is_var_equal(X_O_O, val ~ grp)
+# utils::write.csv(X_O_O, "./data-raw/X_O_O.csv", row.names = FALSE)
+X_O_O <- utils::read.csv("./data-raw/X_O_O.csv")
+usethis::use_data(X_O_O, overwrite = TRUE)
+
+
+
+# ------------------------------------------------------------------------------------------- #
 #           X_X_0: Distribution-free, Heteroscedastic, Balanced-designed
 # ------------------------------------------------------------------------------------------- #
 # n <- rep(20, 6)
@@ -73,10 +95,13 @@ usethis::use_data(O_X_X, overwrite = TRUE)
 #     data.frame("grp" = "G2", "val" = stats::runif(n[2], 3, 12)),
 #     data.frame("grp" = "G3", "val" = stats::rgamma(n[3], 1) + 5),
 #     data.frame("grp" = "G4", "val" = stats::rgamma(n[3], 2) + 8),
-#     data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 10, 4)),
+#     data.frame("grp" = "G5", "val" = stats::rnorm(n[5], 10, 2)),
 #     data.frame("grp" = "G6", "val" = stats::rcauchy(n[1], 7, 1))
 # )
 # X_X_O <- do.call(rbind.data.frame, lst)
+# boxplot(val ~ grp, X_X_O)
+# normality::is_normal(X_X_O, val ~ grp)
+# varequal::is_var_equal(X_X_O, val ~ grp)
 # utils::write.csv(X_X_O, "./data-raw/X_X_O.csv", row.names = FALSE)
 X_X_O <- utils::read.csv("./data-raw/X_X_O.csv")
 usethis::use_data(X_X_O, overwrite = TRUE)
@@ -96,6 +121,10 @@ usethis::use_data(X_X_O, overwrite = TRUE)
 #     data.frame("grp" = "G6", "val" = stats::rgamma(n[3], 3) + 1)
 # )
 # X_X_X <- do.call(rbind.data.frame, lst)
+# boxplot(val ~ grp, X_X_X)
+# normality::is_normal(X_X_X, val ~ grp)
+# varequal::is_var_equal(X_X_X, val ~ grp)
+# is_balance(X_X_X, val ~ grp, 0.2)
 # utils::write.csv(X_X_X, "./data-raw/X_X_X.csv", row.names = FALSE)
 X_X_X <- utils::read.csv("./data-raw/X_X_X.csv")
 usethis::use_data(X_X_X, overwrite = TRUE)

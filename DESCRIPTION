@@ -17,7 +17,6 @@ URL: https://github.com/P10911004-NPUST/oneway
 BugReports: https://github.com/P10911004-NPUST/oneway/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 Imports: 
     normality,
     outlying,
@@ -29,3 +28,4 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

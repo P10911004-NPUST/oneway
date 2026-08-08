@@ -45,20 +45,17 @@ A character vector.
 Represent significance statements resulting from all-pairwise comparisons.
 }
 \examples{
-utils::data("iris", package = "datasets")
-avg <- tapply(iris$Sepal.Length, iris$Species, "mean")
-aov_mod <- stats::aov(Sepal.Length ~ Species, iris)
-res <- stats::TukeyHSD(aov_mod)
-res <- as.data.frame(res$Species)
-res[["x1"]] <- unlist(lapply(strsplit(rownames(res), "-"), function(x) x[[1]]))
-res[["x2"]] <- unlist(lapply(strsplit(rownames(res), "-"), function(x) x[[2]]))
-compact_letter_display(
-    x1 = res$x1,
-    x2 = res$x2,
-    pvalues = res$`p adj`,
-    grp_names = names(avg),
-    centers = unname(avg)
-)
+out <- Dunn_test(X_X_O, val ~ grp, silent = TRUE)
+tab <- row_arrange(out[["summary"]], "MED")
+post <- out[["post_hoc"]]
+print(post[, 1:7])
+print(tab[, 1:6])
+cld <- compact_letter_display(x1 = post$x1,
+                              x2 = post$x2,
+                              pvalues = post$`Padj (holm)`,
+                              grp_names = tab$GROUP,
+                              centers = tab$MED)
+print(cld)
 
 }
 \references{

@@ -17,13 +17,13 @@ There are also other nice alternatives such as
 [`onewaytests`](https://cran.r-project.org/package=onewaytests),
 and other friends.
 
-<!-- # Installation
+# Installation
 
-You can install the package from [CRAN](https://cran.r-project.org/package=oneway) with:
+<!-- You can install the package from [CRAN](https://cran.r-project.org/package=oneway) with:
 
 ``` r
 install.packages("oneway")
-```
+``` -->
 
 or the development version from [GitHub](https://github.com/P10911004-NPUST/oneway) with:
 
@@ -34,5 +34,5 @@ pak::pak("P10911004-NPUST/oneway")
 
 # Quick start
 ```r
-pairwise_comparison(df0, val ~ grp)
-``` -->
+pairwise_comparison(O_O_O, val ~ grp)
+```

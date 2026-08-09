@@ -162,7 +162,7 @@ Games_Howell_test <- function(
                                   alpha = alpha)
 
     desc <- describe(df0, y ~ x, rounding)  # from ./utils.R
-    cld <- cld[match(names(cld), desc[["GROUP"]])]
+    cld <- cld[match(desc[["GROUP"]], names(cld))]
     desc[["CLD"]] <- cld
 
     ret <- oneway_standard_output(  # from ./zzz_standard_output.R

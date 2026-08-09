@@ -102,11 +102,15 @@ REGWQ_test <- function(
     xij <- df1[["x"]]
     yij <- df1[["y"]]
     N <- length(yij)
-    group_sizes <- tapply(yij, xij, length)
+
     group_means <- tapply(yij, xij, mean)
-    group_vars <- tapply(yij, xij, stats::var)
-    group_medians <- tapply(yij, xij, stats::median)
-    group_names <- names(sort(group_means, decreasing = TRUE))
+    ord <- order(group_means, decreasing = TRUE)
+
+    group_means <- group_means[ord]
+    group_names <- names(group_means)
+    group_sizes <- tapply(yij, xij, length)[ord]
+    group_vars <- tapply(yij, xij, stats::var)[ord]
+    group_medians <- tapply(yij, xij, stats::median)[ord]
     n_grps <- length(group_names)
 
     DF_within <- attr(pre_hoc, "DF_within")  # DFerror: Residuals' degree of freedom
@@ -185,7 +189,7 @@ REGWQ_test <- function(
                                   alpha = alpha)
 
     desc <- describe(df0, y ~ x, rounding)  # from ./utils.R
-    cld <- cld[match(names(cld), desc[["GROUP"]])]
+    cld <- cld[match(desc[["GROUP"]], names(cld))]
     desc[["CLD"]] <- cld
 
     ret <- oneway_standard_output(  # from ./zzz_standard_output.R

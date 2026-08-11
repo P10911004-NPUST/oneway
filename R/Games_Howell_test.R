@@ -77,16 +77,16 @@ Games_Howell_test <- function(
     # -------------------------------------------------------------------------------------- #
     if (isFALSE(silent))
     {
-        is_normal <- normality::is_normal(df1, y ~ x)
-        is_var_equal <- varequal::is_var_equal(df1, y ~ x)
+        is_normal <- attr(pre_hoc, "is_normal")
+        is_var_equal <- attr(pre_hoc, "is_var_equal")
         is_balance <- is_balance(df1, y ~ x)  # from ./utils.R
 
-        if (isFALSE(is_normal))
+        if ( ! is_normal )
             warning("Normality assumption is violated.")
-        if (all(is_normal, is_var_equal, is_balance))
+        if ( all(is_normal, is_var_equal, is_balance) )
             message(paste("Normality, homoscedasticity, and balance-designed assumption is met.",
                           "Please consider REGWQ or Tukey-HSD test."))
-        if (all(is_normal, is_var_equal, isFALSE(is_balance)))
+        if ( all(is_normal, is_var_equal, ! is_balance) )
             message(paste("Normality and homoscedasticity assumption is met.",
                           "Please consider Tukey-Kramer test."))
     }

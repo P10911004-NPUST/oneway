@@ -82,16 +82,16 @@ REGWQ_test <- function(
     # -------------------------------------------------------------------------------------- #
     if (isFALSE(silent))
     {
-        is_normal <- normality::is_normal(df1, y ~ x)
-        is_var_equal <- varequal::is_var_equal(df1, y ~ x)
+        is_normal <- attr(pre_hoc, "is_normal")
+        is_var_equal <- attr(pre_hoc, "is_var_equal")
         is_balance <- is_balance(df1, y ~ x)  # from ./utils.R
 
-        if (isFALSE(is_normal))
+        if ( ! is_normal )
             warning("Normality assumption is violated.")
-        if (isTRUE(is_normal) & isFALSE(is_var_equal))
+        if ( is_normal & ! is_var_equal )
             message(paste("Homogeneity of variance assumption is violated.",
                           "Please consider Games-Howell test."))
-        if (isTRUE(is_normal) & isTRUE(is_var_equal) & isFALSE(is_balance))
+        if ( is_normal & is_var_equal & ! is_balance )
             message(paste("Data is unbalance-designed.",
                           "Please consider Tukey-Kramer test."))
     }

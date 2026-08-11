@@ -68,7 +68,8 @@ oneway_anova <- function(
     # ------------------------------------------------------------------------------------- #
     #                                 Check normality                                       #
     # ------------------------------------------------------------------------------------- #
-    is_normal <- normality::is_normal(lst)
+    resid <- lapply(lst, function(y) y - mean(y))  # residuals
+    is_normal <- normality::is_normal(resid)  # test normality on residuals
     if ( isFALSE(silent) & ! is_normal )
         warning(paste("Normality assumption is violated.",
                       "Please consider ART-ANOVA or Kruskal-Wallis."))
@@ -292,15 +293,30 @@ oneway_art <- function(
         rounding = 4,
         silent = FALSE
 ) {
-
-    # -------------------------------------------------------------------------------------------- #
-    #                             Aligned Ranked Transform (ART)
-    # -------------------------------------------------------------------------------------------- #
     df0 <- tidy_to_dataframe(data, formula)
 
+    # ------------------------------------------------------------------------------------- #
+    #                                 Check normality                                       #
+    # ------------------------------------------------------------------------------------- #
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
+    is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
+    if ( isFALSE(silent) & ! is_normal )
+        warning(paste("Data is normally distributed.",
+                      "Please consider standard ANOVA procedure."))
 
+    # ------------------------------------------------------------------------------------- #
+    #                              Check homoscedasticity                                   #
+    # ------------------------------------------------------------------------------------- #
+    IS_VAR_EQUAL <- varequal::is_var_equal(df0, y ~ x)
+    if (isTRUE(var_equal) || isFALSE(var_equal))
+        is_var_equal <- var_equal
+    else
+        is_var_equal <- IS_VAR_EQUAL
+
+    # ------------------------------------------------------------------------------------- #
+    #                             Aligned Ranked Transform (ART)
+    # ------------------------------------------------------------------------------------- #
     yij <- df0[["y"]]
     y_bar <- mean(yij)
     estimated_effect <- tapply(yij, df0[["x"]], function(x) mean(x) - y_bar)
@@ -316,9 +332,9 @@ oneway_art <- function(
     df0[["aligned_y"]] <- round(df0[["residuals"]] + df0[["estimated_effect"]], digits)
     df0[["ranked_y"]] <- rank(df0[["aligned_y"]])
 
-    # -------------------------------------------------------------------------------------------- #
+    # ------------------------------------------------------------------------------------- #
     #                                    ANOVA
-    # -------------------------------------------------------------------------------------------- #
+    # ------------------------------------------------------------------------------------- #
     aov_tab <- oneway_anova(data      = df0,
                             formula   = ranked_y ~ x,
                             alpha     = alpha,
@@ -331,6 +347,8 @@ oneway_art <- function(
     structure(
         .Data = aov_tab,
         "data" = df0,
+        "is_normal" = is_normal,
+        "is_var_equal" = IS_VAR_EQUAL,
         class = c("oneway_aov", "oneway_ranked_y", "oneway_art", "data.frame")
     )
 }
@@ -410,6 +428,22 @@ Kruskal_Wallis_test <- function(
         silent = FALSE
 ) {
     df0 <- tidy_to_dataframe(data, formula)  # from ./tidy_data.R
+
+    # ------------------------------------------------------------------------------------- #
+    #                                 Check normality                                       #
+    # ------------------------------------------------------------------------------------- #
+    aov_mod <- stats::aov(y ~ x, df0)
+    df0[["residuals"]] <- stats::residuals(aov_mod)
+    is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
+    if ( isFALSE(silent) & ! is_normal )
+        warning(paste("Data is normally distributed.",
+                      "Please consider standard ANOVA procedure."))
+
+    # ------------------------------------------------------------------------------------- #
+    #                              Check homoscedasticity                                   #
+    # ------------------------------------------------------------------------------------- #
+    IS_VAR_EQUAL <- varequal::is_var_equal(df0, y ~ x)
+
     df0[["ranked_y"]] <- rank(df0[["y"]])
 
     xi <- df0[["x"]]
@@ -438,9 +472,10 @@ Kruskal_Wallis_test <- function(
     ranked_sum <- sum(sum_i)
 
     ties <- table(df0[["ranked_y"]])
-    ties <- 1 - sum(ties ^ 3 - ties) / (N ^ 3 - N)
+    ties_sum <- sum(ties ^ 3 - ties)
+    denom <- 1 - ties_sum / (N ^ 3 - N)
 
-    H <- (12 / (N * (N + 1)) * ranked_sum - (3 * (N + 1))) / ties
+    H <- (12 / (N * (N + 1)) * ranked_sum - (3 * (N + 1))) / denom
     Hcrit <- stats::qchisq(alpha, DF_between, lower.tail = FALSE)
     pval <- stats::pchisq(H, DF_between, lower.tail = FALSE)
 
@@ -483,6 +518,8 @@ Kruskal_Wallis_test <- function(
     structure(
         .Data = aov_tab,
         "data" = df0,
+        "is_normal" = is_normal,
+        "is_var_equal" = IS_VAR_EQUAL,
         class = c("oneway_aov", "oneway_ranked_y", "data.frame")
     )
 }

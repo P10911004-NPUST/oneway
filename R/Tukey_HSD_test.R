@@ -83,8 +83,8 @@ Tukey_HSD_test <- function(
     # -------------------------------------------------------------------------------------- #
     if (isFALSE(silent))
     {
-        is_normal <- normality::is_normal(df1, y ~ x)
-        is_var_equal <- varequal::is_var_equal(df1, y ~ x)
+        is_normal <- attr(pre_hoc, "is_normal")
+        is_var_equal <- attr(pre_hoc, "is_var_equal")
         is_balance <- is_balance(df1, y ~ x)  # from ./utils.R
 
         if (isFALSE(is_normal))

@@ -86,7 +86,7 @@ Dunn_test <- function(
     # -------------------------------------------------------------------------------------- #
     if (isFALSE(silent))
     {
-        is_normal <- normality::is_normal(df1, y ~ x)
+        is_normal <- attr(pre_hoc, "is_normal")
         if (is_normal)
             message("Data is normally distributed. Please consider parametric tests.")
     }

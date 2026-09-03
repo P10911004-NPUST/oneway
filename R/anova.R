@@ -301,7 +301,7 @@ oneway_art <- function(
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
     is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
-    if ( isFALSE(silent) & ! is_normal )
+    if ( isFALSE(silent) & is_normal )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 
@@ -435,7 +435,7 @@ Kruskal_Wallis_test <- function(
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
     is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
-    if ( isFALSE(silent) & ! is_normal )
+    if ( isFALSE(silent) & is_normal )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 

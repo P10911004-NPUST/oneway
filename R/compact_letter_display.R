@@ -90,7 +90,7 @@ compact_letter_display <- function(
     # -------------------------------------------------------------------------- #
     # Absorption
     # Remove duplicated columns
-    # At the beginning (the for loop), just memorize which column is redundant,
+    # At the beginning (i.e. the for loop), just memorize which column is redundant,
     # the absorption step will only conducted after eliminating the upper right
     # corner of the matrix.
     # -------------------------------------------------------------------------- #
@@ -316,10 +316,6 @@ insert_absorb_sweep <- function(
 }
 
 
-
-
-
-
 #' Convert p-values to significance labels
 #'
 #' Converts numeric p-values into categorical significance labels according to user-defined
@@ -389,18 +385,13 @@ pval2asterisk <- function(
 }
 
 
-
-
-
-
-
 .is_continuous_FALSE <- function(x)
 {
     if (all(x))
         warning("All elements are `TRUE`.")
 
-    bp_count <- 0
-    bp_flag <- TRUE
+    bp_count <- 0  # break point count
+    bp_flag <- TRUE  # break point flag
 
     for (bool in x)
     {

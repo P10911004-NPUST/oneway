@@ -10,7 +10,7 @@ oneway_art(
   alpha = 0.05,
   var_equal = NA,
   rounding = 4,
-  silent = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ the ranked-response variable.}
 
 \item{rounding}{Integer (default: 4). Number of decimal places displayed in the output.}
 
-\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:
@@ -56,6 +56,7 @@ homogeneity of variances is assessed using \code{\link[varequal:is_var_equal]{va
 test is selected automatically.
 }
 \examples{
+normality::is_normal(anorexia, weight_gain ~ therapy)
 oneway_art(anorexia, weight_gain ~ therapy)
 
 }

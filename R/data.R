@@ -123,6 +123,10 @@ NULL
 #'   \item{power}{A factor identifying the power (W) (160(20)220).}
 #'   \item{etch_rate}{A numeric response variable.}
 #' }
+#' @references
+#' Montgomery, D. C. (2017).
+#' Design and analysis of experiments (Ninth edition).
+#' John Wiley & Sons, Inc.
 "plasma_etching"
 
 

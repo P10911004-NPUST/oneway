@@ -19,11 +19,11 @@ and other friends.
 
 # Installation
 
-<!-- You can install the package from [CRAN](https://cran.r-project.org/package=oneway) with:
+You can install the package from [CRAN](https://cran.r-project.org/package=oneway) with:
 
 ``` r
 install.packages("oneway")
-``` -->
+```
 
 or the development version from [GitHub](https://github.com/P10911004-NPUST/oneway) with:
 

@@ -10,7 +10,7 @@ Dunn_test(
   alpha = 0.05,
   p_adjust_method = "holm",
   rounding = 4,
-  silent = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,7 +29,7 @@ multiple comparisons. Must be one of \code{stats::p.adjust.methods}. The default
 \item{rounding}{An integer specifying the number of decimal places to display in the output.
 The default is \code{4}.}
 
-\item{silent}{Logical. If \code{FALSE} (default), informative messages or warnings are displayed.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A list containing the following components:

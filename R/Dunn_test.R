@@ -13,7 +13,7 @@
 #'        multiple comparisons. Must be one of `stats::p.adjust.methods`. The default is `"holm"`.
 #' @param rounding An integer specifying the number of decimal places to display in the output.
 #'        The default is `4`.
-#' @param silent Logical. If `FALSE` (default), informative messages or warnings are displayed.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @returns
 #' A list containing the following components:
@@ -59,7 +59,7 @@ Dunn_test <- function(
         alpha = 0.05,
         p_adjust_method = "holm",
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     if (inherits(data, "oneway_aov"))
         pre_hoc <- data
@@ -68,7 +68,7 @@ Dunn_test <- function(
                                        formula = formula,
                                        alpha = alpha,
                                        rounding = rounding,
-                                       silent = TRUE)
+                                       verbose = FALSE)
 
     df0 <- attr(pre_hoc, "data")
     df1 <- df0
@@ -84,7 +84,7 @@ Dunn_test <- function(
     # -------------------------------------------------------------------------------------- #
     # Check data
     # -------------------------------------------------------------------------------------- #
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         is_normal <- attr(pre_hoc, "is_normal")
         if (is_normal)
@@ -171,7 +171,7 @@ Dunn_test <- function(
     cld <- cld[match(desc[["GROUP"]], names(cld))]
     desc[["CLD"]] <- cld
 
-    ret <- oneway_standard_output(  # from ./zzz_standard_output.R
+    ret <- oneway_standard_output(  # from ./standard_output.R
         method = "Dunn's multiple comparison procedure",
         data = df0,
         pre_hoc = pre_hoc,
@@ -179,7 +179,7 @@ Dunn_test <- function(
         summary = desc
     )
 
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         DNAME <- deparse(substitute(data))
         dashes <- paste(rep("-", nchar(ret[["method"]]) + 1), collapse = "")
@@ -187,8 +187,6 @@ Dunn_test <- function(
         cat(ret[["method"]])
         cat(sprintf("\n%s\n", dashes))
         cat(sprintf("Data: %s ; Formula: %s ~ %s\n\n", DNAME, y_name, x_name))
-        print(post_hoc[, 1:8])
-        cat("\n")
         print(desc[, 1:6])
         cat("\n")
     }

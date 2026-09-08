@@ -9,7 +9,7 @@ Tukey_HSD_test(
   formula = NULL,
   alpha = 0.05,
   rounding = 4,
-  silent = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,8 +25,7 @@ The default is \code{0.05}.}
 \item{rounding}{An integer specifying the number of decimal places to display in the output.
 The default is \code{4}.}
 
-\item{silent}{Logical. If \code{FALSE} (default), assumption checks are performed and informative
-messages or warnings are displayed.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A list containing the following components:

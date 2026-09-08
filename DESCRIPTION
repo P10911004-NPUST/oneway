@@ -4,15 +4,15 @@ Version: 0.0.2
 Authors@R: 
     person("Joon-Keat", "Lai", , "p10911004@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-9840-5836"))
-Description: Performs one-way tests of assumptions (normality and homoscedasticity), 
-    analysis of variance, robust and nonparametric alternatives, multiple comparison 
-    procedures, effect size estimators, confidence intervals, and descriptive summaries. 
-    Functions are designed with a consistent interface to support reproducible and 
-    user-friendly statistical workflows. For more details see 
-    Howell (2010, ISBN:978-0-495-59784-1), 
-    Zar (2014, ISBN:978-0-13-100846-5), 
-    Hollander et al. (2014, ISBN:978-0-470-38737-5), 
-    Montgomery (2017, ISBN:978-1-119-11347-8), 
+Description: Performs one-way tests of assumptions (normality and homoscedasticity),
+    analysis of variance, robust and nonparametric alternatives, multiple comparison
+    procedures, effect size estimators, confidence intervals, and descriptive summaries.
+    Functions are designed with a consistent interface to support reproducible and
+    user-friendly statistical workflows. For more details see
+    Howell (2010, ISBN:978-0-495-59784-1),
+    Zar (2014, ISBN:978-0-13-100846-5),
+    Hollander et al. (2014, ISBN:978-0-470-38737-5),
+    Montgomery (2017, ISBN:978-1-119-11347-8),
     Lakens (2013) <doi:10.3389/fpsyg.2013.00863>, and
     Piepho (2004) <doi:10.1198/1061860043515>.
 License: MIT + file LICENSE

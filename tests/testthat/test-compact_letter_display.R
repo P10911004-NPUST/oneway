@@ -1,5 +1,5 @@
 test_that("compact_letter_display", {
-    out <- Dunn_test(X_X_O, val ~ grp, silent = TRUE)
+    out <- Dunn_test(X_X_O, val ~ grp, verbose = FALSE)
     tab <- row_arrange(out[["summary"]], "MED")
     post <- out[["post_hoc"]]
     cld <- compact_letter_display(x1 = post$x1,

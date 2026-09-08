@@ -32,8 +32,7 @@ t_test <- function(
     {
         p_adjust_method <- "none"
         pre_hoc <- NULL
-        cat("One-sample test is not yet available.")
-        return(NA)
+        return("One-sample test is not yet available.")
     }
 
     # -------------------------------------------------------------------------- #
@@ -50,7 +49,6 @@ t_test <- function(
             comparison <- .two_sample_student_t_test(y1, y2, alternative, ALPHA, mu)
         else
             comparison <- .two_sample_welch_t_test(y1, y2, alternative, ALPHA, mu)
-        print(comparison)
 
         post_hoc <- oneway_post_hoc(
             method = comparison[["method"]],
@@ -77,8 +75,6 @@ t_test <- function(
     # -------------------------------------------------------------------------- #
     if (nsub > 2)
     {
-        cat("Pairwise t-test is not yet available.")
-        return(NA)
         method <- sprintf("Pairwise t-test with %s adjustment", p_adjust_method)
 
         pre_hoc <- NULL
@@ -127,11 +123,6 @@ t_test <- function(
     #                   x = c(rep("Nerve", length(y1)),
     #                         rep("Muscle", length(y2))))
     # out1 <- t_test(df0, y ~ x, var_equal = TRUE)
-    #
-    # print(out1$post_hoc)
-    # out2 <- t.test(y2, y1, var.equal = TRUE)
-    # print(out2)
-    # print(list("tval" = out2$statistic, "pval" = out2$p.value))
 }
 
 

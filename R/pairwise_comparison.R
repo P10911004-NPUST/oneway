@@ -28,9 +28,9 @@
 #' @param alpha A numeric significance level used for hypothesis testing. The default is 0.05.
 #' @param rounding An integer specifying the number of decimal places used when reporting numerical
 #'        results. The default is 4.
-#' @param silent A logical value indicating whether the results should be printed to the console.
-#'        If `FALSE`, the default, the selected analysis protocol, post-hoc comparisons, and
-#'        summary are printed. If `TRUE`, no output is printed.
+#' @param verbose A logical value indicating whether the results should be printed to the console.
+#'        If `TRUE`, the default, the selected analysis protocol, post-hoc comparisons, and
+#'        summary are printed. If `FALSE`, no output is printed.
 #' @param p_adjust_method A character string specifying the method used to adjust p-values for
 #'        Dunn's multiple-comparison test when the Kruskal-Wallis/Dunn protocol is selected. The
 #'        default is "holm". See `stats::p.adjust()` for available methods.
@@ -95,7 +95,7 @@ pairwise_comparison <- function(
         formula,
         alpha = 0.05,
         rounding = 4,
-        silent = FALSE,
+        verbose = TRUE,
         p_adjust_method = "holm"
 ) {
     pre_hoc <- oneway_anova(data = data,
@@ -103,7 +103,7 @@ pairwise_comparison <- function(
                             alpha = alpha,
                             var_equal = NA,
                             rounding = rounding,
-                            silent = TRUE)
+                            verbose = FALSE)
 
     df0 <- attr(pre_hoc, "data")
 
@@ -119,7 +119,7 @@ pairwise_comparison <- function(
                               alpha = alpha,
                               var_equal = NA,
                               rounding = rounding,
-                              silent = TRUE)
+                              verbose = FALSE)
 
         df0 <- attr(pre_hoc, "data")
 
@@ -134,7 +134,7 @@ pairwise_comparison <- function(
                              alpha = alpha,
                              p_adjust_method = p_adjust_method,
                              rounding = rounding,
-                             silent = TRUE)
+                             verbose = FALSE)
 
             pre_hoc_method <- ret[["pre_hoc"]][["method"]][1]
             post_hoc_method <- ret[["method"]]
@@ -147,13 +147,13 @@ pairwise_comparison <- function(
     if (is_normal)
     {
         if (is_var_equal & is_balance)
-            ret <- REGWQ_test(pre_hoc, alpha = alpha, rounding = rounding, silent = TRUE)
+            ret <- REGWQ_test(pre_hoc, alpha = alpha, rounding = rounding, verbose = FALSE)
 
         if (is_var_equal & ! is_balance)
-            ret <- Tukey_Kramer_test(pre_hoc, alpha = alpha, rounding = rounding, silent = TRUE)
+            ret <- Tukey_Kramer_test(pre_hoc, alpha = alpha, rounding = rounding, verbose = FALSE)
 
         if ( ! is_var_equal )
-            ret <- Games_Howell_test(pre_hoc, alpha = alpha, rounding = rounding, silent = TRUE)
+            ret <- Games_Howell_test(pre_hoc, alpha = alpha, rounding = rounding, verbose = FALSE)
 
         pre_hoc_method <- ret[["pre_hoc"]][["method"]][1]
         post_hoc_method <- ret[["method"]]
@@ -162,7 +162,7 @@ pairwise_comparison <- function(
 
     ret[["method"]] <- protocol
 
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         DNAME <- deparse(substitute(data))
         y_name <- attr(df0, "y_name")
@@ -174,8 +174,6 @@ pairwise_comparison <- function(
         cat(sprintf("%s", post_hoc_method))
         cat(sprintf("\n%s\n", dashes))
         cat(sprintf("Data: %s ; Formula: %s ~ %s\n\n", DNAME, y_name, x_name))
-        print(ret[["post_hoc"]][, 1:8])
-        cat("\n")
         print(ret[["summary"]][, 1:6])
         cat("\n")
     }

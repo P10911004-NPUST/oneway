@@ -11,11 +11,12 @@
 #' @param data A data frame containing the response and grouping variables.
 #' @param formula A two-sided formula specifying the response and grouping variables.
 #' @param alpha Numeric (default: 0.05). Significance level (range from 0 to 1).
-#' @param var_equal A logical value indicating whether equal variances should be assumed. If `TRUE`,
-#'        Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA is performed. If `NA` (default),
-#'        equality of variances is determined automatically using [varequal::is_var_equal()].
+#' @param var_equal A logical value indicating whether equal variances should be assumed.
+#'        If `TRUE`, Fisher's ANOVA is performed. If `FALSE`, Welch's ANOVA is performed.
+#'        If `NA` (default), equality of variances is determined automatically using
+#'        [varequal::is_var_equal()].
 #' @param rounding Integer (default: 4). Number of decimal places displayed in the output.
-#' @param silent Logical (default: FALSE). Suppress warnings and messages.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -44,9 +45,13 @@
 #' Statistical methods for psychology (8th ed.).
 #' Cengage Learning. Chapter 11, pg. 325-345.
 #'
+#' Montgomery, D. C. (2017).
+#' Design and analysis of experiments (Ninth edition).
+#' John Wiley & Sons, Inc.
+#'
 #' @examples
 #' # Automatically select the appropriate procedure
-#' oneway_anova(anorexia, weight_gain ~ therapy)
+#' oneway_anova(O_X_X, val ~ grp)
 #'
 #' # Classical one-way ANOVA
 #' oneway_anova(O_O_X, val ~ grp, var_equal = TRUE)
@@ -61,7 +66,7 @@ oneway_anova <- function(
         alpha = 0.05,
         var_equal = NA,
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     lst <- tidy_to_list(data, formula)
 
@@ -69,8 +74,10 @@ oneway_anova <- function(
     #                                 Check normality                                       #
     # ------------------------------------------------------------------------------------- #
     resid <- lapply(lst, function(y) y - mean(y))  # residuals
+
     is_normal <- normality::is_normal(resid)  # test normality on residuals
-    if ( isFALSE(silent) & ! is_normal )
+
+    if ( isTRUE(verbose) & ! is_normal )
         warning(paste("Normality assumption is violated.",
                       "Please consider ART-ANOVA or Kruskal-Wallis."))
 
@@ -252,7 +259,7 @@ oneway_anova <- function(
 #' @param var_equal A logical value passes into the `oneway_anova()` to perform regular ANOVA on
 #'        the ranked-response variable.
 #' @param rounding Integer (default: 4). Number of decimal places displayed in the output.
-#' @param silent Logical (default: FALSE). Suppress warnings and messages.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @return
 #' A data frame representing the ANOVA table with the following columns:
@@ -282,6 +289,7 @@ oneway_anova <- function(
 #' https://doi.org/10.1145/3472749.3474784
 #'
 #' @examples
+#' normality::is_normal(anorexia, weight_gain ~ therapy)
 #' oneway_art(anorexia, weight_gain ~ therapy)
 #'
 #' @export
@@ -291,7 +299,7 @@ oneway_art <- function(
         alpha = 0.05,
         var_equal = NA,
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     df0 <- tidy_to_dataframe(data, formula)
 
@@ -300,8 +308,10 @@ oneway_art <- function(
     # ------------------------------------------------------------------------------------- #
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
+
     is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
-    if ( isFALSE(silent) & is_normal )
+
+    if ( isTRUE(verbose) & is_normal )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 
@@ -340,7 +350,7 @@ oneway_art <- function(
                             alpha     = alpha,
                             var_equal = var_equal,
                             rounding  = rounding,
-                            silent    = TRUE)
+                            verbose   = FALSE)
 
     aov_tab[["method"]] <- "ART-ANOVA"
 
@@ -365,7 +375,7 @@ oneway_art <- function(
 #' @param formula A two-sided formula specifying the response and grouping variables.
 #' @param alpha Numeric (default: 0.05). Significance level (range from 0 to 1).
 #' @param rounding Integer (default: 4). Number of decimal places displayed in the output.
-#' @param silent Logical (default: FALSE). Suppress warnings and messages.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @return
 #' A data frame summarizing the Kruskal–Wallis test result in an ANOVA-like table:
@@ -414,8 +424,8 @@ oneway_art <- function(
 #'     "stimulant" = c(73, 85, 51, 63, 85, 85, 66, 69),
 #'     "placebo" = c(61, 54, 80, 47)
 #' )
-#'
-#' Kruskal_Wallis_test(lst, y ~ x)
+#' normality::is_normal(lst)
+#' Kruskal_Wallis_test(lst)
 #'
 #' Kruskal_Wallis_test(anorexia, weight_gain ~ therapy)
 #'
@@ -425,7 +435,7 @@ Kruskal_Wallis_test <- function(
         formula,
         alpha = 0.05,
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     df0 <- tidy_to_dataframe(data, formula)  # from ./tidy_data.R
 
@@ -434,8 +444,10 @@ Kruskal_Wallis_test <- function(
     # ------------------------------------------------------------------------------------- #
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
+
     is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
-    if ( isFALSE(silent) & is_normal )
+
+    if ( isTRUE(verbose) & is_normal )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 

@@ -1,6 +1,6 @@
 test_that("Kruskal_Wallis_test", {
 
-    out_1 <- Kruskal_Wallis_test(X_X_O, val ~ grp, rounding = 7)
+    out_1 <- Kruskal_Wallis_test(X_X_O, val ~ grp, rounding = 7, verbose = FALSE)
     ChiSq_1 <- round(out_1[["H"]][1], 5)
     pval_1 <- round(out_1[["Pvalue"]][1], 7)
 
@@ -11,7 +11,7 @@ test_that("Kruskal_Wallis_test", {
     testthat::expect_equal(ChiSq_1, ChiSq_2)
     testthat::expect_equal(pval_1, pval_2)
 
-    out_1 <- Kruskal_Wallis_test(X_X_X, val ~ grp, rounding = 7)
+    out_1 <- Kruskal_Wallis_test(X_X_X, val ~ grp, rounding = 7, verbose = FALSE)
     ChiSq_1 <- round(out_1[["H"]][1], 5)
     pval_1 <- round(out_1[["Pvalue"]][1], 7)
 

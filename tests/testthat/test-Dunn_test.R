@@ -9,7 +9,7 @@ test_that("Dunn_test", {
 
     df0 <- df_wide_to_long(df0, 1:4)
 
-    out <- Dunn_test(df0, val ~ grp, rounding = 7, silent = TRUE)
+    out <- Dunn_test(df0, val ~ grp, rounding = 7, verbose = FALSE)
     Zval <- round(out[["post_hoc"]][["Z"]], 7)
     pval <- round(out[["post_hoc"]][["Padj (holm)"]], 7)
 

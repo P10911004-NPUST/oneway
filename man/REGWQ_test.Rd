@@ -4,7 +4,7 @@
 \alias{REGWQ_test}
 \title{Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test}
 \usage{
-REGWQ_test(data, formula = NULL, alpha = 0.05, rounding = 4, silent = FALSE)
+REGWQ_test(data, formula = NULL, alpha = 0.05, rounding = 4, verbose = TRUE)
 }
 \arguments{
 \item{data}{A data frame, or an object returned by \code{oneway_anova()}, from which the response
@@ -19,8 +19,7 @@ The default is \code{0.05}.}
 \item{rounding}{An integer specifying the number of decimal places to display in the output.
 The default is \code{4}.}
 
-\item{silent}{Logical. If \code{FALSE} (default), assumption checks are performed and informative
-messages or warnings are displayed.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A list containing the following components:

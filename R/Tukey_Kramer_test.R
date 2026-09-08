@@ -6,7 +6,7 @@
 #' @param formula A formula specifying the model.
 #' @param alpha Numeric value range from 0 to 1 (default: 0.05). The error tolerance.
 #' @param rounding Integer (default: 4). Rounding digits.
-#' @param silent Logical (default: FALSE). Raise warning message.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @return A list with 4 elements:
 #' \describe{
@@ -36,7 +36,7 @@ Tukey_Kramer_test <- function(
         formula = NULL,
         alpha = 0.05,
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     if (inherits(data, "oneway_aov"))
         pre_hoc <- data
@@ -46,7 +46,7 @@ Tukey_Kramer_test <- function(
                                 alpha = alpha,
                                 var_equal = NA,
                                 rounding = rounding,
-                                silent = TRUE)
+                                verbose = FALSE)
 
     df0 <- attr(pre_hoc, "data")
     df1 <- df0
@@ -60,7 +60,7 @@ Tukey_Kramer_test <- function(
     # -------------------------------------------------------------------------------------- #
     # Check data
     # -------------------------------------------------------------------------------------- #
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         is_normal <- attr(pre_hoc, "is_normal")
         is_var_equal <- attr(pre_hoc, "is_var_equal")
@@ -160,7 +160,7 @@ Tukey_Kramer_test <- function(
         summary = desc
     )
 
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         DNAME <- deparse(substitute(data))
         dashes <- paste(rep("-", nchar(ret[["method"]]) + 1), collapse = "")
@@ -168,8 +168,6 @@ Tukey_Kramer_test <- function(
         cat(ret[["method"]])
         cat(sprintf("\n%s\n", dashes))
         cat(sprintf("Data: %s ; Formula: %s ~ %s\n\n", DNAME, y_name, x_name))
-        print(post_hoc[, 1:8])
-        cat("\n")
         print(desc[, 1:6])
         cat("\n")
     }

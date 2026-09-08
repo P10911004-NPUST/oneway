@@ -10,7 +10,7 @@ oneway_anova(
   alpha = 0.05,
   var_equal = NA,
   rounding = 4,
-  silent = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -20,13 +20,14 @@ oneway_anova(
 
 \item{alpha}{Numeric (default: 0.05). Significance level (range from 0 to 1).}
 
-\item{var_equal}{A logical value indicating whether equal variances should be assumed. If \code{TRUE},
-Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA is performed. If \code{NA} (default),
-equality of variances is determined automatically using \code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
+\item{var_equal}{A logical value indicating whether equal variances should be assumed.
+If \code{TRUE}, Fisher's ANOVA is performed. If \code{FALSE}, Welch's ANOVA is performed.
+If \code{NA} (default), equality of variances is determined automatically using
+\code{\link[varequal:is_var_equal]{varequal::is_var_equal()}}.}
 
 \item{rounding}{Integer (default: 4). Number of decimal places displayed in the output.}
 
-\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A data frame representing the ANOVA table with the following columns:
@@ -61,7 +62,7 @@ a more robust alternative by adjusting the test statistic and denominator degree
 }
 \examples{
 # Automatically select the appropriate procedure
-oneway_anova(anorexia, weight_gain ~ therapy)
+oneway_anova(O_X_X, val ~ grp)
 
 # Classical one-way ANOVA
 oneway_anova(O_O_X, val ~ grp, var_equal = TRUE)
@@ -74,4 +75,8 @@ oneway_anova(O_X_X, val ~ grp, var_equal = FALSE)
 Howell, D. C. (2013).
 Statistical methods for psychology (8th ed.).
 Cengage Learning. Chapter 11, pg. 325-345.
+
+Montgomery, D. C. (2017).
+Design and analysis of experiments (Ninth edition).
+John Wiley & Sons, Inc.
 }

@@ -32,8 +32,9 @@ A character vector of the same length as \code{x}, where each element is the cor
 significance label.
 }
 \description{
-Converts numeric p-values into categorical significance labels according to user-defined
-thresholds. The function is commonly used to annotate statistical results in tables and figures.
+Converts numeric p-values into categorical significance labels according to
+user-defined thresholds. The function is commonly used to annotate statistical
+results in tables and figures.
 }
 \details{
 Each p-value is assigned to exactly one interval defined by \code{break_points}. Values greater

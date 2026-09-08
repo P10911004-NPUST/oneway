@@ -45,11 +45,10 @@ A character vector.
 Represent significance statements resulting from all-pairwise comparisons.
 }
 \examples{
-out <- Dunn_test(X_X_O, val ~ grp, silent = TRUE)
+out <- Dunn_test(X_X_O, val ~ grp, verbose = FALSE)
 tab <- row_arrange(out[["summary"]], "MED")
 post <- out[["post_hoc"]]
 print(post[, 1:7])
-print(tab[, 1:6])
 cld <- compact_letter_display(x1 = post$x1,
                               x2 = post$x2,
                               pvalues = post$`Padj (holm)`,

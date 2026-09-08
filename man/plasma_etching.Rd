@@ -17,4 +17,9 @@ plasma_etching
 \description{
 Etch Rate Data (in Å/min) from the Plasma Etching Experiment.
 }
+\references{
+Montgomery, D. C. (2017).
+Design and analysis of experiments (Ninth edition).
+John Wiley & Sons, Inc.
+}
 \keyword{datasets}

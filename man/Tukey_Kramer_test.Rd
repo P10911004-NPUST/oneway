@@ -9,7 +9,7 @@ Tukey_Kramer_test(
   formula = NULL,
   alpha = 0.05,
   rounding = 4,
-  silent = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ Tukey_Kramer_test(
 
 \item{rounding}{Integer (default: 4). Rounding digits.}
 
-\item{silent}{Logical (default: FALSE). Raise warning message.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A list with 4 elements:

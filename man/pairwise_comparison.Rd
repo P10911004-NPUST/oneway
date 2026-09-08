@@ -9,7 +9,7 @@ pairwise_comparison(
   formula,
   alpha = 0.05,
   rounding = 4,
-  silent = FALSE,
+  verbose = TRUE,
   p_adjust_method = "holm"
 )
 }
@@ -24,9 +24,9 @@ of \code{response ~ group}.}
 \item{rounding}{An integer specifying the number of decimal places used when reporting numerical
 results. The default is 4.}
 
-\item{silent}{A logical value indicating whether the results should be printed to the console.
-If \code{FALSE}, the default, the selected analysis protocol, post-hoc comparisons, and
-summary are printed. If \code{TRUE}, no output is printed.}
+\item{verbose}{A logical value indicating whether the results should be printed to the console.
+If \code{TRUE}, the default, the selected analysis protocol, post-hoc comparisons, and
+summary are printed. If \code{FALSE}, no output is printed.}
 
 \item{p_adjust_method}{A character string specifying the method used to adjust p-values for
 Dunn's multiple-comparison test when the Kruskal-Wallis/Dunn protocol is selected. The

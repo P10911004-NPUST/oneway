@@ -14,8 +14,7 @@
 #'        The default is `0.05`.
 #' @param rounding An integer specifying the number of decimal places to display in the output.
 #'        The default is `4`.
-#' @param silent Logical. If `FALSE` (default), assumption checks are performed and informative
-#'        messages or warnings are displayed.
+#' @param verbose Logical (default: TRUE). Show warnings and messages.
 #'
 #' @returns
 #' A list containing the following components:
@@ -56,7 +55,7 @@ REGWQ_test <- function(
         formula = NULL,
         alpha = 0.05,
         rounding = 4,
-        silent = FALSE
+        verbose = TRUE
 ) {
     if (inherits(data, "oneway_aov"))
         pre_hoc <- data
@@ -66,7 +65,7 @@ REGWQ_test <- function(
                                 alpha = alpha,
                                 var_equal = NA,
                                 rounding = rounding,
-                                silent = TRUE)
+                                verbose = FALSE)
 
     df0 <- attr(pre_hoc, "data")
     df1 <- df0
@@ -80,7 +79,7 @@ REGWQ_test <- function(
     # -------------------------------------------------------------------------------------- #
     # Check data
     # -------------------------------------------------------------------------------------- #
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         is_normal <- attr(pre_hoc, "is_normal")
         is_var_equal <- attr(pre_hoc, "is_var_equal")
@@ -200,7 +199,7 @@ REGWQ_test <- function(
         summary = desc
     )
 
-    if (isFALSE(silent))
+    if (isTRUE(verbose))
     {
         DNAME <- deparse(substitute(data))
         dashes <- paste(rep("-", nchar(ret[["method"]]) + 1), collapse = "")
@@ -208,8 +207,6 @@ REGWQ_test <- function(
         cat(ret[["method"]])
         cat(sprintf("\n%s\n", dashes))
         cat(sprintf("Data: %s ; Formula: %s ~ %s\n\n", DNAME, y_name, x_name))
-        print(post_hoc[, c(1:6, 16, 7, 8)])
-        cat("\n")
         print(desc[, 1:6])
         cat("\n")
     }

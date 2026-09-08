@@ -4,7 +4,7 @@
 \alias{Kruskal_Wallis_test}
 \title{Kruskal–Wallis one-way analysis of variance by ranks}
 \usage{
-Kruskal_Wallis_test(data, formula, alpha = 0.05, rounding = 4, silent = FALSE)
+Kruskal_Wallis_test(data, formula, alpha = 0.05, rounding = 4, verbose = TRUE)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}
@@ -15,7 +15,7 @@ Kruskal_Wallis_test(data, formula, alpha = 0.05, rounding = 4, silent = FALSE)
 
 \item{rounding}{Integer (default: 4). Number of decimal places displayed in the output.}
 
-\item{silent}{Logical (default: FALSE). Suppress warnings and messages.}
+\item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
 \value{
 A data frame summarizing the Kruskal–Wallis test result in an ANOVA-like table:
@@ -56,8 +56,8 @@ lst <- list(
     "stimulant" = c(73, 85, 51, 63, 85, 85, 66, 69),
     "placebo" = c(61, 54, 80, 47)
 )
-
-Kruskal_Wallis_test(lst, y ~ x)
+normality::is_normal(lst)
+Kruskal_Wallis_test(lst)
 
 Kruskal_Wallis_test(anorexia, weight_gain ~ therapy)
 

@@ -5,9 +5,9 @@
 - changed all `silent` argument to `verbose`;
 - enclosed the `print()` and `cat()` calls within `if (verbose) { ... }` blocks.
 
-## Reviewer's comments (first revision for v0.0.1)
+### Reviewer's comments (first revision for v0.0.1)
 
-#### 1. Please do not start the DESCRIPTION with "An integrated toolkit".
+#### 1. Please do not start the DESCRIPTION with "An integrated toolkit...".
 
 The DESCRIPTION has been revised to make the package description more concise and direct.
 
@@ -15,9 +15,13 @@ The DESCRIPTION has been revised to make the package description more concise an
 
 I have added several relevant references to the DESCRIPTION file to provide appropriate guidance and context for the methods implemented in the package.
 
+Refer to [The CRAN Cookbook (description issues #references)](https://contributor.r-project.org/cran-cookbook/description_issues.html#references)
+
 #### 3. You write information messages to the console that cannot be easily suppressed.
 
 I have enclosed the `print()` and `cat()` calls within `if (verbose) { ... }` blocks so that informational messages can be easily suppressed by setting `verbose = FALSE`.
+
+Refer to [The CRAN Cookbook (code issues #using-printcat)](https://contributor.r-project.org/cran-cookbook/code_issues.html#using-printcat)
 
 # oneway 0.0.1
 

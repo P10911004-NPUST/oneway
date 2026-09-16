@@ -1,6 +1,6 @@
 Package: oneway
 Title: One-Way Statistical Analyses
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: 
     person("Joon-Keat", "Lai", , "p10911004@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-9840-5836"))

@@ -1,4 +1,18 @@
-url: ~
+url: https://p10911004-npust.github.io/oneway/
 template:
   bootstrap: 5
+  math-rendering: mathjax
+  light-switch: yes
+  bslib:
+    primary: '#0054AD'
+    secondary: '#6C757D'
+    success: '#198754'
+    info: '#0DCAF0'
+    warning: '#FFC107'
+    danger: '#A6081A'
+    body-bg: '#FFFFFF'
+    body-color: '#212529'
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    link-color: '#0054AD'
 

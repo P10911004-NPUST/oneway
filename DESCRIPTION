@@ -16,7 +16,7 @@ Description: Performs one-way tests of assumptions (normality and homoscedastici
     Lakens (2013) <doi:10.3389/fpsyg.2013.00863>, and
     Piepho (2004) <doi:10.1198/1061860043515>.
 License: MIT + file LICENSE
-URL: https://github.com/P10911004-NPUST/oneway
+URL: https://github.com/P10911004-NPUST/oneway, https://p10911004-npust.github.io/oneway/
 BugReports: https://github.com/P10911004-NPUST/oneway/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -118,6 +118,7 @@ The `summary` component is a data frame with 13 columns:
 | `normality`   | Is the sample follows normal distribution, see `normality::is_normal` |
 | `n_outliers`  | Number of possible outliers, see `outlying::Grubbs_test`              |
 
+<br>
 
 <h3>If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` 
 has you covered. Feel free to skip the rest of this guide.</h3>

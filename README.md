@@ -11,6 +11,8 @@
 
 An R package for one-way statistical analyses.
 
+[Get started](https://p10911004-npust.github.io/oneway/articles/oneway.html)
+
 There are also other nice alternatives such as 
 [`agricolae`](https://cran.r-project.org/package=agricolae),
 [`car`](https://cran.r-project.org/package=car),

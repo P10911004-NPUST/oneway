@@ -82,7 +82,7 @@ The function return a list which includes 5 components:
 The `post_hoc` component is a data frame with at least 15 columns:
 
 | Column name       | Interpretation                                                       |
-| :------           | :------------                                                        |
+| :------           | :-----------------                                                   |
 | `x1`              | The name of the group being subtracted                               |
 | `x2`              | The name of the group as the subtrahend                              |
 | `[x1 - x2]`       | The difference between x1 and x2                                     |
@@ -103,7 +103,7 @@ The `post_hoc` component is a data frame with at least 15 columns:
 The `summary` component is a data frame with 13 columns:
 
 | Column name   | Interpretation                                                        |
-| :---          | :------------                                                         |
+| :---          | :--------------                                                       |
 | `GROUP`       | The name of each groups from the independent variable                 |
 | `CLD`         | Compact letter display, see `oneway::compact_letter_display`          |
 | `N`           | Sample size                                                           |

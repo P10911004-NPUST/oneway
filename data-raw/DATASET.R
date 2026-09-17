@@ -17,9 +17,9 @@ set.seed(123)
 #     direction = "long",
 #     v.names = "val",
 #     # varying = paste0("G", 1:5),
-#     varying = 1:5,
+#     varying = 1:6,
 #     timevar = "grp",
-#     times = paste0("G", 1:5)
+#     times = paste0("G", 1:6)
 # )[, c("grp", "val")]
 # utils::write.csv(O_O_O, "./data-raw/O_O_O.csv", row.names = FALSE)
 O_O_O <- utils::read.csv("./data-raw/O_O_O.csv")

@@ -1,6 +1,6 @@
 # oneway
 
-## Overview
+## 1. Overview
 
 The `oneway` package provides an integrated workflow for one-factor
 experimental designs. Its functionality covers:
@@ -24,7 +24,7 @@ experimental designs. Its functionality covers:
 
   
 
-## Installation
+## 2. Installation
 
 Install the released version from
 [CRAN](https://cran.r-project.org/package=oneway):
@@ -55,7 +55,7 @@ set.seed(123)
 
   
 
-## Quick start
+## 3. Quick start
 
 The core function of this package is
 [`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md),
@@ -82,10 +82,10 @@ out <- pairwise_comparison(morphine, tolerance ~ grp)
 
 The function return a list which includes 5 components:
 
-- method: the combination of a *a priori* and a *post-hoc* test;
+- method: the combination of a ***a priori*** and a ***post-hoc*** test;
 - data: the input data;
-- pre_hoc: An ANOVA-like table from the selected *a priori* test;
-- post_hoc: pairwise comparison result from the selected *post-hoc*
+- pre_hoc: An ANOVA-like table from the selected ***a priori*** test;
+- post_hoc: pairwise comparison result from the selected ***post hoc***
   test;
 - summary: descriptive statistics for reporting.
 
@@ -105,7 +105,7 @@ The `post_hoc` component is a data frame with at least 15 columns:
 | `standard_value` | The statistics of the test, generally is a symbol |
 | `critical_value` | The critical value for the statistics |
 | `StdErr` | The standard error used to calculate `diff_CI` |
-| `method` | The name of the post-hoc method |
+| `method` | The name of the *post hoc* method |
 | `alternative` | The direction of testing, either `less`, `greater`, or `two.sided` |
 | `alpha` | Error tolerance |
 
@@ -133,7 +133,7 @@ The `summary` component is a data frame with 13 columns:
 
   
 
-## 1. Interface
+## 4. Interface
 
 Most analysis functions expect a data frame and a two-sided formula:
 
@@ -162,15 +162,18 @@ as the grouping variable:
 
 ``` r
 
-oneway_anova(anorexia, weight_gain ~ therapy, verbose = FALSE)
-#>           DF        SS       MS Fvalue  Fcrit Pvalue signif p_omega2
-#> Group      2  614.6437 307.3218 5.4223 3.1296 0.0065     **   0.1094
-#> Residuals 69 3910.7424  56.6774     NA     NA     NA   <NA>       NA
-#> Total     71 4525.3861       NA     NA     NA     NA   <NA>       NA
-#>                   method
-#> Group     Fisher's ANOVA
-#> Residuals Fisher's ANOVA
-#> Total     Fisher's ANOVA
+pairwise_comparison(anorexia, weight_gain ~ therapy)
+#> 
+#> -------------------------------------
+#> Kruskal-Wallis +
+#> Dunn's multiple comparison procedure
+#> -------------------------------------
+#> Data: anorexia ; Formula: weight_gain ~ therapy
+#> 
+#>       GROUP CLD  N     AVG     SD   MED
+#> 1 cognitive  ab 29  3.0069 7.3085  1.40
+#> 2   control   b 26 -0.4500 7.9887 -0.35
+#> 3    family   a 17  7.2647 7.1574  9.00
 ```
 
 The package also accepts a list of numeric vectors for several
@@ -182,20 +185,23 @@ group_data <- list(control = rnorm(20, 10, 2),
                    treatment_A = rnorm(20, 12, 2),
                    treatment_B = rnorm(20, 15, 2))
 
-oneway_anova(group_data)
-#>           DF       SS       MS  Fvalue  Fcrit Pvalue signif p_omega2
-#> Group      2 252.6691 126.3346 37.1372 3.1588      0    ***   0.5464
-#> Residuals 57 193.9046   3.4018      NA     NA     NA   <NA>       NA
-#> Total     59 446.5738       NA      NA     NA     NA   <NA>       NA
-#>                   method
-#> Group     Fisher's ANOVA
-#> Residuals Fisher's ANOVA
-#> Total     Fisher's ANOVA
+pairwise_comparison(group_data)
+#> 
+#> ------------------------------------
+#> Fisher's ANOVA +
+#> REGWQ multiple comparison procedure
+#> ------------------------------------
+#> Data: group_data ; Formula: y ~ x
+#> 
+#>         GROUP CLD  N     AVG     SD     MED
+#> 1     control   c 20 10.2832 1.9453 10.2400
+#> 2 treatment_A   b 20 11.8975 1.6599 11.7201
+#> 3 treatment_B   a 20 15.2130 1.9147 14.9286
 ```
 
   
 
-## 2. Describe the data
+## 5. Describe the data
 
 [`describe()`](https://p10911004-npust.github.io/oneway/reference/describe.md)
 is useful as a first-pass summary.
@@ -238,9 +244,9 @@ observations should be removed.
 
   
 
-## 3. *a priori* test
+## 6. *a priori* test
 
-### 3.1 Parametric
+### 6.1 Parametric
 
 The classic ANOVA procedure for parametric analysis is
 [`oneway_anova()`](https://p10911004-npust.github.io/oneway/reference/oneway_anova.md).
@@ -293,7 +299,7 @@ The automatic selection is convenient for exploratory and routine
 analyses, but it is still important to examine the study design and the
 diagnostics before interpreting the result.
 
-### 3.2 Nonparametric
+### 6.2 Nonparametric
 
 #### ART-ANOVA
 
@@ -349,13 +355,20 @@ kw
 
   
 
-## 4. Post-hoc analysis
+## 7. *Post hoc* analysis
 
-`oneway` includes 5 multiple comparison procedures (MCP) for post-hoc
-analysis. All MCPs produce a standardized result identical to the
+`oneway` implements five multiple comparison procedures (MCPs) for *post
+hoc* analysis. Each procedure returns results in a standardized format
+consistent with that of
 [`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md).
+Although these MCPs can be applied directly without *a priori*
+adjustment or protection, their interpretation should nevertheless be
+informed by the outcome of the omnibus test. In particular, evidence
+from the omnibus test provides an overall assessment of whether
+differences among the group means warrant subsequent pairwise
+comparisons.
 
-### 4.1 Parametric
+### 7.1 Parametric
 
 #### REGWQ
 
@@ -439,7 +452,7 @@ tukey_kramer <- Tukey_Kramer_test(O_O_X, val ~ grp)
 is intended for normal data with unequal variances and/or unequal sample
 sizes. Each comparison uses a Welch–Satterthwaite-type degrees of
 freedom and the studentized-range distribution. This makes Games–Howell
-the natural choice among the package’s parametric post-hoc procedures
+the natural choice among the package’s parametric *post hoc* procedures
 when homoscedasticity assumption is violated.
 
 ``` r
@@ -460,7 +473,7 @@ games_howell <- Games_Howell_test(O_X_X, val ~ grp)
 #> 6    G6   b 20 13.8619 0.7809 13.8442
 ```
 
-### 4.2 Nonparametric
+### 7.2 Nonparametric
 
 #### Dunn’s test
 
@@ -514,10 +527,13 @@ The available choices are those accepted by
 
   
 
-## 5. `pairwise_comparison` workflow
+## 8. Automatic Workflow
 
-The package’s main automatic workflow is
-[`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md).
+[`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md)
+automatically implements the conventional workflow for one-way analysis
+by evaluating the relevant distributional and variance assumptions,
+selecting an appropriate omnibus test, and subsequently performing
+pairwise comparisons when warranted.
 
 ``` r
 
@@ -540,7 +556,7 @@ adaptive <- pairwise_comparison(O_O_O, val ~ grp)
 
 The decision logic is:
 
-| Data characteristics | Omnibus / pre-hoc | Post-hoc |
+| Data characteristics | Omnibus / pre-hoc | *Post hoc* |
 |----|----|----|
 | Normal, equal variance, balanced | Fisher’s ANOVA | REGWQ |
 | Normal, equal variance, unbalanced | Fisher’s ANOVA | Tukey–Kramer |
@@ -563,7 +579,7 @@ rather than the raw response.
 
   
 
-## 6. Compact letter displays
+## 9. Compact letter displays
 
 A compact letter display is a presentation device:
 
@@ -646,7 +662,7 @@ pval2asterisk(p,
 #> [1] "NS" "S"  "HS" "HS" "HS"
 ```
 
-## 7. Effect sizes
+## 10. Effect sizes
 
 This package provides quick inference to the effect size using only 2 of
 the many estimators. For comprehensive effect size analysis, please
@@ -693,7 +709,7 @@ fisher[, c("method", "Pvalue", "p_omega2")]
 
   
 
-## 8. Datasets
+## 11. Datasets
 
 The package includes 6 simulated datasets designed specifically for
 different analysis conditions:
@@ -718,7 +734,7 @@ Additional datasets are:
 
   
 
-## 9. Interpretation notes
+## 12. Interpretation notes
 
 #### Statistical significance is not the same as practical importance
 
@@ -755,8 +771,8 @@ A practical way to use `oneway` is:
 5.  Use
     [`Kruskal_Wallis_test()`](https://p10911004-npust.github.io/oneway/reference/Kruskal_Wallis_test.md)
     when a rank-based omnibus test is more appropriate.
-6.  Choose a post-hoc procedure that matches the assumptions and balance
-    of the design.
+6.  Choose a *post hoc* procedure that matches the assumptions and
+    balance of the design.
 7.  Report the estimated pairwise differences, confidence intervals,
     adjusted *p*-values, and effect sizes (not only significance stars
     or CLDs).

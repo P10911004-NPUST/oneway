@@ -75,7 +75,7 @@
     
     
 <div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+<h2 id="overview">1. Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The <code>oneway</code> package provides an integrated workflow for
 one-factor experimental designs. Its functionality covers:</p>
@@ -108,7 +108,7 @@ characteristics.</li>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="installation">2. Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the released version from <a href="https://cran.r-project.org/package=oneway" class="external-link">CRAN</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -126,7 +126,7 @@ characteristics.</li>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+<h2 id="quick-start">3. Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <p>The core function of this package is
 <code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>, which provides out-of-the-box
@@ -149,13 +149,13 @@ two-sided formula:</p>
 <span><span class="co">#&gt; 5    SS   b 8  11 6.7188 10.5</span></span></code></pre></div>
 <p>The function return a list which includes 5 components:</p>
 <ul>
-<li>method: the combination of a <em>a priori</em> and a
-<em>post-hoc</em> test;</li>
+<li>method: the combination of a <strong><em>a priori</em></strong> and
+a <strong><em>post-hoc</em></strong> test;</li>
 <li>data: the input data;</li>
-<li>pre_hoc: An ANOVA-like table from the selected <em>a priori</em>
-test;</li>
+<li>pre_hoc: An ANOVA-like table from the selected <strong><em>a
+priori</em></strong> test;</li>
 <li>post_hoc: pairwise comparison result from the selected
-<em>post-hoc</em> test;</li>
+<strong><em>post hoc</em></strong> test;</li>
 <li>summary: descriptive statistics for reporting.</li>
 </ul>
 <p>The <code>post_hoc</code> component is a data frame with at least 15
@@ -228,7 +228,7 @@ columns:</p>
 </tr>
 <tr class="odd">
 <td align="left"><code>method</code></td>
-<td align="left">The name of the post-hoc method</td>
+<td align="left">The name of the <em>post hoc</em> method</td>
 </tr>
 <tr class="even">
 <td align="left"><code>alternative</code></td>
@@ -328,7 +328,7 @@ the rest of this guide.
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="interface">1. Interface<a class="anchor" aria-label="anchor" href="#interface"></a>
+<h2 id="interface">4. Interface<a class="anchor" aria-label="anchor" href="#interface"></a>
 </h2>
 <p>Most analysis functions expect a data frame and a two-sided
 formula:</p>
@@ -348,15 +348,18 @@ formula:</p>
 <p>The <code>anorexia</code> data contain <code>weight_gain</code> as
 the response and <code>therapy</code> as the grouping variable:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/oneway_anova.html">oneway_anova</a></span><span class="op">(</span><span class="va">anorexia</span>, <span class="va">weight_gain</span> <span class="op">~</span> <span class="va">therapy</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           DF        SS       MS Fvalue  Fcrit Pvalue signif p_omega2</span></span>
-<span><span class="co">#&gt; Group      2  614.6437 307.3218 5.4223 3.1296 0.0065     **   0.1094</span></span>
-<span><span class="co">#&gt; Residuals 69 3910.7424  56.6774     NA     NA     NA   &lt;NA&gt;       NA</span></span>
-<span><span class="co">#&gt; Total     71 4525.3861       NA     NA     NA     NA   &lt;NA&gt;       NA</span></span>
-<span><span class="co">#&gt;                   method</span></span>
-<span><span class="co">#&gt; Group     Fisher's ANOVA</span></span>
-<span><span class="co">#&gt; Residuals Fisher's ANOVA</span></span>
-<span><span class="co">#&gt; Total     Fisher's ANOVA</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_comparison.html">pairwise_comparison</a></span><span class="op">(</span><span class="va">anorexia</span>, <span class="va">weight_gain</span> <span class="op">~</span> <span class="va">therapy</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -------------------------------------</span></span>
+<span><span class="co">#&gt; Kruskal-Wallis +</span></span>
+<span><span class="co">#&gt; Dunn's multiple comparison procedure</span></span>
+<span><span class="co">#&gt; -------------------------------------</span></span>
+<span><span class="co">#&gt; Data: anorexia ; Formula: weight_gain ~ therapy</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       GROUP CLD  N     AVG     SD   MED</span></span>
+<span><span class="co">#&gt; 1 cognitive  ab 29  3.0069 7.3085  1.40</span></span>
+<span><span class="co">#&gt; 2   control   b 26 -0.4500 7.9887 -0.35</span></span>
+<span><span class="co">#&gt; 3    family   a 17  7.2647 7.1574  9.00</span></span></code></pre></div>
 <p>The package also accepts a list of numeric vectors for several
 functions:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -364,19 +367,22 @@ functions:</p>
 <span>                   treatment_A <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">12</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                   treatment_B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">15</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/oneway_anova.html">oneway_anova</a></span><span class="op">(</span><span class="va">group_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           DF       SS       MS  Fvalue  Fcrit Pvalue signif p_omega2</span></span>
-<span><span class="co">#&gt; Group      2 252.6691 126.3346 37.1372 3.1588      0    ***   0.5464</span></span>
-<span><span class="co">#&gt; Residuals 57 193.9046   3.4018      NA     NA     NA   &lt;NA&gt;       NA</span></span>
-<span><span class="co">#&gt; Total     59 446.5738       NA      NA     NA     NA   &lt;NA&gt;       NA</span></span>
-<span><span class="co">#&gt;                   method</span></span>
-<span><span class="co">#&gt; Group     Fisher's ANOVA</span></span>
-<span><span class="co">#&gt; Residuals Fisher's ANOVA</span></span>
-<span><span class="co">#&gt; Total     Fisher's ANOVA</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/pairwise_comparison.html">pairwise_comparison</a></span><span class="op">(</span><span class="va">group_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ------------------------------------</span></span>
+<span><span class="co">#&gt; Fisher's ANOVA +</span></span>
+<span><span class="co">#&gt; REGWQ multiple comparison procedure</span></span>
+<span><span class="co">#&gt; ------------------------------------</span></span>
+<span><span class="co">#&gt; Data: group_data ; Formula: y ~ x</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;         GROUP CLD  N     AVG     SD     MED</span></span>
+<span><span class="co">#&gt; 1     control   c 20 10.2832 1.9453 10.2400</span></span>
+<span><span class="co">#&gt; 2 treatment_A   b 20 11.8975 1.6599 11.7201</span></span>
+<span><span class="co">#&gt; 3 treatment_B   a 20 15.2130 1.9147 14.9286</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="describe-the-data">2. Describe the data<a class="anchor" aria-label="anchor" href="#describe-the-data"></a>
+<h2 id="describe-the-data">5. Describe the data<a class="anchor" aria-label="anchor" href="#describe-the-data"></a>
 </h2>
 <p><code><a href="../reference/describe.html">describe()</a></code> is useful as a first-pass summary.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -472,10 +478,10 @@ be removed.</p>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="a-priori-test">3. <em>a priori</em> test<a class="anchor" aria-label="anchor" href="#a-priori-test"></a>
+<h2 id="a-priori-test">6. <em>a priori</em> test<a class="anchor" aria-label="anchor" href="#a-priori-test"></a>
 </h2>
 <div class="section level3">
-<h3 id="parametric">3.1 Parametric<a class="anchor" aria-label="anchor" href="#parametric"></a>
+<h3 id="parametric">6.1 Parametric<a class="anchor" aria-label="anchor" href="#parametric"></a>
 </h3>
 <p>The classic ANOVA procedure for parametric analysis is
 <code><a href="../reference/oneway_anova.html">oneway_anova()</a></code>.</p>
@@ -533,7 +539,7 @@ analyses, but it is still important to examine the study design and the
 diagnostics before interpreting the result.</p>
 </div>
 <div class="section level3">
-<h3 id="nonparametric">3.2 Nonparametric<a class="anchor" aria-label="anchor" href="#nonparametric"></a>
+<h3 id="nonparametric">6.2 Nonparametric<a class="anchor" aria-label="anchor" href="#nonparametric"></a>
 </h3>
 <div class="section level4">
 <h4 id="art-anova">ART-ANOVA<a class="anchor" aria-label="anchor" href="#art-anova"></a>
@@ -583,13 +589,19 @@ nonparametric alternative:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="post-hoc-analysis">4. Post-hoc analysis<a class="anchor" aria-label="anchor" href="#post-hoc-analysis"></a>
+<h2 id="post-hoc-analysis">7. <em>Post hoc</em> analysis<a class="anchor" aria-label="anchor" href="#post-hoc-analysis"></a>
 </h2>
-<p><code>oneway</code> includes 5 multiple comparison procedures (MCP)
-for post-hoc analysis. All MCPs produce a standardized result identical
-to the <code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>.</p>
+<p><code>oneway</code> implements five multiple comparison procedures
+(MCPs) for <em>post hoc</em> analysis. Each procedure returns results in
+a standardized format consistent with that of
+<code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>. Although these MCPs can be applied
+directly without <em>a priori</em> adjustment or protection, their
+interpretation should nevertheless be informed by the outcome of the
+omnibus test. In particular, evidence from the omnibus test provides an
+overall assessment of whether differences among the group means warrant
+subsequent pairwise comparisons.</p>
 <div class="section level3">
-<h3 id="parametric-1">4.1 Parametric<a class="anchor" aria-label="anchor" href="#parametric-1"></a>
+<h3 id="parametric-1">7.1 Parametric<a class="anchor" aria-label="anchor" href="#parametric-1"></a>
 </h3>
 <div class="section level4">
 <h4 id="regwq">REGWQ<a class="anchor" aria-label="anchor" href="#regwq"></a>
@@ -666,7 +678,7 @@ unequal sample sizes while retaining the equal-variance assumption:</p>
 unequal variances and/or unequal sample sizes. Each comparison uses a
 Welch–Satterthwaite-type degrees of freedom and the studentized-range
 distribution. This makes Games–Howell the natural choice among the
-package’s parametric post-hoc procedures when homoscedasticity
+package’s parametric <em>post hoc</em> procedures when homoscedasticity
 assumption is violated.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games_howell</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Games_Howell_test.html">Games_Howell_test</a></span><span class="op">(</span><span class="va">O_X_X</span>, <span class="va">val</span> <span class="op">~</span> <span class="va">grp</span><span class="op">)</span></span>
@@ -686,7 +698,7 @@ assumption is violated.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="nonparametric-1">4.2 Nonparametric<a class="anchor" aria-label="anchor" href="#nonparametric-1"></a>
+<h3 id="nonparametric-1">7.2 Nonparametric<a class="anchor" aria-label="anchor" href="#nonparametric-1"></a>
 </h3>
 <div class="section level4">
 <h4 id="dunns-test">Dunn’s test<a class="anchor" aria-label="anchor" href="#dunns-test"></a>
@@ -734,10 +746,13 @@ default:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="pairwise_comparison-workflow">5. <code>pairwise_comparison</code> workflow<a class="anchor" aria-label="anchor" href="#pairwise_comparison-workflow"></a>
+<h2 id="automatic-workflow">8. Automatic Workflow<a class="anchor" aria-label="anchor" href="#automatic-workflow"></a>
 </h2>
-<p>The package’s main automatic workflow is
-<code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>.</p>
+<p><code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code> automatically implements the
+conventional workflow for one-way analysis by evaluating the relevant
+distributional and variance assumptions, selecting an appropriate
+omnibus test, and subsequently performing pairwise comparisons when
+warranted.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adaptive</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_comparison.html">pairwise_comparison</a></span><span class="op">(</span><span class="va">O_O_O</span>, <span class="va">val</span> <span class="op">~</span> <span class="va">grp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -764,7 +779,7 @@ default:</p>
 <thead><tr class="header">
 <th>Data characteristics</th>
 <th>Omnibus / pre-hoc</th>
-<th>Post-hoc</th>
+<th><em>Post hoc</em></th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -809,7 +824,7 @@ residuals rather than the raw response.</p>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="compact-letter-displays">6. Compact letter displays<a class="anchor" aria-label="anchor" href="#compact-letter-displays"></a>
+<h2 id="compact-letter-displays">9. Compact letter displays<a class="anchor" aria-label="anchor" href="#compact-letter-displays"></a>
 </h2>
 <p>A compact letter display is a presentation device:</p>
 <ul>
@@ -896,7 +911,7 @@ thresholds in descending order:</p>
 <span><span class="co">#&gt; [1] "NS" "S"  "HS" "HS" "HS"</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="effect-sizes">7. Effect sizes<a class="anchor" aria-label="anchor" href="#effect-sizes"></a>
+<h2 id="effect-sizes">10. Effect sizes<a class="anchor" aria-label="anchor" href="#effect-sizes"></a>
 </h2>
 <p>This package provides quick inference to the effect size using only 2
 of the many estimators. For comprehensive effect size analysis, please
@@ -961,7 +976,7 @@ Cohen’s <em>d</em>:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="datasets">8. Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
+<h2 id="datasets">11. Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h2>
 <p>The package includes 6 simulated datasets designed specifically for
 different analysis conditions:</p>
@@ -1027,7 +1042,7 @@ levels.</li>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="interpretation-notes">9. Interpretation notes<a class="anchor" aria-label="anchor" href="#interpretation-notes"></a>
+<h2 id="interpretation-notes">12. Interpretation notes<a class="anchor" aria-label="anchor" href="#interpretation-notes"></a>
 </h2>
 <div class="section level4">
 <h4 id="statistical-significance-is-not-the-same-as-practical-importance">Statistical significance is not the same as practical
@@ -1069,8 +1084,8 @@ is appropriate.</li>
 analysis is justified.</li>
 <li>Use <code><a href="../reference/Kruskal_Wallis_test.html">Kruskal_Wallis_test()</a></code> when a rank-based omnibus
 test is more appropriate.</li>
-<li>Choose a post-hoc procedure that matches the assumptions and balance
-of the design.</li>
+<li>Choose a <em>post hoc</em> procedure that matches the assumptions
+and balance of the design.</li>
 <li>Report the estimated pairwise differences, confidence intervals,
 adjusted <em>p</em>-values, and effect sizes (not only significance
 stars or CLDs).</li>

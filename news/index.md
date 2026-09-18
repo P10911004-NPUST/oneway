@@ -2,6 +2,13 @@
 
 ## oneway 0.0.3
 
+- added vignette and built github pages;
+- fixed DATASETS O_O_O, should be 6 groups instead of 5;
+- increase sensitivity of
+  [`outlying::Grubbs_test()`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html)
+  in
+  [`describe()`](https://p10911004-npust.github.io/oneway/reference/describe.md).
+
 ## oneway 0.0.2
 
 CRAN release: 2026-09-15

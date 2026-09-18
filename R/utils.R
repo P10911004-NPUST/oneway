@@ -105,7 +105,7 @@ describe <- function(data, formula, rounding = 2)
     .outliers <- function(x)
     {
         suppressWarnings(
-            out <- outlying::Grubbs_test(x)
+            out <- outlying::Grubbs_test(x, sensitivity = 3)
         )
         n_out <- sum(unname(out))
         return(n_out)

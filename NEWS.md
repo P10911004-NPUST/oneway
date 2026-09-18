@@ -1,5 +1,9 @@
 # oneway 0.0.3
 
+- added vignette and built github pages;
+- fixed DATASETS O_O_O, should be 6 groups instead of 5;
+- increase sensitivity of `outlying::Grubbs_test()` in `describe()`.
+
 # oneway 0.0.2
 
 - make the package description more concise and direct;

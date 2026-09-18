@@ -2,7 +2,7 @@
 title: "oneway"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{varequal}
+  %\VignetteIndexEntry{oneway}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Overview
+# 1. Overview
 
 The `oneway` package provides an integrated workflow for one-factor experimental designs. Its 
 functionality covers:
@@ -36,7 +36,7 @@ functionality covers:
 
 <br>
 
-# Installation
+# 2. Installation
 
 Install the released version from [CRAN](https://cran.r-project.org/package=oneway):
 
@@ -62,7 +62,7 @@ set.seed(123)
 
 <br>
 
-# Quick start
+# 3. Quick start
 
 The core function of this package is `pairwise_comparison()`, which provides out-of-the-box 
 statistical inference for one-way designs. It expects a data frame and a two-sided formula:
@@ -73,10 +73,10 @@ out <- pairwise_comparison(morphine, tolerance ~ grp)
 
 The function return a list which includes 5 components:
 
-- method: the combination of a *a priori* and a *post-hoc* test;
+- method: the combination of a ***a priori*** and a ***post-hoc*** test;
 - data: the input data;
-- pre_hoc: An ANOVA-like table from the selected *a priori* test;
-- post_hoc: pairwise comparison result from the selected *post-hoc* test;
+- pre_hoc: An ANOVA-like table from the selected ***a priori*** test;
+- post_hoc: pairwise comparison result from the selected ***post hoc*** test;
 - summary: descriptive statistics for reporting.
 
 The `post_hoc` component is a data frame with at least 15 columns:
@@ -95,7 +95,7 @@ The `post_hoc` component is a data frame with at least 15 columns:
 | `standard_value`  | The statistics of the test, generally is a symbol                    |
 | `critical_value`  | The critical value for the statistics                                |
 | `StdErr`          | The standard error used to calculate `diff_CI`                       |
-| `method`          | The name of the post-hoc method                                      |
+| `method`          | The name of the *post hoc* method                                      |
 | `alternative`     | The direction of testing, either `less`, `greater`, or `two.sided`   |
 | `alpha`           | Error tolerance                                                      |
 
@@ -125,7 +125,7 @@ has you covered. Feel free to skip the rest of this guide.</h3>
 
 <br>
 
-# 1. Interface
+# 4. Interface
 
 Most analysis functions expect a data frame and a two-sided formula:
 
@@ -143,7 +143,7 @@ anorexia[c(2, 19, 43, 47, 60, 71), ]
 The `anorexia` data contain `weight_gain` as the response and `therapy` as the grouping variable:
 
 ```{r}
-oneway_anova(anorexia, weight_gain ~ therapy, verbose = FALSE)
+pairwise_comparison(anorexia, weight_gain ~ therapy)
 ```
 
 The package also accepts a list of numeric vectors for several functions:
@@ -153,12 +153,12 @@ group_data <- list(control = rnorm(20, 10, 2),
                    treatment_A = rnorm(20, 12, 2),
                    treatment_B = rnorm(20, 15, 2))
 
-oneway_anova(group_data)
+pairwise_comparison(group_data)
 ```
 
 <br>
 
-# 2. Describe the data
+# 5. Describe the data
 
 `describe()` is useful as a first-pass summary.
 
@@ -190,9 +190,9 @@ than as evidence that those observations should be removed.
 
 <br>
 
-# 3. *a priori* test
+# 6. *a priori* test
 
-## 3.1 Parametric
+## 6.1 Parametric
 
 The classic ANOVA procedure for parametric analysis is `oneway_anova()`.
 
@@ -231,7 +231,7 @@ The Fisher/Welch's ANOVA output includes columns such as:
 The automatic selection is convenient for exploratory and routine analyses, but it is still 
 important to examine the study design and the diagnostics before interpreting the result.
 
-## 3.2 Nonparametric
+## 6.2 Nonparametric
 
 ### ART-ANOVA
 
@@ -263,12 +263,16 @@ kw
 
 <br>
 
-# 4. Post-hoc analysis
+# 7. *Post hoc* analysis
 
-`oneway` includes 5 multiple comparison procedures (MCP) for post-hoc analysis. All MCPs produce a 
-standardized result identical to the `pairwise_comparison()`.
+`oneway` implements five multiple comparison procedures (MCPs) for *post hoc* analysis. Each 
+procedure returns results in a standardized format consistent with that of `pairwise_comparison()`. 
+Although these MCPs can be applied directly without *a priori* adjustment or protection, their 
+interpretation should nevertheless be informed by the outcome of the omnibus test. In particular, 
+evidence from the omnibus test provides an overall assessment of whether differences among the 
+group means warrant subsequent pairwise comparisons.
 
-## 4.1 Parametric
+## 7.1 Parametric
 
 ### REGWQ
 
@@ -305,13 +309,13 @@ tukey_kramer <- Tukey_Kramer_test(O_O_X, val ~ grp)
 `Games_Howell_test()` is intended for normal data with unequal variances and/or unequal sample 
 sizes. Each comparison uses a Welch--Satterthwaite-type degrees of freedom and the 
 studentized-range distribution. This makes Games--Howell the natural choice among the package's 
-parametric post-hoc procedures when homoscedasticity assumption is violated.
+parametric *post hoc* procedures when homoscedasticity assumption is violated.
 
 ```{r}
 games_howell <- Games_Howell_test(O_X_X, val ~ grp)
 ```
 
-## 4.2 Nonparametric
+## 7.2 Nonparametric
 
 ### Dunn's test
 
@@ -333,9 +337,11 @@ The available choices are those accepted by `stats::p.adjust()`.
 
 <br>
 
-# 5. `pairwise_comparison` workflow
+# 8. Automatic Workflow
 
-The package's main automatic workflow is `pairwise_comparison()`.
+`pairwise_comparison()` automatically implements the conventional workflow for one-way analysis by 
+evaluating the relevant distributional and variance assumptions, selecting an appropriate omnibus 
+test, and subsequently performing pairwise comparisons when warranted.
 
 ```{r}
 adaptive <- pairwise_comparison(O_O_O, val ~ grp)
@@ -343,7 +349,7 @@ adaptive <- pairwise_comparison(O_O_O, val ~ grp)
 
 The decision logic is:
 
-| Data characteristics                             | Omnibus / pre-hoc | Post-hoc          |
+| Data characteristics                             | Omnibus / pre-hoc | *Post hoc*        |
 | ---                                              | ---               | ---               |
 | Normal, equal variance, balanced                 | Fisher's ANOVA    | REGWQ             |
 | Normal, equal variance, unbalanced               | Fisher's ANOVA    | Tukey--Kramer     |
@@ -366,7 +372,7 @@ response.
 
 <br>
 
-# 6. Compact letter displays
+# 9. Compact letter displays
 
 A compact letter display is a presentation device:
 
@@ -435,7 +441,7 @@ pval2asterisk(p,
               symbols = c("NS", "S", "HS"))
 ```
 
-# 7. Effect sizes
+# 10. Effect sizes
 
 This package provides quick inference to the effect size using only 2 of the many estimators.
 For comprehensive effect size analysis, please refer to the paper of
@@ -470,7 +476,7 @@ fisher[, c("method", "Pvalue", "p_omega2")]
 
 <br>
 
-# 8. Datasets
+# 11. Datasets
 
 The package includes 6 simulated datasets designed specifically for different analysis conditions:
 
@@ -493,7 +499,7 @@ Additional datasets are:
 
 <br>
 
-# 9. Interpretation notes
+# 12. Interpretation notes
 
 ### Statistical significance is not the same as practical importance
 
@@ -520,7 +526,7 @@ A practical way to use `oneway` is:
 3. Use `oneway_anova()` when a parametric omnibus analysis is appropriate.
 4. Use `oneway_art()` when an aligned-rank-transform analysis is justified.
 5. Use `Kruskal_Wallis_test()` when a rank-based omnibus test is more appropriate.
-6. Choose a post-hoc procedure that matches the assumptions and balance of the design.
+6. Choose a *post hoc* procedure that matches the assumptions and balance of the design.
 7. Report the estimated pairwise differences, confidence intervals, adjusted *p*-values, and 
    effect sizes (not only significance stars or CLDs).
 8. Use `pairwise_comparison()` when you want to formalize this decision process automatically.

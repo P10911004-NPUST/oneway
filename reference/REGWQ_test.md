@@ -1,4 +1,4 @@
-# Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test
+# REGWQ – Ryan-Einot-Gabriel-Welsch Studentized Range test
 
 Performs the Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ)
 multiple comparison procedure for all pairwise comparisons of group

@@ -80,7 +80,7 @@ out <- pairwise_comparison(morphine, tolerance ~ grp)
 #> 5    SS   b 8  11 6.7188 10.5
 ```
 
-The function return a list which includes 5 components:
+### The function return a list which includes 5 components:
 
 - method: the combination of a ***a priori*** and a ***post-hoc*** test;
 - data: the input data;
@@ -89,7 +89,7 @@ The function return a list which includes 5 components:
   test;
 - summary: descriptive statistics for reporting.
 
-The `post_hoc` component is a data frame with at least 15 columns:
+> **The `post_hoc` component is a data frame with at least 15 columns:**
 
 | Column name | Interpretation |
 |:---|:---|
@@ -109,7 +109,7 @@ The `post_hoc` component is a data frame with at least 15 columns:
 | `alternative` | The direction of testing, either `less`, `greater`, or `two.sided` |
 | `alpha` | Error tolerance |
 
-The `summary` component is a data frame with 13 columns:
+> **The `summary` component is a data frame with 13 columns:**
 
 | Column name | Interpretation |
 |:---|:---|
@@ -121,17 +121,22 @@ The `summary` component is a data frame with 13 columns:
 | `MED` | Median |
 | `MIN` | Minimum value |
 | `MAX` | Maximum value |
-| `CI (95%)` | Confidence interval of including the population’s mean |
+| `CI (95%)` | Confidence interval containing the true population mean |
 | `SKEW (= 0)` | Skewness, see [`normality::skewness`](https://rdrr.io/pkg/normality/man/skewness.html) |
 | `KURT (= 3)` | Kurtosis, see [`normality::kurtosis`](https://rdrr.io/pkg/normality/man/kurtosis.html) |
 | `normality` | Is the sample follows normal distribution, see [`normality::is_normal`](https://rdrr.io/pkg/normality/man/is_normal.html) |
 | `n_outliers` | Number of possible outliers, see [`outlying::Grubbs_test`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html) |
 
+- Note that the `n_outliers` field provides only a **soft suggestion**
+  that approximately *n* observations may be outliers. It should
+  therefore be interpreted as a diagnostic flag rather than as evidence
+  that those observations should be removed.
+
   
 
 #### If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` has you covered. Feel free to skip the rest of this guide.
 
-  
+------------------------------------------------------------------------
 
 ## 4. Interface
 
@@ -139,7 +144,6 @@ Most analysis functions expect a data frame and a two-sided formula:
 
 ``` r
 
-# Pseudo code, do not run
 response ~ group
 ```
 
@@ -204,7 +208,9 @@ pairwise_comparison(group_data)
 ## 5. Describe the data
 
 [`describe()`](https://p10911004-npust.github.io/oneway/reference/describe.md)
-is useful as a first-pass summary.
+is useful as a first-pass summary. This is the function used to generate
+the `summary` component of the
+[`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md).
 
 ``` r
 
@@ -219,32 +225,9 @@ describe(anorexia, weight_gain ~ therapy, rounding = 2)
 #> 3       2.80      TRUE          0
 ```
 
-The summary includes:
-
-| Column name | Interpretation |
-|:---|:---|
-| `GROUP` | The name of each groups from the independent variable |
-| `CLD` | Compact letter display, see [`oneway::compact_letter_display`](https://p10911004-npust.github.io/oneway/reference/compact_letter_display.md) |
-| `N` | Sample size |
-| `AVG` | Mean |
-| `SD` | Sample’s standard deviation |
-| `MED` | Median |
-| `MIN` | Minimum value |
-| `MAX` | Maximum value |
-| `CI (95%)` | Confidence interval of including the population’s mean |
-| `SKEW (= 0)` | Skewness, see [`normality::skewness`](https://rdrr.io/pkg/normality/man/skewness.html) |
-| `KURT (= 3)` | Kurtosis, see [`normality::kurtosis`](https://rdrr.io/pkg/normality/man/kurtosis.html) |
-| `normality` | Is the sample follows normal distribution, see [`normality::is_normal`](https://rdrr.io/pkg/normality/man/is_normal.html) |
-| `n_outliers` | Number of possible outliers, see [`outlying::Grubbs_test`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html) |
-
-Note that the `n_outliers` field provides only a **soft suggestion**
-that approximately *n* observations may be outliers. It should therefore
-be interpreted as a diagnostic flag rather than as evidence that those
-observations should be removed.
-
   
 
-## 6. *a priori* test
+## 6. Omnibus / *a priori* test
 
 ### 6.1 Parametric
 
@@ -753,6 +736,8 @@ compact visualization of those decisions.
 The package provides rank-based alternatives so that a scientifically
 defensible analysis does not depend on forcing the response into a
 particular distributional shape.
+
+  
 
 ## Summary
 

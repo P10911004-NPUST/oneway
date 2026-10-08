@@ -39,7 +39,7 @@ balanced datasets contain 120 observations (20 per group), whereas
 unbalanced datasets contain 128 observations with group sizes of 27, 24,
 16, 30, 11, and 20.
 
-An object of class `data.frame` with 100 rows and 2 columns.
+An object of class `data.frame` with 120 rows and 2 columns.
 
 An object of class `data.frame` with 128 rows and 2 columns.
 

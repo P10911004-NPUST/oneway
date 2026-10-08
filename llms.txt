@@ -65,7 +65,7 @@ Dunnett test
 - [`Kruskal_Wallis_test()`](https://p10911004-npust.github.io/oneway/reference/Kruskal_Wallis_test.md)
   : Kruskal–Wallis one-way analysis of variance by ranks
 - [`REGWQ_test()`](https://p10911004-npust.github.io/oneway/reference/REGWQ_test.md)
-  : Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test
+  : REGWQ – Ryan-Einot-Gabriel-Welsch Studentized Range test
 - [`Tukey_HSD_test()`](https://p10911004-npust.github.io/oneway/reference/Tukey_HSD_test.md)
   : Tukey's Honestly Significant Difference (Tukey-HSD) test
 - [`Tukey_Kramer_test()`](https://p10911004-npust.github.io/oneway/reference/Tukey_Kramer_test.md)

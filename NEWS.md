@@ -2,7 +2,8 @@
 
 - added vignette and built github pages;
 - fixed DATASETS O_O_O, should be 6 groups instead of 5;
-- increase sensitivity of `outlying::Grubbs_test()` in `describe()`.
+- increase sensitivity of `outlying::Grubbs_test()` in `describe()`;
+- bugfixed: `compact_letter_display()` output failed when `all(pvalues > alpha)`.
 
 # oneway 0.0.2
 

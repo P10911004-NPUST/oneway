@@ -1,4 +1,4 @@
-#' Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test
+#' REGWQ -- Ryan-Einot-Gabriel-Welsch Studentized Range test
 #'
 #' Performs the Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) multiple comparison procedure
 #' for all pairwise comparisons of group means following a one-way analysis of variance. REGWQ is
@@ -150,7 +150,7 @@ REGWQ_test <- function(
         y2 <- yij[xij == x2]
         effect_size <- Hedges_g_s(y1, y2)  # from ./effect_size.R
 
-        post_hoc[[i]] <- oneway_post_hoc(  # from ./zzz_standard_output.R
+        post_hoc[[i]] <- oneway_post_hoc(  # from ./standard_output.R
             method = "REGWQ",
             alternative = "two.sided",
             alpha = alpha,
@@ -191,7 +191,7 @@ REGWQ_test <- function(
     cld <- cld[match(desc[["GROUP"]], names(cld))]
     desc[["CLD"]] <- cld
 
-    ret <- oneway_standard_output(  # from ./zzz_standard_output.R
+    ret <- oneway_standard_output(  # from ./standard_output.R
         method = "REGWQ multiple comparison procedure",
         data = df0,
         pre_hoc = pre_hoc,

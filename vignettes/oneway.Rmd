@@ -71,7 +71,7 @@ statistical inference for one-way designs. It expects a data frame and a two-sid
 out <- pairwise_comparison(morphine, tolerance ~ grp)
 ```
 
-The function return a list which includes 5 components:
+## The function return a list which includes 5 components:
 
 - method: the combination of a ***a priori*** and a ***post-hoc*** test;
 - data: the input data;
@@ -79,7 +79,7 @@ The function return a list which includes 5 components:
 - post_hoc: pairwise comparison result from the selected ***post hoc*** test;
 - summary: descriptive statistics for reporting.
 
-The `post_hoc` component is a data frame with at least 15 columns:
+> <b>The `post_hoc` component is a data frame with at least 15 columns:</b> 
 
 | Column name       | Interpretation                                                       |
 | :------           | :-----------------                                                   |
@@ -95,12 +95,11 @@ The `post_hoc` component is a data frame with at least 15 columns:
 | `standard_value`  | The statistics of the test, generally is a symbol                    |
 | `critical_value`  | The critical value for the statistics                                |
 | `StdErr`          | The standard error used to calculate `diff_CI`                       |
-| `method`          | The name of the *post hoc* method                                      |
+| `method`          | The name of the *post hoc* method                                    |
 | `alternative`     | The direction of testing, either `less`, `greater`, or `two.sided`   |
 | `alpha`           | Error tolerance                                                      |
 
-
-The `summary` component is a data frame with 13 columns:
+> <b>The `summary` component is a data frame with 13 columns:</b>  
 
 | Column name   | Interpretation                                                        |
 | :---          | :--------------                                                       |
@@ -112,25 +111,28 @@ The `summary` component is a data frame with 13 columns:
 | `MED`         | Median                                                                |
 | `MIN`         | Minimum value                                                         |
 | `MAX`         | Maximum value                                                         |
-| `CI (95%)`    | Confidence interval of including the population's mean                |
+| `CI (95%)`    | Confidence interval containing the true population mean               |
 | `SKEW (= 0)`  | Skewness, see `normality::skewness`                                   |
 | `KURT (= 3)`  | Kurtosis, see `normality::kurtosis`                                   |
 | `normality`   | Is the sample follows normal distribution, see `normality::is_normal` |
 | `n_outliers`  | Number of possible outliers, see `outlying::Grubbs_test`              |
+
+- Note that the `n_outliers` field provides only a **soft suggestion** that approximately *n* 
+observations may be outliers. It should therefore be interpreted as a diagnostic flag rather
+than as evidence that those observations should be removed.
 
 <br>
 
 <h3>If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` 
 has you covered. Feel free to skip the rest of this guide.</h3>
 
-<br>
+<hr>
 
 # 4. Interface
 
 Most analysis functions expect a data frame and a two-sided formula:
 
 ```r
-# Pseudo code, do not run
 response ~ group
 ```
 
@@ -160,37 +162,16 @@ pairwise_comparison(group_data)
 
 # 5. Describe the data
 
-`describe()` is useful as a first-pass summary.
+`describe()` is useful as a first-pass summary. This is the function used to generate the `summary`
+component of the `pairwise_comparison()`.
 
 ```{r}
 describe(anorexia, weight_gain ~ therapy, rounding = 2)
 ```
 
-The summary includes:
-
-| Column name   | Interpretation                                                        |
-| :---          | :------------                                                         |
-| `GROUP`       | The name of each groups from the independent variable                 |
-| `CLD`         | Compact letter display, see `oneway::compact_letter_display`          |
-| `N`           | Sample size                                                           |
-| `AVG`         | Mean                                                                  |
-| `SD`          | Sample's standard deviation                                           |
-| `MED`         | Median                                                                |
-| `MIN`         | Minimum value                                                         |
-| `MAX`         | Maximum value                                                         |
-| `CI (95%)`    | Confidence interval of including the population's mean                |
-| `SKEW (= 0)`  | Skewness, see `normality::skewness`                                   |
-| `KURT (= 3)`  | Kurtosis, see `normality::kurtosis`                                   |
-| `normality`   | Is the sample follows normal distribution, see `normality::is_normal` |
-| `n_outliers`  | Number of possible outliers, see `outlying::Grubbs_test`              |
-
-Note that the `n_outliers` field provides only a **soft suggestion** that approximately *n* 
-observations may be outliers. It should therefore be interpreted as a diagnostic flag rather 
-than as evidence that those observations should be removed.
-
 <br>
 
-# 6. *a priori* test
+# 6. Omnibus / *a priori* test
 
 ## 6.1 Parametric
 
@@ -515,6 +496,8 @@ and effect sizes. Treat the CLD as a compact visualization of those decisions.
 
 The package provides rank-based alternatives so that a scientifically defensible analysis does not 
 depend on forcing the response into a particular distributional shape.
+
+<br>
 
 # Summary
 

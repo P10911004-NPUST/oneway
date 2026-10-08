@@ -3,6 +3,7 @@ template:
   bootstrap: 5
   math-rendering: mathjax
   light-switch: yes
+  theme-dark: arrow-dark
   bslib:
     primary: '#0054AD'
     secondary: '#6C757D'

@@ -135,7 +135,7 @@ Dunn_test <- function(
         y2 <- yij[xij == x2]
         effect_size <- Hedges_g_s(y1, y2)
 
-        post_hoc[[i]] <- oneway_post_hoc(  # from ./zzz_standard_output.R
+        post_hoc[[i]] <- oneway_post_hoc(  # from ./standard_output.R
             method = "Dunn",
             alternative = "two.sided",
             alpha = alpha,

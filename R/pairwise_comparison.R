@@ -92,7 +92,7 @@
 #' @export
 pairwise_comparison <- function(
         data,
-        formula,
+        formula = NULL,
         alpha = 0.05,
         rounding = 4,
         verbose = TRUE,
@@ -142,7 +142,7 @@ pairwise_comparison <- function(
         }
     }
 
-    # Either the `y` or `ranked_y` is normally distributed, conduct the same procedure
+    # If `y` or `ranked_y` is normally distributed, conduct the same procedure
     # the only difference is using either raw y or aligned-ranked y as the response variable
     if (is_normal)
     {

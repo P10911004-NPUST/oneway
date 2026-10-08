@@ -2,7 +2,7 @@
 % Please edit documentation in R/REGWQ_test.R
 \name{REGWQ_test}
 \alias{REGWQ_test}
-\title{Ryan-Einot-Gabriel-Welsch Studentized Range (REGWQ) test}
+\title{REGWQ -- Ryan-Einot-Gabriel-Welsch Studentized Range test}
 \usage{
 REGWQ_test(data, formula = NULL, alpha = 0.05, rounding = 4, verbose = TRUE)
 }

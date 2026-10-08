@@ -62,7 +62,7 @@
 #' @export
 oneway_anova <- function(
         data,
-        formula,
+        formula = NULL,
         alpha = 0.05,
         var_equal = NA,
         rounding = 4,
@@ -75,9 +75,9 @@ oneway_anova <- function(
     # ------------------------------------------------------------------------------------- #
     resid <- lapply(lst, function(y) y - mean(y))  # residuals
 
-    is_normal <- normality::is_normal(resid)  # test normality on residuals
+    IS_NORMAL <- normality::is_normal(resid)  # test normality on residuals
 
-    if ( isTRUE(verbose) & ! is_normal )
+    if ( isTRUE(verbose) & ! IS_NORMAL )
         warning(paste("Normality assumption is violated.",
                       "Please consider ART-ANOVA or Kruskal-Wallis."))
 
@@ -101,7 +101,7 @@ oneway_anova <- function(
     structure(
         .Data = aov_tab,
         "data" = tidy_to_dataframe(data, formula),
-        "is_normal" = is_normal,
+        "is_normal" = IS_NORMAL,
         "is_var_equal" = IS_VAR_EQUAL,
         class = c("oneway_aov", "data.frame")
     )
@@ -295,7 +295,7 @@ oneway_anova <- function(
 #' @export
 oneway_art <- function(
         data,
-        formula,
+        formula = NULL,
         alpha = 0.05,
         var_equal = NA,
         rounding = 4,
@@ -309,18 +309,18 @@ oneway_art <- function(
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
 
-    is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
+    IS_NORMAL <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
 
-    if ( isTRUE(verbose) & is_normal )
+    if ( isTRUE(verbose) & IS_NORMAL )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 
     # ------------------------------------------------------------------------------------- #
     #                              Check homoscedasticity                                   #
     # ------------------------------------------------------------------------------------- #
-    IS_VAR_EQUAL <- varequal::is_var_equal(df0, y ~ x)
+    IS_VAR_EQUAL <- varequal::is_var_equal(df0, y ~ x) # Not assigned by the user
     if (isTRUE(var_equal) || isFALSE(var_equal))
-        is_var_equal <- var_equal
+        is_var_equal <- var_equal  # Assigned by the user
     else
         is_var_equal <- IS_VAR_EQUAL
 
@@ -357,8 +357,8 @@ oneway_art <- function(
     structure(
         .Data = aov_tab,
         "data" = df0,
-        "is_normal" = is_normal,
-        "is_var_equal" = IS_VAR_EQUAL,
+        "is_normal" = IS_NORMAL,
+        "is_var_equal" = IS_VAR_EQUAL,  # Not assigned by the user
         class = c("oneway_aov", "oneway_ranked_y", "oneway_art", "data.frame")
     )
 }
@@ -432,7 +432,7 @@ oneway_art <- function(
 #' @export
 Kruskal_Wallis_test <- function(
         data,
-        formula,
+        formula = NULL,
         alpha = 0.05,
         rounding = 4,
         verbose = TRUE
@@ -445,9 +445,9 @@ Kruskal_Wallis_test <- function(
     aov_mod <- stats::aov(y ~ x, df0)
     df0[["residuals"]] <- stats::residuals(aov_mod)
 
-    is_normal <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
+    IS_NORMAL <- normality::is_normal(df0, residuals ~ x)  # test normality on residuals
 
-    if ( isTRUE(verbose) & is_normal )
+    if ( isTRUE(verbose) & IS_NORMAL )
         warning(paste("Data is normally distributed.",
                       "Please consider standard ANOVA procedure."))
 
@@ -524,13 +524,13 @@ Kruskal_Wallis_test <- function(
         "p_omega2"    = effect_size
     )
 
-    # Assign a class of "oneway.art", because the subsequent post-hoc function need to
-    # retrieve `ranked_y` from the `data` attribute.
+    # Assign a class of "oneway_ranked_y", because the subsequent post-hoc
+    # function need to retrieve `ranked_y` from the `data` attribute.
     # The Kruskal-Wallis `ranked_y` calculation is different from the ART-ANOVA.
     structure(
         .Data = aov_tab,
         "data" = df0,
-        "is_normal" = is_normal,
+        "is_normal" = IS_NORMAL,
         "is_var_equal" = IS_VAR_EQUAL,
         class = c("oneway_aov", "oneway_ranked_y", "data.frame")
     )

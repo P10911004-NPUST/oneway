@@ -42,7 +42,7 @@ pairwise_comparison(O_O_O, val ~ grp)
 # TODO
 - [ ] pairwise *t*-test
 - [ ] data transformation (maybe not necessary)
-- [ ] Scheffé test
+- [x] Scheffé test
   - [Scheffé, H. (1953)](https://doi.org/10.1093/biomet/40.1-2.87)
 - [ ] Dunnett test
   - [Dunnett, C.W. (1955)](https://doi.org/10.1080/01621459.1955.10501294)

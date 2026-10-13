@@ -6,7 +6,7 @@
 \usage{
 pairwise_comparison(
   data,
-  formula,
+  formula = NULL,
   alpha = 0.05,
   rounding = 4,
   verbose = TRUE,

@@ -1,9 +1,10 @@
 # oneway 0.0.3
 
+- implement `Scheffe_test()`;
 - added vignette and built github pages;
-- fixed DATASETS O_O_O, should be 6 groups instead of 5;
+- fixed DATASETS `O_O_O`, it should be 6 groups instead of 5;
 - increase sensitivity of `outlying::Grubbs_test()` in `describe()`;
-- bugfixed: `compact_letter_display()` output failed when `all(pvalues > alpha)`.
+- bugfixed: `compact_letter_display()` output failed when all groups are non-significant (i.e. `all(pvalues > alpha)`).
 
 # oneway 0.0.2
 

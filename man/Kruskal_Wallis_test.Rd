@@ -4,7 +4,13 @@
 \alias{Kruskal_Wallis_test}
 \title{Kruskal–Wallis one-way analysis of variance by ranks}
 \usage{
-Kruskal_Wallis_test(data, formula, alpha = 0.05, rounding = 4, verbose = TRUE)
+Kruskal_Wallis_test(
+  data,
+  formula = NULL,
+  alpha = 0.05,
+  rounding = 4,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data}{A data frame containing the response and grouping variables.}

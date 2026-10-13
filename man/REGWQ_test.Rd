@@ -7,17 +7,15 @@
 REGWQ_test(data, formula = NULL, alpha = 0.05, rounding = 4, verbose = TRUE)
 }
 \arguments{
-\item{data}{A data frame, or an object returned by \code{oneway_anova()}, from which the response
-and grouping variables are obtained.}
+\item{data}{A data frame, a list, or an object returned by \code{oneway_anova()}, from which the
+response and grouping variables are obtained.}
 
 \item{formula}{A two-sided formula specifying the response and grouping variables in the form
-\code{response ~ group}. Ignored if \code{data} is a \code{"oneway_aov"} object.}
+\code{response ~ group}. Ignored if \code{data} is a list or an \code{"oneway_aov"} object.}
 
-\item{alpha}{A numeric value between 0 and 1 specifying the significance level.
-The default is \code{0.05}.}
+\item{alpha}{A numeric value between 0 and 1 (default: 0.05) specifying the significance level.}
 
-\item{rounding}{An integer specifying the number of decimal places to display in the output.
-The default is \code{4}.}
+\item{rounding}{An integer (default: 4). The number of decimal places to display in the output.}
 
 \item{verbose}{Logical (default: TRUE). Show warnings and messages.}
 }
@@ -57,7 +55,7 @@ out <- REGWQ_test(morphine, tolerance ~ grp)
 
 }
 \references{
-Howell, D. C. (2010).
+Howell, D.C. (2010).
 Statistical Methods for Psychology (7th ed.).
 Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
 Section 12.6: Post hoc comparisons, pg. 393-394.

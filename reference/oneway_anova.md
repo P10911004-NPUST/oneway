@@ -10,7 +10,7 @@ to whether the group variances are judged to be homogeneous.
 ``` r
 oneway_anova(
   data,
-  formula,
+  formula = NULL,
   alpha = 0.05,
   var_equal = NA,
   rounding = 4,

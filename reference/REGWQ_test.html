@@ -72,23 +72,21 @@ under balanced designs.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame, or an object returned by <code><a href="oneway_anova.html">oneway_anova()</a></code>, from which the response
-and grouping variables are obtained.</p></dd>
+<dd><p>A data frame, a list, or an object returned by <code><a href="oneway_anova.html">oneway_anova()</a></code>, from which the
+response and grouping variables are obtained.</p></dd>
 
 
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
 <dd><p>A two-sided formula specifying the response and grouping variables in the form
-<code>response ~ group</code>. Ignored if <code>data</code> is a <code>"oneway_aov"</code> object.</p></dd>
+<code>response ~ group</code>. Ignored if <code>data</code> is a list or an <code>"oneway_aov"</code> object.</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>A numeric value between 0 and 1 specifying the significance level.
-The default is <code>0.05</code>.</p></dd>
+<dd><p>A numeric value between 0 and 1 (default: 0.05) specifying the significance level.</p></dd>
 
 
 <dt id="arg-rounding">rounding<a class="anchor" aria-label="anchor" href="#arg-rounding"></a></dt>
-<dd><p>An integer specifying the number of decimal places to display in the output.
-The default is <code>4</code>.</p></dd>
+<dd><p>An integer (default: 4). The number of decimal places to display in the output.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -130,7 +128,7 @@ designs. When sample sizes are unequal but variances remain homogeneous, conside
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Howell, D. C. (2010).
+    <p>Howell, D.C. (2010).
 Statistical Methods for Psychology (7th ed.).
 Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
 Section 12.6: Post hoc comparisons, pg. 393-394.</p>

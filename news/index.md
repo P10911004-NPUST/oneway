@@ -2,15 +2,18 @@
 
 ## oneway 0.0.3
 
+- implement
+  [`Scheffe_test()`](https://p10911004-npust.github.io/oneway/reference/Scheffe_test.md);
 - added vignette and built github pages;
-- fixed DATASETS O_O_O, should be 6 groups instead of 5;
+- fixed DATASETS `O_O_O`, it should be 6 groups instead of 5;
 - increase sensitivity of
   [`outlying::Grubbs_test()`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html)
   in
   [`describe()`](https://p10911004-npust.github.io/oneway/reference/describe.md);
 - bugfixed:
   [`compact_letter_display()`](https://p10911004-npust.github.io/oneway/reference/compact_letter_display.md)
-  output failed when `all(pvalues > alpha)`.
+  output failed when all groups are non-significant
+  (i.e. `all(pvalues > alpha)`).
 
 ## oneway 0.0.2
 

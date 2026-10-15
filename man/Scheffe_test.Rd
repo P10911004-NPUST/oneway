@@ -58,16 +58,25 @@ out <- Scheffe_test(morphine, tolerance ~ grp, planned_contrasts = contr)
 
 }
 \references{
-Howell, D.C. (2010).
-Statistical Methods for Psychology (7th ed.).
-Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
-Section 12.3: A Priori Comparisons, pg. 374.
-
 Heckert, N.A., Filliben, J.J., Croarkin, C.M., Hembree, B., Guthrie, W.F.,
 Tobias, P., & Prinz, J. (2002).
 Handbook 151: Nist/sematech e-handbook of statistical methods.
 Section 7.4.6.2: Scheffe's method
 https://doi.org/10.18434/M32189
+
+Howell, D.C. (2010).
+Statistical Methods for Psychology (7th ed.).
+Cengage Learning. Chapter 12: Multiple comparisons among treatment means,
+Section 12.3: A Priori Comparisons, pg. 374.
+
+Montgomery, D.C. (2017).
+Design and analysis of experiments (9th ed.).
+John Wiley & Sons. pg. 89-95.
+
+Scheffé, H. (1953).
+A method for judging all contrasts in the analysis of variance.
+Biometrika, 40, 87–104.
+https://doi.org/10.1093/biomet/40.1-2.87
 }
 \seealso{
 \code{\link[=oneway_anova]{oneway_anova()}}, \code{\link[=pairwise_contrasts]{pairwise_contrasts()}}

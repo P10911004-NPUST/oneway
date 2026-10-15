@@ -110,30 +110,35 @@ out <- pairwise_comparison(morphine, tolerance ~ grp)
 
 > <b>The `summary` component is a data frame with 13 columns:</b>  
 
-| Column name   | Interpretation                                                        |
-| :---          | :--------------                                                       |
-| `GROUP`       | The name of each groups from the independent variable                 |
-| `CLD`         | Compact letter display, see `oneway::compact_letter_display`          |
-| `N`           | Sample size                                                           |
-| `AVG`         | Mean                                                                  |
-| `SD`          | Sample's standard deviation                                           |
-| `MED`         | Median                                                                |
-| `MIN`         | Minimum value                                                         |
-| `MAX`         | Maximum value                                                         |
-| `CI (95%)`    | Confidence interval containing the true population mean               |
-| `SKEW (= 0)`  | Skewness, see `normality::skewness`                                   |
-| `KURT (= 3)`  | Kurtosis, see `normality::kurtosis`                                   |
-| `normality`   | Is the sample follows normal distribution, see `normality::is_normal` |
-| `n_outliers`  | Number of possible outliers, see `outlying::Grubbs_test`              |
+| Column name               | Interpretation                                                 |
+| :---                      | :--------------                                                |
+| `GROUP`                   | The name of each groups from the independent variable          |
+| `CLD`                     | Compact letter display, see `oneway::compact_letter_display`   |
+| `N`                       | Sample size                                                    |
+| `AVG`                     | Mean                                                           |
+| `SD`                      | Sample's standard deviation                                    |
+| `MED`                     | Median                                                         |
+| `MIN`                     | Minimum value                                                  |
+| `MAX`                     | Maximum value                                                  |
+| `CI (95%)`                | Confidence interval containing the true population mean        |
+| `SKEW (= 0)`              | Skewness, see `normality::skewness`                            |
+| `KURT (= 3)`              | Kurtosis, see `normality::kurtosis`                            |
+| `normality`               | Is the sample normally distributed? See `normality::is_normal` |
+| `n_outliers` <sup>#</sup> | Number of possible outliers, see `outlying::Grubbs_test`       |
 
-- Note that the `n_outliers` field provides only a **soft suggestion** that approximately *n* 
-observations may be outliers. It should therefore be interpreted as a diagnostic flag rather
-than as evidence that those observations should be removed.
+<h5 style='text-align: justify; color: gray'><sup>#</sup>Note that the `n_outliers` field provides 
+only a **soft suggestion** that approximately *n* observations may be outliers. It should therefore 
+be interpreted as a diagnostic flag rather than as an evidence that those observations should be 
+removed.</h5>
+
+<br>
 
 <h3>If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` 
-has you covered. Feel free to skip the rest of this guide.</h3>
+has you covered. Feel free to skip the rest of this article.</h3>
 
 <hr>
+
+<br>
 
 # 4. Interface
 

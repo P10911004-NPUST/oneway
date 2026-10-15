@@ -8,13 +8,7 @@ the observations rather than their original values.
 ## Usage
 
 ``` r
-Kruskal_Wallis_test(
-  data,
-  formula = NULL,
-  alpha = 0.05,
-  rounding = 4,
-  verbose = TRUE
-)
+Kruskal_Wallis_test(data, formula, alpha = 0.05, rounding = 4, verbose = TRUE)
 ```
 
 ## Arguments

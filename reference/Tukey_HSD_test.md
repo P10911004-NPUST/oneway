@@ -23,25 +23,25 @@ Tukey_HSD_test(
 
 - data:
 
-  A data frame, a list, or an object returned by
+  A data frame, or an object returned by
   [`oneway_anova()`](https://p10911004-npust.github.io/oneway/reference/oneway_anova.md),
   from which the response and grouping variables are obtained.
 
 - formula:
 
   A two-sided formula specifying the response and grouping variables in
-  the form `response ~ group`. Ignored if `data` is a list or an
-  `"oneway_aov"` object.
+  the form `response ~ group`. Ignored if `data` is a `"oneway_aov"`
+  object.
 
 - alpha:
 
-  A numeric value between 0 and 1 (default: 0.05) specifying the
-  significance level.
+  A numeric value between 0 and 1 specifying the significance level. The
+  default is `0.05`.
 
 - rounding:
 
-  An integer (default: 4). The number of decimal places to display in
-  the output.
+  An integer specifying the number of decimal places to display in the
+  output. The default is `4`.
 
 - verbose:
 

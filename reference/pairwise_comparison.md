@@ -11,7 +11,7 @@ an appropriate analysis protocol.
 ``` r
 pairwise_comparison(
   data,
-  formula = NULL,
+  formula,
   alpha = 0.05,
   rounding = 4,
   verbose = TRUE,

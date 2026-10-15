@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/P10911004-NPUST/oneway/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/P10911004-NPUST/oneway/blob/v0.0.3/DESCRIPTION)
 
 Lai J (2026). *oneway: One-Way Statistical Analyses*. R package version
 0.0.3, <https://github.com/P10911004-NPUST/oneway>.

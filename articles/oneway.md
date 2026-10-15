@@ -5,7 +5,7 @@
 The `oneway` package provides an integrated workflow for one-factor
 experimental designs. Its functionality covers:
 
-- descriptive statistics;
+- Descriptive statistics;
 - *a priori* test (omnibus test)
   - classical ANOVA
   - aligned rank transform ANOVA (`ART-ANOVA`)
@@ -16,8 +16,10 @@ experimental designs. Its functionality covers:
   - Tukey-Kramer
   - Games-Howell
   - Dunn’s
+- Planned contrasts test
+  - Scheffé
 - Effect sizes;
-- a single adaptive workflow,
+- A single adaptive workflow,
   [`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md),
   that selects an appropriate *a priori* + *post hoc* protocol from the
   observed distributional, variance, and design characteristics.
@@ -124,19 +126,18 @@ out <- pairwise_comparison(morphine, tolerance ~ grp)
 | `CI (95%)` | Confidence interval containing the true population mean |
 | `SKEW (= 0)` | Skewness, see [`normality::skewness`](https://rdrr.io/pkg/normality/man/skewness.html) |
 | `KURT (= 3)` | Kurtosis, see [`normality::kurtosis`](https://rdrr.io/pkg/normality/man/kurtosis.html) |
-| `normality` | Is the sample follows normal distribution, see [`normality::is_normal`](https://rdrr.io/pkg/normality/man/is_normal.html) |
-| `n_outliers` | Number of possible outliers, see [`outlying::Grubbs_test`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html) |
+| `normality` | Is the sample normally distributed? See [`normality::is_normal`](https://rdrr.io/pkg/normality/man/is_normal.html) |
+| `n_outliers` ^(\#) | Number of possible outliers, see [`outlying::Grubbs_test`](https://rdrr.io/pkg/outlying/man/Grubbs_test.html) |
 
-- Note that the `n_outliers` field provides only a **soft suggestion**
-  that approximately *n* observations may be outliers. It should
-  therefore be interpreted as a diagnostic flag rather than as evidence
-  that those observations should be removed.
+###### ^(\#)Note that the `n_outliers` field provides only a **soft suggestion** that approximately *n* observations may be outliers. It should therefore be interpreted as a diagnostic flag rather than as an evidence that those observations should be removed.
 
   
 
-#### If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` has you covered. Feel free to skip the rest of this guide.
+#### If you only require a plug-and-play function to analyze your data, `pairwise_comparison()` has you covered. Feel free to skip the rest of this article.
 
 ------------------------------------------------------------------------
+
+  
 
 ## 4. Interface
 
@@ -341,15 +342,12 @@ kw
 ## 7. *Post hoc* analysis
 
 `oneway` implements five multiple comparison procedures (MCPs) for *post
-hoc* analysis. Each procedure returns results in a standardized format
-consistent with that of
-[`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md).
-Although these MCPs can be applied directly without *a priori*
-adjustment or protection, their interpretation should nevertheless be
-informed by the outcome of the omnibus test. In particular, evidence
-from the omnibus test provides an overall assessment of whether
-differences among the group means warrant subsequent pairwise
-comparisons.
+hoc* analysis. Although these MCPs can be applied directly without *a
+priori* adjustment or protection, their interpretation should
+nevertheless be informed by the outcome of the omnibus test. In
+particular, evidence from the omnibus test provides an overall
+assessment of whether differences among the group means warrant
+subsequent pairwise comparisons.
 
 ### 7.1 Parametric
 
@@ -562,7 +560,92 @@ rather than the raw response.
 
   
 
-## 9. Compact letter displays
+## 9. Planned contrasts
+
+The
+[`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md)
+function can be considered an unplanned contrast method, as it does not
+require the user to pre-specify exact group-to-group comparisons prior
+to data collection. Instead, pairwise comparisons are typically executed
+after inspecting the results. The risk here is that if comparisons are
+chosen post-inspection, analysts naturally tend to test the largest
+observed differences. These extremes can reflect true treatment effects,
+but they can also stem entirely from random error. Systematically
+testing only the largest observed differences severely inflates the Type
+Ⅰ error rate, as a high proportion of those comparisons are driven by
+sampling noise rather than genuine effects—a practice known as data
+snooping. While post-hoc procedures like the Scheffé test safely account
+for data snooping through multiplicity adjustments (Montgomery, 2017),
+the practical distinction between planned and unplanned workflows can
+occasionally be nuanced depending on how an analysis pipeline is
+structured.
+
+#### Scheffé
+
+In many situations, experimenters may not know in advance which
+contrasts they wish to test, or they may be interested in exploring more
+than the standard `k - 1` orthogonal comparisons. In exploratory
+research, hypotheses of interest are frequently conceived only after a
+preliminary examination of the data. Scheffé method is used for testing
+any and all possible linear contrasts among treatment means. Under the
+Scheffé method, the overall Type Ⅰ error rate is strictly controlled at
+no more than α, regardless of how many or which comparisons are
+ultimately evaluated.
+
+``` r
+
+# Compute all pairwise contrasts using Scheffé's method (internal programmatic initiation).
+# Note: Scheffé's test is overly conservative for pure pairwise comparisons; 
+# dedicated post-hoc methods in the previous section should be preferred for pairwise comparison.
+out <- Scheffe_test(morphine, tolerance ~ grp)
+#> 
+#> -----------------------------------
+#> Scheffe's planned contrasts method
+#> -----------------------------------
+#> Data: morphine ; Formula: tolerance ~ grp
+#> 
+#>     x1 x2 [x1 - x2] Pvalue signif     [x1 - x2] 95% CI      F  Fcrit StdErr
+#> 1  McM MM        19 0.0000    ***    [9.8061, 28.1939] 45.125 3.2505 2.8284
+#> 2  McM MS        25 0.0000    ***   [15.8061, 34.1939] 78.125 3.2505 2.8284
+#> 3  McM SM         5 0.0268      *   [-4.1939, 14.1939]  3.125 3.2505 2.8284
+#> 4  McM SS        18 0.0000    ***    [8.8061, 27.1939] 40.500 3.2505 2.8284
+#> 5   MM MS         6 0.0049     **   [-3.1939, 15.1939]  4.500 3.2505 2.8284
+#> 6   MM SM       -14 0.0000    ***  [-23.1939, -4.8061] 24.500 3.2505 2.8284
+#> 7   MM SS        -1 0.9725     ns   [-10.1939, 8.1939]  0.125 3.2505 2.8284
+#> 8   MS SM       -20 0.0000    *** [-29.1939, -10.8061] 50.000 3.2505 2.8284
+#> 9   MS SS        -7 0.0008    ***   [-16.1939, 2.1939]  6.125 3.2505 2.8284
+#> 10  SM SS        13 0.0000    ***    [3.8061, 22.1939] 21.125 3.2505 2.8284
+
+# Specify custom contrasts
+grp_names <- c("MS", "MM", "SS", "SM", "McM")
+ca <- c(-1, -1, -1, 1.5, 1.5)
+cb <- c(0, -1, 0, 0, 1)
+cc <- c(-1, 0, 1, 0, 0)
+cd <- c(0, 1, -1, 0, 0)
+contr <- matrix(c(ca, cb, cc, cd), ncol = length(grp_names), byrow = TRUE)
+colnames(contr) <- grp_names
+out <- Scheffe_test(morphine, tolerance ~ grp, planned_contrasts = contr)
+#> 
+#> -----------------------------------
+#> Scheffe's planned contrasts method
+#> -----------------------------------
+#> Data: morphine ; Formula: tolerance ~ grp
+#> 
+#>         x1           x2 [x1 - x2] Pvalue signif   [x1 - x2] 95% CI       F
+#> 1 McM + SM MM + MS + SS   18.1667 0.0000    *** [12.2321, 24.1013] 99.0083
+#> 2      McM           MM   19.0000 0.0000    ***  [9.8061, 28.1939] 45.1250
+#> 3       SS           MS    7.0000 0.0008    *** [-2.1939, 16.1939]  6.1250
+#> 4       MM           SS   -1.0000 0.9725     ns [-10.1939, 8.1939]  0.1250
+#>    Fcrit StdErr
+#> 1 3.2505 1.8257
+#> 2 3.2505 2.8284
+#> 3 3.2505 2.8284
+#> 4 3.2505 2.8284
+```
+
+  
+
+## 10. Compact letter displays
 
 A compact letter display is a presentation device:
 
@@ -645,7 +728,9 @@ pval2asterisk(p,
 #> [1] "NS" "S"  "HS" "HS" "HS"
 ```
 
-## 10. Effect sizes
+  
+
+## 11. Effect sizes
 
 This package provides quick inference to the effect size using only 2 of
 the many estimators. For comprehensive effect size analysis, please
@@ -692,7 +777,7 @@ fisher[, c("method", "Pvalue", "p_omega2")]
 
   
 
-## 11. Datasets
+## 12. Datasets
 
 The package includes 6 simulated datasets designed specifically for
 different analysis conditions:
@@ -717,7 +802,7 @@ Additional datasets are:
 
   
 
-## 12. Interpretation notes
+## 13. Interpretation notes
 
 #### Statistical significance is not the same as practical importance
 
@@ -773,9 +858,14 @@ selecting the analysis protocol.
 
 ## References
 
+Ben-Shachar M., Lüdecke D., Makowski D. (2020). effectsize: Estimation
+of Effect Size Indices and Standardized Parameters. *Journal of Open
+Source Software*, 5(56), 2815.  
+<https://doi.org/10.21105/joss.02815>
+
 Dinno, A. (2015). Nonparametric pairwise multiple comparisons in
 independent groups using Dunn’s test. *The Stata Journal: Promoting
-Communications on Statistics and Stata*, 15(1), 292–300.
+Communications on Statistics and Stata*, 15(1), 292–300.  
 <https://doi.org/10.1177/1536867X1501500117>
 
 Elkin, L.A., Kay, M., Higgins, J.J., & Wobbrock, J.O. (2021). An aligned
@@ -794,11 +884,12 @@ Cengage Learning.
 
 Kruskal, W.H., & Wallis, W. A. (1952). Use of ranks in one-criterion
 variance analysis. *Journal of the American Statistical Association*,
-47(260), 583–621. <https://doi.org/10.1080/01621459.1952.10483441>
+47(260), 583–621.  
+<https://doi.org/10.1080/01621459.1952.10483441>
 
 Lakens, D. (2013). Calculating and reporting effect sizes to facilitate
 cumulative science: A practical primer for t-tests and ANOVAs.
-*Frontiers in Psychology*, 4(863).
+*Frontiers in Psychology*, 4(863).  
 <https://doi.org/10.3389/fpsyg.2013.00863>
 
 Montgomery, D.C. (2017). *Design and analysis of experiments* (9th ed.).
@@ -806,7 +897,8 @@ John Wiley & Sons.
 
 Piepho, H.P. (2004). An algorithm for a letter-based representation of
 all-pairwise comparisons. *Journal of Computational and Graphical
-Statistics*, 13(2), 456–466. <https://doi.org/10.1198/1061860043515>
+Statistics*, 13(2), 456–466.  
+<https://doi.org/10.1198/1061860043515>
 
 Piepho, H.P. (2018). Letters in mean comparisons: What they do and don’t
 mean. *Agronomy Journal*, 110(2), 431–434.
@@ -815,7 +907,7 @@ mean. *Agronomy Journal*, 110(2), 431–434.
 Wobbrock, J.O., Findlater, L., Gergle, D., & Higgins, J.J. (2011). The
 aligned rank transform for nonparametric factorial analyses using only
 ANOVA procedures. *Proceedings of the SIGCHI Conference on Human Factors
-in Computing Systems*, 143–146.
+in Computing Systems*, 143–146.  
 <https://doi.org/10.1145/1978942.1978963>
 
 Zar, J.H. (2014). *Biostatistical analysis* (5th ed.). Pearson.

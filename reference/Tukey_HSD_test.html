@@ -19,7 +19,7 @@ homogeneity of variances, and balanced group sizes are reasonably satisfied."></
 
     <a class="navbar-brand me-2" href="../index.html">oneway</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ homogeneity of variances, and balanced group sizes are reasonably satisfied."></
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Tukey's Honestly Significant Difference (Tukey-HSD) test</h1>
-      <small class="dont-index">Source: <a href="https://github.com/P10911004-NPUST/oneway/blob/v0.0.3/R/Tukey_HSD_test.R" class="external-link"><code>R/Tukey_HSD_test.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/P10911004-NPUST/oneway/blob/main/R/Tukey_HSD_test.R" class="external-link"><code>R/Tukey_HSD_test.R</code></a></small>
       <div class="d-none name"><code>Tukey_HSD_test.Rd</code></div>
     </div>
 
@@ -75,23 +75,21 @@ homogeneity of variances, and balanced group sizes are reasonably satisfied.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame, or an object returned by <code><a href="oneway_anova.html">oneway_anova()</a></code>, from which the response
-and grouping variables are obtained.</p></dd>
+<dd><p>A data frame, a list, or an object returned by <code><a href="oneway_anova.html">oneway_anova()</a></code>, from which the
+response and grouping variables are obtained.</p></dd>
 
 
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
 <dd><p>A two-sided formula specifying the response and grouping variables in the form
-<code>response ~ group</code>. Ignored if <code>data</code> is a <code>"oneway_aov"</code> object.</p></dd>
+<code>response ~ group</code>. Ignored if <code>data</code> is a list or an <code>"oneway_aov"</code> object.</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>A numeric value between 0 and 1 specifying the significance level.
-The default is <code>0.05</code>.</p></dd>
+<dd><p>A numeric value between 0 and 1 (default: 0.05) specifying the significance level.</p></dd>
 
 
 <dt id="arg-rounding">rounding<a class="anchor" aria-label="anchor" href="#arg-rounding"></a></dt>
-<dd><p>An integer specifying the number of decimal places to display in the output.
-The default is <code>4</code>.</p></dd>
+<dd><p>An integer (default: 4). The number of decimal places to display in the output.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

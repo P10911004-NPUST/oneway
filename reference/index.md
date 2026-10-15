@@ -13,6 +13,8 @@
   : Kruskal–Wallis one-way analysis of variance by ranks
 - [`REGWQ_test()`](https://p10911004-npust.github.io/oneway/reference/REGWQ_test.md)
   : REGWQ – Ryan-Einot-Gabriel-Welsch Studentized Range test
+- [`Scheffe_test()`](https://p10911004-npust.github.io/oneway/reference/Scheffe_test.md)
+  : Scheffé's Method for Planned Contrasts
 - [`Tukey_HSD_test()`](https://p10911004-npust.github.io/oneway/reference/Tukey_HSD_test.md)
   : Tukey's Honestly Significant Difference (Tukey-HSD) test
 - [`Tukey_Kramer_test()`](https://p10911004-npust.github.io/oneway/reference/Tukey_Kramer_test.md)
@@ -35,6 +37,8 @@
   : One-Way Aligned Ranked Transformed Analysis of Variance (ART-ANOVA)
 - [`pairwise_comparison()`](https://p10911004-npust.github.io/oneway/reference/pairwise_comparison.md)
   : Multiple comparison procedure
+- [`pairwise_contrasts()`](https://p10911004-npust.github.io/oneway/reference/pairwise_contrasts.md)
+  : Generate All Pairwise Contrasts
 - [`plasma_etching`](https://p10911004-npust.github.io/oneway/reference/plasma_etching.md)
   : Plasma Etching Experiment
 - [`pval2asterisk()`](https://p10911004-npust.github.io/oneway/reference/pval2asterisk.md)

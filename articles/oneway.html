@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">oneway</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,19 +68,24 @@
       <h1>oneway</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/P10911004-NPUST/oneway/blob/v0.0.3/vignettes/oneway.Rmd" class="external-link"><code>vignettes/oneway.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/P10911004-NPUST/oneway/blob/main/vignettes/oneway.Rmd" class="external-link"><code>vignettes/oneway.Rmd</code></a></small>
       <div class="d-none name"><code>oneway.Rmd</code></div>
     </div>
 
     
     
+<style>
+p {
+  text-align: justify;
+}
+</style>
 <div class="section level2">
 <h2 id="overview">1. Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The <code>oneway</code> package provides an integrated workflow for
 one-factor experimental designs. Its functionality covers:</p>
 <ul>
-<li>descriptive statistics;</li>
+<li>Descriptive statistics;</li>
 <li>
 <em>a priori</em> test (omnibus test)
 <ul>
@@ -99,8 +104,13 @@ one-factor experimental designs. Its functionality covers:</p>
 <li>Dunn’s</li>
 </ul>
 </li>
+<li>Planned contrasts test
+<ul>
+<li>Scheffé</li>
+</ul>
+</li>
 <li>Effect sizes;</li>
-<li>a single adaptive workflow, <code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>, that
+<li>A single adaptive workflow, <code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>, that
 selects an appropriate <em>a priori</em> + <em>post hoc</em> protocol
 from the observed distributional, variance, and design
 characteristics.</li>
@@ -312,33 +322,37 @@ mean</td>
 </tr>
 <tr class="even">
 <td align="left"><code>normality</code></td>
-<td align="left">Is the sample follows normal distribution, see
+<td align="left">Is the sample normally distributed? See
 <code><a href="https://rdrr.io/pkg/normality/man/is_normal.html" class="external-link">normality::is_normal</a></code>
 </td>
 </tr>
 <tr class="odd">
-<td align="left"><code>n_outliers</code></td>
+<td align="left">
+<code>n_outliers</code> <sup>#</sup>
+</td>
 <td align="left">Number of possible outliers, see
 <code><a href="https://rdrr.io/pkg/outlying/man/Grubbs_test.html" class="external-link">outlying::Grubbs_test</a></code>
 </td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li>Note that the <code>n_outliers</code> field provides only a
+<h6 style="text-align: justify; color: gray" id="the-function-return-a-list-which-includes-5-components-1">
+<sup>#</sup>Note that the <code>n_outliers</code> field provides only a
 <strong>soft suggestion</strong> that approximately <em>n</em>
 observations may be outliers. It should therefore be interpreted as a
-diagnostic flag rather than as evidence that those observations should
-be removed.</li>
-</ul>
+diagnostic flag rather than as an evidence that those observations
+should be removed.
+<a class="anchor" aria-label="anchor" href="#the-function-return-a-list-which-includes-5-components-1"></a>
+</h6>
 <p><br></p>
-<h4 id="the-function-return-a-list-which-includes-5-components-1">
+<h4 id="the-function-return-a-list-which-includes-5-components-2">
 If you only require a plug-and-play function to analyze your data,
 <code>pairwise_comparison()</code> has you covered. Feel free to skip
-the rest of this guide.
-<a class="anchor" aria-label="anchor" href="#the-function-return-a-list-which-includes-5-components-1"></a>
+the rest of this article.
+<a class="anchor" aria-label="anchor" href="#the-function-return-a-list-which-includes-5-components-2"></a>
 </h4>
 <hr>
+<p><br></p>
 </div>
 </div>
 <div class="section level2">
@@ -527,14 +541,12 @@ nonparametric alternative:</p>
 <h2 id="post-hoc-analysis">7. <em>Post hoc</em> analysis<a class="anchor" aria-label="anchor" href="#post-hoc-analysis"></a>
 </h2>
 <p><code>oneway</code> implements five multiple comparison procedures
-(MCPs) for <em>post hoc</em> analysis. Each procedure returns results in
-a standardized format consistent with that of
-<code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code>. Although these MCPs can be applied
-directly without <em>a priori</em> adjustment or protection, their
-interpretation should nevertheless be informed by the outcome of the
-omnibus test. In particular, evidence from the omnibus test provides an
-overall assessment of whether differences among the group means warrant
-subsequent pairwise comparisons.</p>
+(MCPs) for <em>post hoc</em> analysis. Although these MCPs can be
+applied directly without <em>a priori</em> adjustment or protection,
+their interpretation should nevertheless be informed by the outcome of
+the omnibus test. In particular, evidence from the omnibus test provides
+an overall assessment of whether differences among the group means
+warrant subsequent pairwise comparisons.</p>
 <div class="section level3">
 <h3 id="parametric-1">7.1 Parametric<a class="anchor" aria-label="anchor" href="#parametric-1"></a>
 </h3>
@@ -759,7 +771,89 @@ residuals rather than the raw response.</p>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="compact-letter-displays">9. Compact letter displays<a class="anchor" aria-label="anchor" href="#compact-letter-displays"></a>
+<h2 id="planned-contrasts">9. Planned contrasts<a class="anchor" aria-label="anchor" href="#planned-contrasts"></a>
+</h2>
+<p>The <code><a href="../reference/pairwise_comparison.html">pairwise_comparison()</a></code> function can be considered an
+unplanned contrast method, as it does not require the user to
+pre-specify exact group-to-group comparisons prior to data collection.
+Instead, pairwise comparisons are typically executed after inspecting
+the results. The risk here is that if comparisons are chosen
+post-inspection, analysts naturally tend to test the largest observed
+differences. These extremes can reflect true treatment effects, but they
+can also stem entirely from random error. Systematically testing only
+the largest observed differences severely inflates the Type Ⅰ error
+rate, as a high proportion of those comparisons are driven by sampling
+noise rather than genuine effects—a practice known as data snooping.
+While post-hoc procedures like the Scheffé test safely account for data
+snooping through multiplicity adjustments (Montgomery, 2017), the
+practical distinction between planned and unplanned workflows can
+occasionally be nuanced depending on how an analysis pipeline is
+structured.</p>
+<div class="section level4">
+<h4 id="scheffé">Scheffé<a class="anchor" aria-label="anchor" href="#scheff%C3%A9"></a>
+</h4>
+<p>In many situations, experimenters may not know in advance which
+contrasts they wish to test, or they may be interested in exploring more
+than the standard <code>k - 1</code> orthogonal comparisons. In
+exploratory research, hypotheses of interest are frequently conceived
+only after a preliminary examination of the data. Scheffé method is used
+for testing any and all possible linear contrasts among treatment means.
+Under the Scheffé method, the overall Type Ⅰ error rate is strictly
+controlled at no more than α, regardless of how many or which
+comparisons are ultimately evaluated.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compute all pairwise contrasts using Scheffé's method (internal programmatic initiation).</span></span>
+<span><span class="co"># Note: Scheffé's test is overly conservative for pure pairwise comparisons; </span></span>
+<span><span class="co"># dedicated post-hoc methods in the previous section should be preferred for pairwise comparison.</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Scheffe_test.html">Scheffe_test</a></span><span class="op">(</span><span class="va">morphine</span>, <span class="va">tolerance</span> <span class="op">~</span> <span class="va">grp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt; Scheffe's planned contrasts method</span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt; Data: morphine ; Formula: tolerance ~ grp</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     x1 x2 [x1 - x2] Pvalue signif     [x1 - x2] 95% CI      F  Fcrit StdErr</span></span>
+<span><span class="co">#&gt; 1  McM MM        19 0.0000    ***    [9.8061, 28.1939] 45.125 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 2  McM MS        25 0.0000    ***   [15.8061, 34.1939] 78.125 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 3  McM SM         5 0.0268      *   [-4.1939, 14.1939]  3.125 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 4  McM SS        18 0.0000    ***    [8.8061, 27.1939] 40.500 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 5   MM MS         6 0.0049     **   [-3.1939, 15.1939]  4.500 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 6   MM SM       -14 0.0000    ***  [-23.1939, -4.8061] 24.500 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 7   MM SS        -1 0.9725     ns   [-10.1939, 8.1939]  0.125 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 8   MS SM       -20 0.0000    *** [-29.1939, -10.8061] 50.000 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 9   MS SS        -7 0.0008    ***   [-16.1939, 2.1939]  6.125 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 10  SM SS        13 0.0000    ***    [3.8061, 22.1939] 21.125 3.2505 2.8284</span></span>
+<span></span>
+<span><span class="co"># Specify custom contrasts</span></span>
+<span><span class="va">grp_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MS"</span>, <span class="st">"MM"</span>, <span class="st">"SS"</span>, <span class="st">"SM"</span>, <span class="st">"McM"</span><span class="op">)</span></span>
+<span><span class="va">ca</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span><span class="va">cb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">cc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">contr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ca</span>, <span class="va">cb</span>, <span class="va">cc</span>, <span class="va">cd</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">grp_names</span><span class="op">)</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">grp_names</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Scheffe_test.html">Scheffe_test</a></span><span class="op">(</span><span class="va">morphine</span>, <span class="va">tolerance</span> <span class="op">~</span> <span class="va">grp</span>, planned_contrasts <span class="op">=</span> <span class="va">contr</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt; Scheffe's planned contrasts method</span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt; Data: morphine ; Formula: tolerance ~ grp</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;         x1           x2 [x1 - x2] Pvalue signif   [x1 - x2] 95% CI       F</span></span>
+<span><span class="co">#&gt; 1 McM + SM MM + MS + SS   18.1667 0.0000    *** [12.2321, 24.1013] 99.0083</span></span>
+<span><span class="co">#&gt; 2      McM           MM   19.0000 0.0000    ***  [9.8061, 28.1939] 45.1250</span></span>
+<span><span class="co">#&gt; 3       SS           MS    7.0000 0.0008    *** [-2.1939, 16.1939]  6.1250</span></span>
+<span><span class="co">#&gt; 4       MM           SS   -1.0000 0.9725     ns [-10.1939, 8.1939]  0.1250</span></span>
+<span><span class="co">#&gt;    Fcrit StdErr</span></span>
+<span><span class="co">#&gt; 1 3.2505 1.8257</span></span>
+<span><span class="co">#&gt; 2 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 3 3.2505 2.8284</span></span>
+<span><span class="co">#&gt; 4 3.2505 2.8284</span></span></code></pre></div>
+<p><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="compact-letter-displays">10. Compact letter displays<a class="anchor" aria-label="anchor" href="#compact-letter-displays"></a>
 </h2>
 <p>A compact letter display is a presentation device:</p>
 <ul>
@@ -769,7 +863,7 @@ significantly different;</li>
 </ul>
 <p><code><a href="../reference/compact_letter_display.html">compact_letter_display()</a></code> can be used independently. For
 example:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dunn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Dunn_test.html">Dunn_test</a></span><span class="op">(</span><span class="va">X_X_O</span>, <span class="va">val</span> <span class="op">~</span> <span class="va">grp</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">summary_tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/row_arrange.html">row_arrange</a></span><span class="op">(</span><span class="va">dunn</span><span class="op">$</span><span class="va">summary</span>, cols <span class="op">=</span> <span class="st">"MED"</span><span class="op">)</span></span>
@@ -789,7 +883,7 @@ example:</p>
 letters. For parametric procedures it is typically natural to use the
 mean; for rank-based procedures, the median is more appropriate.</p>
 <p>The symbols can also be customized:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compact_letter_display.html">compact_letter_display</a></span><span class="op">(</span></span>
 <span>  x1 <span class="op">=</span> <span class="va">dunn</span><span class="op">$</span><span class="va">post_hoc</span><span class="op">$</span><span class="va">x1</span>,</span>
 <span>  x2 <span class="op">=</span> <span class="va">dunn</span><span class="op">$</span><span class="va">post_hoc</span><span class="op">$</span><span class="va">x2</span>,</span>
@@ -803,7 +897,7 @@ mean; for rank-based procedures, the median is more appropriate.</p>
 <span><span class="co">#&gt; "___4_" "__34_" "_23__" "_23__" "_2___" "1____"</span></span></code></pre></div>
 <p>For two-samples comparison, use <code><a href="../reference/pval2asterisk.html">pval2asterisk()</a></code> to
 convert numeric p-values into user-defined significance symbols.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.20</span>, <span class="fl">0.04</span>, <span class="fl">0.008</span>, <span class="fl">0.0005</span>, <span class="fl">1e-6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/pval2asterisk.html">pval2asterisk</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
@@ -839,14 +933,15 @@ convert numeric p-values into user-defined significance symbols.</p>
 </table>
 <p>Custom thresholds and symbols are supported. The function expects
 thresholds in descending order:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pval2asterisk.html">pval2asterisk</a></span><span class="op">(</span><span class="va">p</span>,</span>
 <span>              break_points <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>              symbols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NS"</span>, <span class="st">"S"</span>, <span class="st">"HS"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "NS" "S"  "HS" "HS" "HS"</span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level2">
-<h2 id="effect-sizes">10. Effect sizes<a class="anchor" aria-label="anchor" href="#effect-sizes"></a>
+<h2 id="effect-sizes">11. Effect sizes<a class="anchor" aria-label="anchor" href="#effect-sizes"></a>
 </h2>
 <p>This package provides quick inference to the effect size using only 2
 of the many estimators. For comprehensive effect size analysis, please
@@ -858,7 +953,7 @@ CRAN package.</p>
 </h4>
 <p><code><a href="../reference/Cohen_d_s.html">Hedges_g_s()</a></code> applies a small-sample correction to
 Cohen’s <em>d</em>:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">O_O_O</span>, <span class="va">grp</span> <span class="op">==</span> <span class="st">"G1"</span><span class="op">)</span><span class="op">$</span><span class="va">val</span></span>
 <span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">O_O_O</span>, <span class="va">grp</span> <span class="op">==</span> <span class="st">"G2"</span><span class="op">)</span><span class="op">$</span><span class="va">val</span></span>
 <span><span class="fu"><a href="../reference/Cohen_d_s.html">Hedges_g_s</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span>
@@ -901,7 +996,7 @@ Cohen’s <em>d</em>:</p>
 </h4>
 <p>The classical ANOVA implementation reports partial omega-squared as
 <code>p_omega2</code>:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fisher</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"method"</span>, <span class="st">"Pvalue"</span>, <span class="st">"p_omega2"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   method Pvalue p_omega2</span></span>
 <span><span class="co">#&gt; Group     Fisher's ANOVA      0   0.6264</span></span>
@@ -911,7 +1006,7 @@ Cohen’s <em>d</em>:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="datasets">11. Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
+<h2 id="datasets">12. Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h2>
 <p>The package includes 6 simulated datasets designed specifically for
 different analysis conditions:</p>
@@ -977,7 +1072,7 @@ levels.</li>
 <p><br></p>
 </div>
 <div class="section level2">
-<h2 id="interpretation-notes">12. Interpretation notes<a class="anchor" aria-label="anchor" href="#interpretation-notes"></a>
+<h2 id="interpretation-notes">13. Interpretation notes<a class="anchor" aria-label="anchor" href="#interpretation-notes"></a>
 </h2>
 <div class="section level4">
 <h4 id="statistical-significance-is-not-the-same-as-practical-importance">Statistical significance is not the same as practical
@@ -1036,9 +1131,12 @@ selecting the analysis protocol.</p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<p>Ben-Shachar M., Lüdecke D., Makowski D. (2020). effectsize:
+Estimation of Effect Size Indices and Standardized Parameters.
+<em>Journal of Open Source Software</em>, 5(56), 2815. <br><a href="https://doi.org/10.21105/joss.02815" class="external-link uri">https://doi.org/10.21105/joss.02815</a></p>
 <p>Dinno, A. (2015). Nonparametric pairwise multiple comparisons in
 independent groups using Dunn’s test. <em>The Stata Journal: Promoting
-Communications on Statistics and Stata</em>, 15(1), 292–300. <a href="https://doi.org/10.1177/1536867X1501500117" class="external-link uri">https://doi.org/10.1177/1536867X1501500117</a></p>
+Communications on Statistics and Stata</em>, 15(1), 292–300. <br><a href="https://doi.org/10.1177/1536867X1501500117" class="external-link uri">https://doi.org/10.1177/1536867X1501500117</a></p>
 <p>Elkin, L.A., Kay, M., Higgins, J.J., &amp; Wobbrock, J.O. (2021). An
 aligned rank transform procedure for multifactor contrast tests.
 <em>Proceedings of the 34th Annual ACM Symposium on User Interface
@@ -1051,21 +1149,21 @@ ed.). Cengage Learning.</p>
 ed.). Cengage Learning.</p>
 <p>Kruskal, W.H., &amp; Wallis, W. A. (1952). Use of ranks in
 one-criterion variance analysis. <em>Journal of the American Statistical
-Association</em>, 47(260), 583–621. <a href="https://doi.org/10.1080/01621459.1952.10483441" class="external-link uri">https://doi.org/10.1080/01621459.1952.10483441</a></p>
+Association</em>, 47(260), 583–621.<br><a href="https://doi.org/10.1080/01621459.1952.10483441" class="external-link uri">https://doi.org/10.1080/01621459.1952.10483441</a></p>
 <p>Lakens, D. (2013). Calculating and reporting effect sizes to
 facilitate cumulative science: A practical primer for t-tests and
-ANOVAs. <em>Frontiers in Psychology</em>, 4(863). <a href="https://doi.org/10.3389/fpsyg.2013.00863" class="external-link uri">https://doi.org/10.3389/fpsyg.2013.00863</a></p>
+ANOVAs. <em>Frontiers in Psychology</em>, 4(863).<br><a href="https://doi.org/10.3389/fpsyg.2013.00863" class="external-link uri">https://doi.org/10.3389/fpsyg.2013.00863</a></p>
 <p>Montgomery, D.C. (2017). <em>Design and analysis of experiments</em>
 (9th ed.). John Wiley &amp; Sons.</p>
 <p>Piepho, H.P. (2004). An algorithm for a letter-based representation
 of all-pairwise comparisons. <em>Journal of Computational and Graphical
-Statistics</em>, 13(2), 456–466. <a href="https://doi.org/10.1198/1061860043515" class="external-link uri">https://doi.org/10.1198/1061860043515</a></p>
+Statistics</em>, 13(2), 456–466. <br><a href="https://doi.org/10.1198/1061860043515" class="external-link uri">https://doi.org/10.1198/1061860043515</a></p>
 <p>Piepho, H.P. (2018). Letters in mean comparisons: What they do and
 don’t mean. <em>Agronomy Journal</em>, 110(2), 431–434. <a href="https://doi.org/10.2134/agronj2017.10.0580" class="external-link uri">https://doi.org/10.2134/agronj2017.10.0580</a></p>
 <p>Wobbrock, J.O., Findlater, L., Gergle, D., &amp; Higgins, J.J.
 (2011). The aligned rank transform for nonparametric factorial analyses
 using only ANOVA procedures. <em>Proceedings of the SIGCHI Conference on
-Human Factors in Computing Systems</em>, 143–146. <a href="https://doi.org/10.1145/1978942.1978963" class="external-link uri">https://doi.org/10.1145/1978942.1978963</a></p>
+Human Factors in Computing Systems</em>, 143–146. <br><a href="https://doi.org/10.1145/1978942.1978963" class="external-link uri">https://doi.org/10.1145/1978942.1978963</a></p>
 <p>Zar, J.H. (2014). <em>Biostatistical analysis</em> (5th ed.).
 Pearson.</p>
 </div>

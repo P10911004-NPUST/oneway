@@ -8,15 +8,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/P10911004-NPUST/oneway/blob/v0.0.3/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/P10911004-NPUST/oneway/blob/main/DESCRIPTION)
 
 Lai J (2026). *oneway: One-Way Statistical Analyses*. R package version
-0.0.3, <https://github.com/P10911004-NPUST/oneway>.
+0.0.4, <https://github.com/P10911004-NPUST/oneway>.
 
     @Manual{,
       title = {oneway: One-Way Statistical Analyses},
       author = {Joon-Keat Lai},
       year = {2026},
-      note = {R package version 0.0.3},
+      note = {R package version 0.0.4},
       url = {https://github.com/P10911004-NPUST/oneway},
     }
